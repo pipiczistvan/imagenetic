@@ -1,4 +1,4 @@
-package imagenetic.assets;
+package imagenetic.asset;
 
 import org.joml.Vector4f;
 import piengine.object.asset.domain.Asset;

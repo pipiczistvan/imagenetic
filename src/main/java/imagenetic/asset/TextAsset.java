@@ -1,4 +1,4 @@
-package imagenetic.assets;
+package imagenetic.asset;
 
 import piengine.common.gui.writing.font.domain.Font;
 import piengine.common.gui.writing.text.domain.Text;

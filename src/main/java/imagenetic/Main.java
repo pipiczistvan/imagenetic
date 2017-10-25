@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         piEngine engine = new piEngine(APPLICATION_PROPERTIES,
                 Arrays.asList("^.*/pi-engine.*$", "^.*/target/.*$"),
-                Arrays.asList("imagenetic.scenes"));
+                Arrays.asList("imagenetic.*.scene", "imagenetic.*.service"));
         engine.start();
     }
 
