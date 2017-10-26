@@ -23,4 +23,19 @@ public class ImageProcessorTest {
         Assert.assertThat(expectedImage, new BufferedImageMatcher(actualImage));
     }
 
+    @Test
+    public void convertToNegative() throws Exception {
+        String normalFlag = getClass().getResource("/images/normalFlag.png").getFile();
+        String negativeFlag = getClass().getResource("/images/negativeFlag.png").getFile();
+
+        BufferedImage actualImage = ImageProcessor.loadImage(normalFlag)
+                .toNegative()
+                .get();
+
+        BufferedImage expectedImage = ImageProcessor.loadImage(negativeFlag)
+                .get();
+
+        Assert.assertThat(expectedImage, new BufferedImageMatcher(actualImage));
+    }
+
 }

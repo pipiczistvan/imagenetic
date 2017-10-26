@@ -28,6 +28,32 @@ public class ImageProcessor {
     }
 
     public ImageProcessor toGrayScale() {
+        process((a, r, g, b) -> {
+            int avg = (r + g + b) / 3;
+
+            return (a << 24) | (avg << 16) | (avg << 8) | avg;
+        });
+
+        return this;
+    }
+
+    public ImageProcessor toNegative() {
+        process((a, r, g, b) -> {
+            int nr = 255 - r;
+            int ng = 255 - g;
+            int nb = 255 - b;
+
+            return (a << 24) | (nr << 16) | (ng << 8) | nb;
+        });
+
+        return this;
+    }
+
+    public BufferedImage get() {
+        return image;
+    }
+
+    private void process(ImageProcessorFunction processor) {
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -40,19 +66,14 @@ public class ImageProcessor {
                 int g = (p >> 8) & 0xff;
                 int b = p & 0xff;
 
-                int avg = (r + g + b) / 3;
-
-                p = (a << 24) | (avg << 16) | (avg << 8) | avg;
-
+                p = processor.process(a, r, g, b);
                 image.setRGB(x, y, p);
             }
         }
-
-        return this;
     }
 
-    public BufferedImage get() {
-        return image;
+    private interface ImageProcessorFunction {
+        int process(int a, int r, int g, int b);
     }
 
 }
