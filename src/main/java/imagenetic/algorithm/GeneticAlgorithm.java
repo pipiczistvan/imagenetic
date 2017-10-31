@@ -35,12 +35,12 @@ public abstract class GeneticAlgorithm<T> {
         this.mutationOperator = mutationOperator;
     }
 
-    public List<T> execute(Collection<T> genoTypes, float mutationRate) {
+    public List<T> execute(Collection<T> genoTypes, float mutationRate, float elitismRate) {
         numberOfGenerations = 0;
         List<Entity<T>> population = createSortedPopulation(genoTypes);
 
         while (!criterionFunction.matches(population)) {
-            List<T> children = nextGeneration(population, mutationRate);
+            List<T> children = nextGeneration(population, mutationRate, elitismRate);
             population = createSortedPopulation(children);
             numberOfGenerations++;
         }
@@ -48,15 +48,16 @@ public abstract class GeneticAlgorithm<T> {
         return population.stream().map(Entity::getGenoType).collect(Collectors.toList());
     }
 
-    private List<T> nextGeneration(List<Entity<T>> population, float mutationRate) {
+    private List<T> nextGeneration(List<Entity<T>> population, float mutationRate, float elitismRate) {
         int populationSize = population.size();
         List<Entity<T>> bestParents = population.subList(0, populationSize / 2);
 
-        List<T> children = new ArrayList<>(bestParents.stream()
+        List<T> newGeneration = new ArrayList<>(bestParents.stream()
+                .filter(parent -> parent.getFitness() >= elitismRate)
                 .map(Entity::getGenoType)
                 .collect(Collectors.toList()));
 
-        while (children.size() < population.size()) {
+        while (newGeneration.size() < population.size()) {
             Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(bestParents);
 
             T child = crossOverOperator.crossOver(parents);
@@ -64,10 +65,10 @@ public abstract class GeneticAlgorithm<T> {
                 child = mutationOperator.mutate(child);
             }
 
-            children.add(child);
+            newGeneration.add(child);
         }
 
-        return children;
+        return newGeneration;
     }
 
     public int getNumberOfGenerations() {
