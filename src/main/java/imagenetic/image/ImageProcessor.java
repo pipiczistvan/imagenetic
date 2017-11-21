@@ -3,16 +3,21 @@ package imagenetic.image;
 import imagenetic.exception.ImageneticException;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class ImageProcessor {
 
-    private final BufferedImage image;
+    private BufferedImage image;
 
     private ImageProcessor(BufferedImage image) {
         this.image = image;
+    }
+
+    public static ImageProcessor loadImage(BufferedImage image) {
+        return new ImageProcessor(image);
     }
 
     public static ImageProcessor loadImage(String imageFile) {
@@ -45,6 +50,22 @@ public class ImageProcessor {
 
             return (a << 24) | (nr << 16) | (ng << 8) | nb;
         });
+
+        return this;
+    }
+
+    public ImageProcessor resize(int width, int height) {
+        final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        final Graphics2D graphics2D = bufferedImage.createGraphics();
+        graphics2D.setComposite(AlphaComposite.Src);
+
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.drawImage(image, 0, 0, width, height, null);
+        graphics2D.dispose();
+
+        image = bufferedImage;
 
         return this;
     }

@@ -38,4 +38,19 @@ public class ImageProcessorTest {
         Assert.assertThat(expectedImage, new BufferedImageMatcher(actualImage));
     }
 
+    @Test
+    public void resize() throws Exception {
+        String normalFlag = getClass().getResource("/images/normalFlag.png").getFile();
+        String scaledFlag = getClass().getResource("/images/scaledFlag.png").getFile();
+
+        BufferedImage actualImage = ImageProcessor.loadImage(normalFlag)
+                .resize(100, 200)
+                .get();
+
+        BufferedImage expectedImage = ImageProcessor.loadImage(scaledFlag)
+                .get();
+
+        Assert.assertThat(expectedImage, new BufferedImageMatcher(actualImage));
+    }
+
 }

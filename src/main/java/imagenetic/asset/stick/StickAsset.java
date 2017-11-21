@@ -20,6 +20,8 @@ import static piengine.visual.render.domain.AssetPlan.createPlan;
 
 public class StickAsset extends Asset {
 
+    private static final int MAX_SIZE = 100;
+
     private final ModelManager modelManager;
 
     private final Random random = new Random();
@@ -35,7 +37,7 @@ public class StickAsset extends Asset {
 
     @Override
     public void initialize() {
-        createStick();
+        createLotOfSticks();
 
         int[][] colorValues = getColorValues();
         fitnessFunction = new StickFitnessFunction(colorValues);
@@ -57,9 +59,9 @@ public class StickAsset extends Asset {
             Model stick = modelManager.supply("octahedron", this);
 
             stick.setPosition(
-                    random.nextFloat() * 600 - 300,
-                    random.nextFloat() * 600 - 300,
-                    random.nextFloat() * 600 - 300);
+                    random.nextFloat() * MAX_SIZE - MAX_SIZE / 2,
+                    random.nextFloat() * MAX_SIZE - MAX_SIZE / 2,
+                    random.nextFloat() * MAX_SIZE - MAX_SIZE / 2);
             stick.setRotation(
                     random.nextFloat() * 360 - 180,
                     random.nextFloat() * 360 - 180,
@@ -81,7 +83,20 @@ public class StickAsset extends Asset {
 
     private int[][] getColorValues() {
         String eiffelPath = getClass().getResource("/images/eiffel.png").getFile();
-        BufferedImage eiffelImage = ImageProcessor.loadImage(eiffelPath).toGrayScale().get();
+        BufferedImage eiffelImage = ImageProcessor.loadImage(eiffelPath).get();
+
+        int width = eiffelImage.getWidth();
+        int height = eiffelImage.getHeight();
+
+        if (width > height) {
+            height = MAX_SIZE * height / width;
+            width = MAX_SIZE;
+        } else {
+            width = MAX_SIZE * width / height;
+            height = MAX_SIZE;
+        }
+
+        eiffelImage = ImageProcessor.loadImage(eiffelImage).resize(width, height).get();
 
         int[][] colorValues = new int[eiffelImage.getHeight()][eiffelImage.getWidth()];
         for (int y = 0; y < eiffelImage.getHeight(); y++) {
