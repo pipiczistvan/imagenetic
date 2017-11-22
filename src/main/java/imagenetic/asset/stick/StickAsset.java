@@ -20,7 +20,7 @@ import static piengine.visual.render.domain.AssetPlan.createPlan;
 
 public class StickAsset extends Asset {
 
-    private static final int MAX_SIZE = 100;
+    private static final int MAX_SIZE = 200;
 
     private final ModelManager modelManager;
 
@@ -37,7 +37,7 @@ public class StickAsset extends Asset {
 
     @Override
     public void initialize() {
-        createLotOfSticks();
+        createStick();
 
         int[][] colorValues = getColorValues();
         fitnessFunction = new StickFitnessFunction(colorValues);
@@ -48,7 +48,7 @@ public class StickAsset extends Asset {
         Model stick = modelManager.supply("octahedron", this);
 
         stick.setPosition(0, 0, 0);
-        stick.setRotation(100, 0, 0);
+        stick.setRotation(0, 0, 0);
         stick.setScale(2, 60, 2);
 
         sticks.add(stick);
