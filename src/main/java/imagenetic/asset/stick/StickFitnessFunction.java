@@ -10,18 +10,20 @@ import java.util.List;
 
 public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
 
+    private static final int MAX_COLOR_VALUE = 255;
+
     private final int[][] colorValues;
     private final Vector2i[][] grid;
     private final int width;
     private final int height;
 
-    public StickFitnessFunction(int maxSize) {
-        BufferedImage eiffelImage = prepareImage(maxSize);
+    public StickFitnessFunction(String imagePath, int maxSize) {
+        BufferedImage image = prepareImage(imagePath, maxSize);
 
-        this.width = eiffelImage.getWidth();
-        this.height = eiffelImage.getHeight();
+        this.width = image.getWidth();
+        this.height = image.getHeight();
 
-        this.colorValues = getColorValues(eiffelImage);
+        this.colorValues = getColorValues(image);
         this.grid = createGrid();
     }
 
@@ -32,17 +34,17 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         double x = length * Math.sin(rotation) / 2;
         double y = length * Math.cos(rotation) / 2;
 
-        //todo: if the element is on and edge, these coordinates can be out of bound
-        int x0 = (int) (element.position.x + width / 2 + x);
-        int y0 = (int) (element.position.y + height / 2 + y);
-        int x1 = (int) (element.position.x + width / 2 - x);
-        int y1 = (int) (element.position.y + height / 2 - y);
+        int x0 = positiveMax((int) (element.position.x + width / 2 + x), width - 1);
+        int y0 = positiveMax((int) (element.position.y + height / 2 + y), height - 1);
+        int x1 = positiveMax((int) (element.position.x + width / 2 - x), width - 1);
+        int y1 = positiveMax((int) (element.position.y + height / 2 - y), height - 1);
 
         List<Vector2i> line = BresenhamAlgorithm.findLine(grid, x0, y0, x1, y1);
 
-        // make it camera view based
+        int sum = line.stream().map(point -> colorValues[point.x][point.y]).reduce(0, Integer::sum);
+        float max = MAX_COLOR_VALUE * line.size();
 
-        return 0f;
+        return sum / max;
     }
 
     private Vector2i[][] createGrid() {
@@ -56,9 +58,11 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         return grid;
     }
 
-    private BufferedImage prepareImage(int maxSize) {
-        String eiffelPath = getClass().getResource("/images/eiffel.png").getFile();
-        BufferedImage image = ImageProcessor.loadImage(eiffelPath).get();
+    private BufferedImage prepareImage(String imagePath, int maxSize) {
+        BufferedImage image = ImageProcessor.loadImage(imagePath)
+                .toGrayScale()
+                .toNegative()
+                .get();
 
         int width = image.getWidth();
         int height = image.getHeight();
@@ -75,13 +79,17 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
     }
 
     private int[][] getColorValues(BufferedImage image) {
-        int[][] colorValues = new int[image.getHeight()][image.getWidth()];
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                colorValues[y][x] = image.getRGB(x, y) & 0xff;
+        int[][] colorValues = new int[image.getWidth()][image.getHeight()];
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                colorValues[x][y] = image.getRGB(x, y) & 0xff;
             }
         }
 
         return colorValues;
+    }
+
+    private static int positiveMax(int value, int max) {
+        return Math.max(0, Math.min(max, value));
     }
 }

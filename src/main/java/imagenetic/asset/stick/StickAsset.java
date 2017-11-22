@@ -37,7 +37,8 @@ public class StickAsset extends Asset {
     public void initialize() {
         createStick();
 
-        fitnessFunction = new StickFitnessFunction(MAX_SIZE);
+        String eiffelPath = getClass().getResource("/images/eiffel.png").getFile();
+        fitnessFunction = new StickFitnessFunction(eiffelPath, MAX_SIZE);
         chromosomes = convertToChromosomes(sticks);
     }
 
