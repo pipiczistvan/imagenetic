@@ -1,6 +1,5 @@
 package imagenetic.asset.stick;
 
-import imagenetic.image.ImageProcessor;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import piengine.object.asset.domain.Asset;
@@ -10,7 +9,6 @@ import piengine.visual.render.domain.AssetPlan;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,8 +37,7 @@ public class StickAsset extends Asset {
     public void initialize() {
         createStick();
 
-        int[][] colorValues = getColorValues();
-        fitnessFunction = new StickFitnessFunction(colorValues);
+        fitnessFunction = new StickFitnessFunction(MAX_SIZE);
         chromosomes = convertToChromosomes(sticks);
     }
 
@@ -48,7 +45,7 @@ public class StickAsset extends Asset {
         Model stick = modelManager.supply("octahedron", this);
 
         stick.setPosition(0, 0, 0);
-        stick.setRotation(0, 0, 0);
+        stick.setRotation(0, 0, 45);
         stick.setScale(2, 60, 2);
 
         sticks.add(stick);
@@ -81,32 +78,6 @@ public class StickAsset extends Asset {
                 .collect(Collectors.toList());
     }
 
-    private int[][] getColorValues() {
-        String eiffelPath = getClass().getResource("/images/eiffel.png").getFile();
-        BufferedImage eiffelImage = ImageProcessor.loadImage(eiffelPath).get();
-
-        int width = eiffelImage.getWidth();
-        int height = eiffelImage.getHeight();
-
-        if (width > height) {
-            height = MAX_SIZE * height / width;
-            width = MAX_SIZE;
-        } else {
-            width = MAX_SIZE * width / height;
-            height = MAX_SIZE;
-        }
-
-        eiffelImage = ImageProcessor.loadImage(eiffelImage).resize(width, height).get();
-
-        int[][] colorValues = new int[eiffelImage.getHeight()][eiffelImage.getWidth()];
-        for (int y = 0; y < eiffelImage.getHeight(); y++) {
-            for (int x = 0; x < eiffelImage.getWidth(); x++) {
-                colorValues[y][x] = eiffelImage.getRGB(x, y) & 0xff;
-            }
-        }
-
-        return colorValues;
-    }
 
     @Override
     public void update(double delta) {
