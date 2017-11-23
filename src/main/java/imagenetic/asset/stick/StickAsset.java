@@ -24,8 +24,9 @@ public class StickAsset extends Asset {
 
     private final Random random = new Random();
     private final List<Model> sticks = new ArrayList<>();
-    private StickFitnessFunction fitnessFunction;
+    private StickGeneticAlgorithm geneticAlgorithm;
     private List<StickChromosome> chromosomes;
+    private List<StickChromosome> generatedChromosomes;
 
     @Wire
     public StickAsset(RenderManager renderManager, ModelManager modelManager) {
@@ -35,11 +36,21 @@ public class StickAsset extends Asset {
 
     @Override
     public void initialize() {
-        createStick();
+        createLotOfSticks();
 
         String eiffelPath = getClass().getResource("/images/eiffel.png").getFile();
-        fitnessFunction = new StickFitnessFunction(eiffelPath, MAX_SIZE);
+        geneticAlgorithm = new StickGeneticAlgorithm(eiffelPath, MAX_SIZE);
         chromosomes = convertToChromosomes(sticks);
+
+        generatedChromosomes = geneticAlgorithm.execute(chromosomes, 0f, 0.8f);
+        for (int i = 0; i < sticks.size(); i++) {
+            Model stick = sticks.get(i);
+            StickChromosome chromosome = generatedChromosomes.get(0);
+
+            stick.setPosition(chromosome.position.x, chromosome.position.y, chromosome.position.z);
+            stick.setRotation(chromosome.rotation.x, chromosome.rotation.y, chromosome.rotation.z);
+            stick.setScale(chromosome.scale.x, chromosome.scale.y, chromosome.scale.z);
+        }
     }
 
     private void createStick() {
@@ -82,7 +93,6 @@ public class StickAsset extends Asset {
 
     @Override
     public void update(double delta) {
-        chromosomes.forEach(c -> fitnessFunction.calculate(c));
     }
 
     @Override
