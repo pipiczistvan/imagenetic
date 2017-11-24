@@ -1,7 +1,7 @@
 package imagenetic.scene;
 
-import imagenetic.asset.TextAsset;
-import imagenetic.asset.stick.StickAsset;
+import imagenetic.scene.asset.fps.TextAsset;
+import imagenetic.scene.asset.stick.StickAsset;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import piengine.core.architecture.scene.domain.Scene;

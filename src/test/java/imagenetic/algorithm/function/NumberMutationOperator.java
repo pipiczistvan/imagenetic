@@ -1,5 +1,7 @@
 package imagenetic.algorithm.function;
 
+import imagenetic.common.algorithm.genetic.function.MutationOperator;
+
 import java.util.Random;
 
 public class NumberMutationOperator implements MutationOperator<Integer[]> {

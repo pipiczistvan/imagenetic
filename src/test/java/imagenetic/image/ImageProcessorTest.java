@@ -1,10 +1,13 @@
 package imagenetic.image;
 
+import imagenetic.common.algorithm.image.ImageProcessor;
 import matcher.BufferedImageMatcher;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class ImageProcessorTest {
 

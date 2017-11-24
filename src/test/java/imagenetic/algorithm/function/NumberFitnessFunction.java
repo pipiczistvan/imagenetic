@@ -1,5 +1,7 @@
 package imagenetic.algorithm.function;
 
+import imagenetic.common.algorithm.genetic.function.FitnessFunction;
+
 public class NumberFitnessFunction implements FitnessFunction<Integer[]> {
 
     private static final Integer[] OPTIMUM = {1, 1, 1, 1};

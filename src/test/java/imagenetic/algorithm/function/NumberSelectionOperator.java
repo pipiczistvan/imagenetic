@@ -1,6 +1,7 @@
 package imagenetic.algorithm.function;
 
-import imagenetic.algorithm.entity.Entity;
+import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.common.algorithm.genetic.function.SelectionOperator;
 import javafx.util.Pair;
 
 import java.util.List;
