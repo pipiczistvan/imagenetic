@@ -4,6 +4,7 @@ import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.BresenhamAlgorithm;
 import imagenetic.common.algorithm.image.ImageProcessor;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import java.awt.image.BufferedImage;
@@ -30,15 +31,31 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
 
     @Override
     public Float calculate(StickChromosome element) {
-        double length = Math.abs(Math.cos(Math.toRadians(element.rotation.x))) * element.scale.y;
-        double rotation = Math.toRadians(element.rotation.z);
-        double x = length * Math.sin(rotation) / 2;
-        double y = length * Math.cos(rotation) / 2;
+        float fitness1 = calculate(new Vector2f(element.position.x, element.position.y), new Vector2f(element.rotation.x, element.rotation.z), element.scale.y);
+//        float fitness2 = fitness1;
+        float fitness2 = calculate(new Vector2f(element.position.z, element.position.y), new Vector2f(element.rotation.z, element.rotation.x), element.scale.y);
 
-        int x0 = positiveMax((int) (element.position.x + width / 2d + x), width - 1);
-        int y0 = positiveMax((int) (element.position.y + height / 2d + y), height - 1);
-        int x1 = positiveMax((int) (element.position.x + width / 2d - x), width - 1);
-        int y1 = positiveMax((int) (element.position.y + height / 2d - y), height - 1);
+        return overall(fitness1, fitness2) * ratio(fitness1, fitness2);
+    }
+
+    private float overall(float fitness1, float fitness2) {
+        return (fitness1 + fitness2) / 2f;
+    }
+
+    private float ratio(float fitness1, float fitness2) {
+        return fitness1 < fitness2 ? nullSafeDivide(fitness1, fitness2) : nullSafeDivide(fitness2, fitness1);
+    }
+
+    private float calculate(Vector2f position, Vector2f rotation, float scale) {
+        double length = Math.abs(Math.cos(Math.toRadians(rotation.x))) * scale;
+        double rot = Math.toRadians(rotation.y);
+        double x = length * Math.sin(rot) / 2;
+        double y = length * Math.cos(rot) / 2;
+
+        int x0 = positiveMax((int) (position.x + width / 2d + x), width - 1);
+        int y0 = positiveMax((int) (position.y + height / 2d + y), height - 1);
+        int x1 = positiveMax((int) (position.x + width / 2d - x), width - 1);
+        int y1 = positiveMax((int) (position.y + height / 2d - y), height - 1);
 
         List<Vector2i> line = BresenhamAlgorithm.findLine(pixelGrid, x0, y0, x1, y1);
 
@@ -88,6 +105,13 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         }
 
         return colorValues;
+    }
+
+    private static float nullSafeDivide(float dividend, float divisor) {
+        if (divisor == 0f) {
+            return 0f;
+        }
+        return dividend / divisor;
     }
 
     private static int positiveMax(int value, int max) {

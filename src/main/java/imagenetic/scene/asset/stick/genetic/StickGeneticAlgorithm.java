@@ -16,7 +16,7 @@ public class StickGeneticAlgorithm extends GeneticAlgorithm<StickChromosome> {
                 new StickCriterionFunction(),
                 new StickSelectionOperator(),
                 new StickCrossoverOperator(),
-                new StickMutationOperator()
+                new StickMutationOperator(maxSize)
         );
     }
 }

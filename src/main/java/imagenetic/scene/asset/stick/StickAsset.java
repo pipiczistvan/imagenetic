@@ -90,18 +90,18 @@ public class StickAsset extends Asset {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public void update(double delta) {
+//        evaluateGeneticAlgorithm();
     }
 
     private void evaluateGeneticAlgorithm() {
         List<Entity<StickChromosome>> population = geneticAlgorithm.createSortedPopulation(chromosomes);
-        List<StickChromosome> generatedChromosomes = geneticAlgorithm.nextGeneration(population, 0.0f, 0.5f);
+        chromosomes = geneticAlgorithm.nextGeneration(population, 1f - 1f / population.size(), 0.25f);
 
         for (int i = 0; i < sticks.size(); i++) {
             Model stick = sticks.get(i);
-            StickChromosome chromosome = generatedChromosomes.get(i);
+            StickChromosome chromosome = chromosomes.get(i);
 
             stick.setPosition(chromosome.position.x, chromosome.position.y, chromosome.position.z);
             stick.setRotation(chromosome.rotation.x, chromosome.rotation.y, chromosome.rotation.z);

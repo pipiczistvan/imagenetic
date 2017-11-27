@@ -49,16 +49,13 @@ public abstract class GeneticAlgorithm<T> {
     }
 
     public List<T> nextGeneration(List<Entity<T>> population, float mutationRate, float elitismRate) {
-        int populationSize = population.size();
-        List<Entity<T>> bestParents = population.subList(0, populationSize / 2);
-
-        List<T> newGeneration = new ArrayList<>(bestParents.stream()
+        List<T> newGeneration = new ArrayList<>(population.stream()
                 .filter(parent -> parent.getFitness() >= elitismRate)
                 .map(Entity::getGenoType)
                 .collect(Collectors.toList()));
 
         while (newGeneration.size() < population.size()) {
-            Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(bestParents);
+            Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(population);
 
             T child = crossoverOperator.crossover(parents);
             if (random.nextFloat() >= mutationRate) {
