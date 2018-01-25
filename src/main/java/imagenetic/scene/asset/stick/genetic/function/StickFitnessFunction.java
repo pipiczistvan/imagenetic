@@ -19,8 +19,8 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
     private final int width;
     private final int height;
 
-    public StickFitnessFunction(String imagePath, int maxSize) {
-        BufferedImage image = prepareImage(imagePath, maxSize);
+    public StickFitnessFunction(BufferedImage originalImage, int maxSize) {
+        BufferedImage image = prepareImage(originalImage, maxSize);
 
         this.width = image.getWidth();
         this.height = image.getHeight();
@@ -76,8 +76,8 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         return grid;
     }
 
-    private BufferedImage prepareImage(String imagePath, int maxSize) {
-        BufferedImage image = ImageProcessor.loadImage(imagePath)
+    private BufferedImage prepareImage(BufferedImage originalImage, int maxSize) {
+        BufferedImage image = ImageProcessor.loadImage(originalImage)
                 .toGrayScale()
                 .toNegative()
                 .get();

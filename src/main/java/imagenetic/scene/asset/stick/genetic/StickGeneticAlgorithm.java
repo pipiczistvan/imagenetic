@@ -8,11 +8,13 @@ import imagenetic.scene.asset.stick.genetic.function.StickFitnessFunction;
 import imagenetic.scene.asset.stick.genetic.function.StickMutationOperator;
 import imagenetic.scene.asset.stick.genetic.function.StickSelectionOperator;
 
+import java.awt.image.BufferedImage;
+
 public class StickGeneticAlgorithm extends GeneticAlgorithm<StickChromosome> {
 
-    public StickGeneticAlgorithm(String imagePath, int maxSize) {
+    public StickGeneticAlgorithm(BufferedImage originalImage, int maxSize) {
         super(
-                new StickFitnessFunction(imagePath, maxSize),
+                new StickFitnessFunction(originalImage, maxSize),
                 new StickCriterionFunction(),
                 new StickSelectionOperator(),
                 new StickCrossoverOperator(),

@@ -1,12 +1,7 @@
 package imagenetic.common.algorithm.image;
 
-import imagenetic.common.exception.ImageneticException;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class ImageProcessor {
 
@@ -17,18 +12,6 @@ public class ImageProcessor {
     }
 
     public static ImageProcessor loadImage(BufferedImage image) {
-        return new ImageProcessor(image);
-    }
-
-    public static ImageProcessor loadImage(String imageFile) {
-        File file = new File(imageFile);
-        BufferedImage image;
-        try {
-            image = ImageIO.read(file);
-        } catch (IOException e) {
-            throw new ImageneticException("Could not parse image file!", e);
-        }
-
         return new ImageProcessor(image);
     }
 

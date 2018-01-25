@@ -4,31 +4,32 @@ import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.scene.asset.stick.genetic.StickGeneticAlgorithm;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
+import piengine.core.base.resource.ResourceLoader;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
-import piengine.object.asset.domain.Asset;
+import piengine.object.asset.domain.WorldAsset;
+import piengine.object.asset.plan.WorldRenderAssetContext;
+import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
-import piengine.visual.render.domain.AssetPlan;
-import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static piengine.visual.render.domain.AssetPlan.createPlan;
+public class StickAsset extends WorldAsset<StickAssetArgument> {
 
-public class StickAsset extends Asset {
-
-    private static final int MAX_SIZE = 800;
+    private static final int MAX_SIZE = (int) (800 / Math.sqrt(2));
     private static final int HALF_MAX_SIZE = MAX_SIZE / 2;
 
     private final ModelManager modelManager;
     private final InputManager inputManager;
+    private final ResourceLoader imageLoader;
 
     private final Random random = new Random();
     private final List<Model> sticks = new ArrayList<>();
@@ -36,25 +37,30 @@ public class StickAsset extends Asset {
     private List<StickChromosome> chromosomes;
 
     @Wire
-    public StickAsset(RenderManager renderManager, ModelManager modelManager, InputManager inputManager) {
-        super(renderManager);
+    public StickAsset(ModelManager modelManager, InputManager inputManager) {
         this.modelManager = modelManager;
         this.inputManager = inputManager;
+        this.imageLoader = new ResourceLoader("/images", "png");
     }
 
     @Override
     public void initialize() {
         createLotOfSticks();
 
-        String imagePath = getClass().getResource("/images/java.png").getFile();
-        geneticAlgorithm = new StickGeneticAlgorithm(imagePath, MAX_SIZE);
+        BufferedImage bufferedImage = null;
+        try {
+            bufferedImage = imageLoader.loadBufferedImage("eiffel");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        geneticAlgorithm = new StickGeneticAlgorithm(bufferedImage, MAX_SIZE);
         chromosomes = convertToChromosomes(sticks);
 
         inputManager.addEvent(GLFW.GLFW_KEY_SPACE, KeyEventType.PRESS, this::evaluateGeneticAlgorithm);
     }
 
     private void createStick() {
-        Model stick = modelManager.supply("octahedron", this);
+        Model stick = modelManager.supply(this, "octahedron", "black", false);
 
         stick.setPosition(0, 0, 0);
         stick.setRotation(0, 0, 45);
@@ -65,7 +71,7 @@ public class StickAsset extends Asset {
 
     private void createLotOfSticks() {
         for (int i = 0; i < 5_000; i++) {
-            Model stick = modelManager.supply("octahedron", this);
+            Model stick = modelManager.supply(this, "octahedron", "black", false);
 
             stick.setPosition(
                     random.nextFloat() * MAX_SIZE - HALF_MAX_SIZE,
@@ -75,7 +81,7 @@ public class StickAsset extends Asset {
                     random.nextFloat() * 360 - 180,
                     random.nextFloat() * 360 - 180,
                     random.nextFloat() * 360 - 180);
-            stick.setScale(2, 60, 2);
+            stick.setScale(2, 20, 2);
 
             sticks.add(stick);
         }
@@ -91,7 +97,7 @@ public class StickAsset extends Asset {
     }
 
     @Override
-    public void update(double delta) {
+    public void update(final float delta) {
 //        evaluateGeneticAlgorithm();
     }
 
@@ -110,10 +116,9 @@ public class StickAsset extends Asset {
     }
 
     @Override
-    protected AssetPlan createRenderPlan() {
-        return createPlan()
-                .withModels(sticks)
-                .withColor(new Vector4f(0, 0, 0, 1));
+    public WorldRenderAssetContext getAssetContext() {
+        return WorldRenderAssetContextBuilder.create()
+                .loadModels(sticks.toArray(new Model[sticks.size()]))
+                .build();
     }
-
 }
