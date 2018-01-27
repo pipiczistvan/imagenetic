@@ -5,7 +5,7 @@ import piengine.object.asset.domain.AssetArgument;
 
 public class UiAssetArgument implements AssetArgument {
 
-    public final Vector2i viewport;
+    final Vector2i viewport;
 
     public UiAssetArgument(final Vector2i viewport) {
         this.viewport = viewport;

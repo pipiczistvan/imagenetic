@@ -3,6 +3,7 @@ package imagenetic.scene.asset.camera;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.camera.asset.CameraAsset;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
@@ -15,7 +16,7 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 public class ObserverCameraAsset extends CameraAsset {
 
     private static final Vector3f DEFAULT_POSITION = new Vector3f();
-    private static final Vector3f DEFAULT_ROTATION = new Vector3f();
+    private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 180);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -23,8 +24,8 @@ public class ObserverCameraAsset extends CameraAsset {
     private final Vector2f looking;
 
     @Wire
-    public ObserverCameraAsset(final InputManager inputManager, final WindowManager windowManager) {
-        super(inputManager, windowManager);
+    public ObserverCameraAsset(final AssetManager assetManager, final InputManager inputManager, final WindowManager windowManager) {
+        super(assetManager, inputManager, windowManager);
         this.inputManager = inputManager;
         this.windowManager = windowManager;
         this.lastPos = new Vector2f();
@@ -33,9 +34,14 @@ public class ObserverCameraAsset extends CameraAsset {
 
     @Override
     public void initialize() {
+        resetRotation();
+
         inputManager.addEvent(GLFW_MOUSE_BUTTON_LEFT, PRESS, () -> {
-            lookingEnabled = true;
-            lastPos.set(windowManager.getPointer());
+            Vector2f pointer = windowManager.getPointer();
+            if (pointer.x <= 600 && pointer.y <= 600) {
+                lookingEnabled = true;
+                lastPos.set(pointer);
+            }
         });
         inputManager.addEvent(GLFW_MOUSE_BUTTON_LEFT, RELEASE, () -> lookingEnabled = false);
         inputManager.addEvent(GLFW_KEY_R, PRESS, this::resetRotation);

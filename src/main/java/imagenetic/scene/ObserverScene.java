@@ -46,24 +46,19 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 public class ObserverScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
-    private static final Vector2i STICK_CANVAS_VIEWPORT = new Vector2i(600, VIEWPORT.y);
-    private static final Vector2i UI_CANVAS_VIEWPORT = new Vector2i(200, VIEWPORT.y);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final FramebufferManager framebufferManager;
     private final CanvasManager canvasManager;
 
+    // Main
+    private Framebuffer mainFbo;
+    private Canvas mainCanvas;
     // Stick
-    private Framebuffer stickFbo;
-    private Canvas stickCanvas;
     private StickAsset stickAsset;
-    private ObserverCameraAsset cameraAsset;
     private Camera camera;
-
     // UI
-    private Framebuffer uiFbo;
-    private Canvas uiCanvas;
     private UiAsset uiAsset;
 
     @Wire
@@ -86,8 +81,12 @@ public class ObserverScene extends Scene {
 
     @Override
     protected void createAssets() {
+        // Main
+        mainFbo = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
+
         // Stick
-        cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
+        ObserverCameraAsset cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
@@ -96,24 +95,12 @@ public class ObserverScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, STICK_CANVAS_VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), STICK_CANVAS_VIEWPORT.x / 2, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, new Vector2i(600, 600), new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), VIEWPORT.x / 2, ORTHOGRAPHIC);
 
-        stickFbo = framebufferManager.supply(STICK_CANVAS_VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
-        stickCanvas = canvasManager.supply(this, stickFbo, ANTIALIAS_EFFECT);
-        float ratio = STICK_CANVAS_VIEWPORT.x / (float) VIEWPORT.x;
-        stickCanvas.setRotation(180, 180, 0);
-        stickCanvas.setScale(ratio, 1, 1);
-        stickCanvas.setPosition(-1 + ratio, 0, 0);
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(STICK_CANVAS_VIEWPORT));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(new Vector2i(600, 600)));
 
         // UI
-        uiFbo = framebufferManager.supply(UI_CANVAS_VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
-        uiCanvas = canvasManager.supply(this, uiFbo, ANTIALIAS_EFFECT);
-        float ratio2 = UI_CANVAS_VIEWPORT.x / (float) VIEWPORT.x;
-        uiCanvas.setRotation(180, 180, 0);
-        uiCanvas.setScale(ratio2, 1, 1);
-        uiCanvas.setPosition(1 - ratio2, 0, 0);
-        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(UI_CANVAS_VIEWPORT));
+        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(VIEWPORT));
     }
 
     @Override
@@ -121,7 +108,7 @@ public class ObserverScene extends Scene {
         return GuiRenderPlanBuilder
                 .createPlan(VIEWPORT)
                 .bindFrameBuffer(
-                        stickFbo,
+                        mainFbo,
                         WorldRenderPlanBuilder
                                 .createPlan(camera)
                                 .loadAssets(stickAsset)
@@ -129,19 +116,22 @@ public class ObserverScene extends Scene {
                                 .render()
                 )
                 .bindFrameBuffer(
-                        uiFbo,
+                        mainFbo,
                         GuiRenderPlanBuilder
-                                .createPlan(UI_CANVAS_VIEWPORT)
+                                .createPlan(mainFbo.getSize())
                                 .loadAssets(uiAsset)
-                                .clearScreen(ColorUtils.RED)
                                 .render()
                 )
                 .loadAssetContext(GuiRenderAssetContextBuilder
                         .create()
-                        .loadCanvases(stickCanvas, uiCanvas)
+                        .loadCanvases(mainCanvas)
                         .build()
                 )
                 .clearScreen(ColorUtils.BLACK)
                 .render();
+    }
+
+    @Override
+    public void update(final float delta) {
     }
 }

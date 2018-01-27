@@ -9,6 +9,7 @@ import piengine.core.base.resource.ResourceLoader;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.WorldAsset;
+import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
@@ -34,7 +35,9 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     private List<StickChromosome> chromosomes;
 
     @Wire
-    public StickAsset(ModelManager modelManager, InputManager inputManager) {
+    public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final InputManager inputManager) {
+        super(assetManager);
+
         this.modelManager = modelManager;
         this.inputManager = inputManager;
         this.imageLoader = new ResourceLoader("/images", "png");
