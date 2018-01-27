@@ -24,9 +24,6 @@ import java.util.stream.Collectors;
 
 public class StickAsset extends WorldAsset<StickAssetArgument> {
 
-    private static final int MAX_SIZE = (int) (800 / Math.sqrt(2));
-    private static final int HALF_MAX_SIZE = MAX_SIZE / 2;
-
     private final ModelManager modelManager;
     private final InputManager inputManager;
     private final ResourceLoader imageLoader;
@@ -53,7 +50,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        geneticAlgorithm = new StickGeneticAlgorithm(bufferedImage, MAX_SIZE);
+        geneticAlgorithm = new StickGeneticAlgorithm(bufferedImage, arguments.size);
         chromosomes = convertToChromosomes(sticks);
 
         inputManager.addEvent(GLFW.GLFW_KEY_SPACE, KeyEventType.PRESS, this::evaluateGeneticAlgorithm);
@@ -74,9 +71,9 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
             Model stick = modelManager.supply(this, "octahedron", "black", false);
 
             stick.setPosition(
-                    random.nextFloat() * MAX_SIZE - HALF_MAX_SIZE,
-                    random.nextFloat() * MAX_SIZE - HALF_MAX_SIZE,
-                    random.nextFloat() * MAX_SIZE - HALF_MAX_SIZE);
+                    random.nextFloat() * arguments.size - arguments.halfSize,
+                    random.nextFloat() * arguments.size - arguments.halfSize,
+                    random.nextFloat() * arguments.size - arguments.halfSize);
             stick.setRotation(
                     random.nextFloat() * 360 - 180,
                     random.nextFloat() * 360 - 180,

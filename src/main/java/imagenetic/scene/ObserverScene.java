@@ -1,16 +1,14 @@
 package imagenetic.scene;
 
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
-import imagenetic.scene.asset.fps.FpsAsset;
-import imagenetic.scene.asset.fps.FpsAssetArgument;
 import imagenetic.scene.asset.stick.StickAsset;
 import imagenetic.scene.asset.stick.StickAssetArgument;
+import imagenetic.scene.asset.ui.UiAsset;
+import imagenetic.scene.asset.ui.UiAssetArgument;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.input.manager.InputManager;
 import piengine.core.utils.ColorUtils;
-import piengine.gui.asset.ButtonAsset;
-import piengine.gui.asset.ButtonAssetArgument;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.object.camera.asset.CameraAssetArgument;
@@ -48,20 +46,25 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 public class ObserverScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
+    private static final Vector2i STICK_CANVAS_VIEWPORT = new Vector2i(600, VIEWPORT.y);
+    private static final Vector2i UI_CANVAS_VIEWPORT = new Vector2i(200, VIEWPORT.y);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
     private final FramebufferManager framebufferManager;
     private final CanvasManager canvasManager;
 
-    private Framebuffer framebuffer;
-    private Canvas mainCanvas;
+    // Stick
+    private Framebuffer stickFbo;
+    private Canvas stickCanvas;
+    private StickAsset stickAsset;
+    private ObserverCameraAsset cameraAsset;
     private Camera camera;
 
-    private ObserverCameraAsset cameraAsset;
-    private ButtonAsset buttonAsset;
-    private FpsAsset fpsAsset;
-    private StickAsset stickAsset;
+    // UI
+    private Framebuffer uiFbo;
+    private Canvas uiCanvas;
+    private UiAsset uiAsset;
 
     @Wire
     public ObserverScene(final RenderManager renderManager, final AssetManager assetManager,
@@ -83,6 +86,7 @@ public class ObserverScene extends Scene {
 
     @Override
     protected void createAssets() {
+        // Stick
         cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
                 get(CAMERA_LOOK_UP_LIMIT),
@@ -92,18 +96,24 @@ public class ObserverScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), VIEWPORT.x / 2, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, STICK_CANVAS_VIEWPORT, new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), STICK_CANVAS_VIEWPORT.x / 2, ORTHOGRAPHIC);
 
-        framebuffer = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
-        mainCanvas = canvasManager.supply(this, framebuffer, ANTIALIAS_EFFECT);
-        mainCanvas.rotate(180, 180, 0);
+        stickFbo = framebufferManager.supply(STICK_CANVAS_VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        stickCanvas = canvasManager.supply(this, stickFbo, ANTIALIAS_EFFECT);
+        float ratio = STICK_CANVAS_VIEWPORT.x / (float) VIEWPORT.x;
+        stickCanvas.setRotation(180, 180, 0);
+        stickCanvas.setScale(ratio, 1, 1);
+        stickCanvas.setPosition(-1 + ratio, 0, 0);
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(STICK_CANVAS_VIEWPORT));
 
-        buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
-                "buttonDefault", "buttonHover", "buttonPress",
-                VIEWPORT, "Please press me!", () -> System.out.println("Button clicked!")));
-        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument());
-
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument());
+        // UI
+        uiFbo = framebufferManager.supply(UI_CANVAS_VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        uiCanvas = canvasManager.supply(this, uiFbo, ANTIALIAS_EFFECT);
+        float ratio2 = UI_CANVAS_VIEWPORT.x / (float) VIEWPORT.x;
+        uiCanvas.setRotation(180, 180, 0);
+        uiCanvas.setScale(ratio2, 1, 1);
+        uiCanvas.setPosition(1 - ratio2, 0, 0);
+        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(UI_CANVAS_VIEWPORT));
     }
 
     @Override
@@ -111,19 +121,26 @@ public class ObserverScene extends Scene {
         return GuiRenderPlanBuilder
                 .createPlan(VIEWPORT)
                 .bindFrameBuffer(
-                        framebuffer,
+                        stickFbo,
                         WorldRenderPlanBuilder
                                 .createPlan(camera)
                                 .loadAssets(stickAsset)
                                 .clearScreen(ColorUtils.WHITE)
                                 .render()
                 )
+                .bindFrameBuffer(
+                        uiFbo,
+                        GuiRenderPlanBuilder
+                                .createPlan(UI_CANVAS_VIEWPORT)
+                                .loadAssets(uiAsset)
+                                .clearScreen(ColorUtils.RED)
+                                .render()
+                )
                 .loadAssetContext(GuiRenderAssetContextBuilder
                         .create()
-                        .loadCanvases(mainCanvas)
+                        .loadCanvases(stickCanvas, uiCanvas)
                         .build()
                 )
-                .loadAssets(fpsAsset)
                 .clearScreen(ColorUtils.BLACK)
                 .render();
     }
