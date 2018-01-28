@@ -43,7 +43,7 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUF
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
-public class ObserverScene extends Scene {
+public class MainScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
@@ -62,9 +62,9 @@ public class ObserverScene extends Scene {
     private UiAsset uiAsset;
 
     @Wire
-    public ObserverScene(final RenderManager renderManager, final AssetManager assetManager,
-                         final InputManager inputManager, final WindowManager windowManager,
-                         final FramebufferManager framebufferManager, final CanvasManager canvasManager) {
+    public MainScene(final RenderManager renderManager, final AssetManager assetManager,
+                     final InputManager inputManager, final WindowManager windowManager,
+                     final FramebufferManager framebufferManager, final CanvasManager canvasManager) {
         super(renderManager, assetManager);
 
         this.inputManager = inputManager;

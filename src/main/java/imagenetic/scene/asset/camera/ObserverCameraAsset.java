@@ -15,7 +15,6 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 
 public class ObserverCameraAsset extends CameraAsset {
 
-    private static final Vector3f DEFAULT_POSITION = new Vector3f();
     private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 180);
 
     private final InputManager inputManager;
@@ -60,13 +59,13 @@ public class ObserverCameraAsset extends CameraAsset {
     public void update(final float delta) {
         Vector3f newRotation = calculateRotation(delta);
 
-        setPositionRotation(DEFAULT_POSITION, newRotation);
+        setRotation(newRotation);
 
         looking.set(0, 0);
     }
 
     private void resetRotation() {
-        setPositionRotation(DEFAULT_POSITION, DEFAULT_ROTATION);
+        setRotation(DEFAULT_ROTATION);
     }
 
     private Vector3f calculateRotation(final double delta) {

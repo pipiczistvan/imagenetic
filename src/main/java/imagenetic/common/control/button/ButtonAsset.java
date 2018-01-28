@@ -1,4 +1,4 @@
-package imagenetic.scene.asset.button;
+package imagenetic.common.control.button;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -94,7 +94,7 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
         });
         inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
             if (pressed && hover) {
-                arguments.onClickEvent.invoke();
+                arguments.onClick.invoke();
             }
             pressed = false;
             if (hover) {
@@ -107,7 +107,6 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
 
     @Override
     public void update(final float delta) {
-
     }
 
     @Override
@@ -119,14 +118,14 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
     }
 
     @Override
-    public void setPosition(float x, float y, float z) {
-        super.setPosition(x, y, z);
+    public void translate(final float x, final float y, final float z) {
+        super.translate(x, y, z);
         setupButtonParameters();
     }
 
     @Override
-    public void setScale(float x, float y, float z) {
-        super.setScale(x, y, z);
+    public void scale(final float x, final float y, final float z) {
+        super.scale(x, y, z);
         setupButtonParameters();
     }
 

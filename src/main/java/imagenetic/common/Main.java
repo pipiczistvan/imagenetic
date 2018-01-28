@@ -1,6 +1,6 @@
 package imagenetic.common;
 
-import imagenetic.scene.ObserverScene;
+import imagenetic.scene.MainScene;
 import piengine.core.engine.domain.piEngine;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class Main {
                 singletonList(".*pi-engine.*\\.jar"),
                 emptyList()
         );
-        engine.start(ObserverScene.class);
+        engine.start(MainScene.class);
     }
 
 }
