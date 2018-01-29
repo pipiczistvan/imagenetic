@@ -3,6 +3,7 @@ package imagenetic.scene;
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
 import imagenetic.scene.asset.stick.StickAsset;
 import imagenetic.scene.asset.stick.StickAssetArgument;
+import imagenetic.scene.asset.stick.genetic.StickGeneticAlgorithm;
 import imagenetic.scene.asset.ui.UiAsset;
 import imagenetic.scene.asset.ui.UiAssetArgument;
 import org.joml.Vector2i;
@@ -45,6 +46,7 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
 public class MainScene extends Scene {
 
+    private static final int SIZE = 600;
     private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
 
     private final InputManager inputManager;
@@ -85,6 +87,8 @@ public class MainScene extends Scene {
         mainFbo = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
+        StickGeneticAlgorithm geneticAlgorithm = new StickGeneticAlgorithm(SIZE);
+
         // Stick
         ObserverCameraAsset cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
@@ -95,12 +99,12 @@ public class MainScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, new Vector2i(600, 600), new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), VIEWPORT.x / 2, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, new Vector2i(SIZE), new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), VIEWPORT.x / 2, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(new Vector2i(600, 600)));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(geneticAlgorithm, new Vector2i(SIZE)));
 
         // UI
-        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(VIEWPORT));
+        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(geneticAlgorithm, VIEWPORT));
     }
 
     @Override

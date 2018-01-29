@@ -12,13 +12,17 @@ import java.awt.image.BufferedImage;
 
 public class StickGeneticAlgorithm extends GeneticAlgorithm<StickChromosome> {
 
-    public StickGeneticAlgorithm(BufferedImage originalImage, int maxSize) {
+    public StickGeneticAlgorithm(final int maxSize) {
         super(
-                new StickFitnessFunction(originalImage, maxSize),
+                new StickFitnessFunction(maxSize),
                 new StickCriterionFunction(),
                 new StickSelectionOperator(),
                 new StickCrossoverOperator(),
                 new StickMutationOperator(maxSize)
         );
+    }
+
+    public void setImage(final BufferedImage image) {
+        ((StickFitnessFunction) super.fitnessFunction).setImage(image);
     }
 }

@@ -12,7 +12,10 @@ import piengine.object.asset.plan.GuiRenderAssetContext;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import puppeteer.annotation.premade.Wire;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 public class UiAsset extends GuiAsset<UiAssetArgument> {
 
@@ -64,9 +67,11 @@ public class UiAsset extends GuiAsset<UiAssetArgument> {
     }
 
     private void onSelected(final File[] files) {
-        System.out.println("Selected files: ");
-        for (File file : files) {
-            System.out.println(file.getAbsolutePath());
+        try {
+            BufferedImage image = ImageIO.read(files[0]);
+            arguments.geneticAlgorithm.setImage(image);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

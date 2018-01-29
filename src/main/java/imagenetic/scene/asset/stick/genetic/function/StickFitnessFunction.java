@@ -14,12 +14,18 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
 
     private static final float MAX_COLOR_VALUE = 255f;
 
-    private final int[][] pixelValues;
-    private final Vector2i[][] pixelGrid;
-    private final int width;
-    private final int height;
+    private final int maxSize;
 
-    public StickFitnessFunction(BufferedImage originalImage, int maxSize) {
+    private int[][] pixelValues;
+    private Vector2i[][] pixelGrid;
+    private int width;
+    private int height;
+
+    public StickFitnessFunction(final int maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public void setImage(BufferedImage originalImage) {
         BufferedImage image = prepareImage(originalImage, maxSize);
 
         this.width = image.getWidth();
@@ -31,6 +37,10 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
 
     @Override
     public Float calculate(StickChromosome element) {
+        if (pixelValues == null) {
+            return 1.0f;
+        }
+
         float fitness1 = calculate(new Vector2f(element.position.x, element.position.y), new Vector2f(element.rotation.x, element.rotation.z), element.scale.y);
 //        float fitness2 = fitness1;
         float fitness2 = calculate(new Vector2f(element.position.z, element.position.y), new Vector2f(element.rotation.z, element.rotation.x), element.scale.y);

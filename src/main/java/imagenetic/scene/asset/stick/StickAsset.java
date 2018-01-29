@@ -1,7 +1,6 @@
 package imagenetic.scene.asset.stick;
 
 import imagenetic.common.algorithm.genetic.entity.Entity;
-import imagenetic.scene.asset.stick.genetic.StickGeneticAlgorithm;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -16,8 +15,6 @@ import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import puppeteer.annotation.premade.Wire;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,7 +28,6 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     private final Random random = new Random();
     private final List<Model> sticks = new ArrayList<>();
-    private StickGeneticAlgorithm geneticAlgorithm;
     private List<StickChromosome> chromosomes;
 
     @Wire
@@ -47,13 +43,6 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     public void initialize() {
         createLotOfSticks();
 
-        BufferedImage bufferedImage = null;
-        try {
-            bufferedImage = imageLoader.loadBufferedImage("eiffel");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        geneticAlgorithm = new StickGeneticAlgorithm(bufferedImage, arguments.size);
         chromosomes = convertToChromosomes(sticks);
 
         inputManager.addEvent(GLFW.GLFW_KEY_SPACE, KeyEventType.PRESS, this::evaluateGeneticAlgorithm);
@@ -102,8 +91,8 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     }
 
     private void evaluateGeneticAlgorithm() {
-        List<Entity<StickChromosome>> population = geneticAlgorithm.createSortedPopulation(chromosomes);
-        chromosomes = geneticAlgorithm.nextGeneration(population, 1f - 1f / population.size(), 0.25f);
+        List<Entity<StickChromosome>> population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
+        chromosomes = arguments.geneticAlgorithm.nextGeneration(population, 1f - 1f / population.size(), 0.25f);
 
         for (int i = 0; i < sticks.size(); i++) {
             Model stick = sticks.get(i);

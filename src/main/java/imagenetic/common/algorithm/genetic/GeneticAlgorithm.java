@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public abstract class GeneticAlgorithm<T> {
 
-    private final FitnessFunction<T> fitnessFunction;
+    protected final FitnessFunction<T> fitnessFunction;
     private final CriterionFunction<T> criterionFunction;
     private final SelectionOperator<T> selectionOperator;
     private final CrossoverOperator<T> crossoverOperator;
