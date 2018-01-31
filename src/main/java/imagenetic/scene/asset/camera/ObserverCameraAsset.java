@@ -15,7 +15,7 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 
 public class ObserverCameraAsset extends CameraAsset {
 
-    private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 180);
+    private static final Vector3f DEFAULT_ROTATION = new Vector3f(180, 0, 180);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;

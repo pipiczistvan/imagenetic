@@ -3,6 +3,7 @@ package imagenetic.scene.asset.stick.genetic.function;
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.BresenhamAlgorithm;
 import imagenetic.common.algorithm.image.ImageProcessor;
+import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -10,18 +11,18 @@ import org.joml.Vector2i;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
+public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
 
     private static final float MAX_COLOR_VALUE = 255f;
 
     private final int maxSize;
 
-    private int[][] pixelValues;
+    private int[][] originalPixelValues;
     private Vector2i[][] pixelGrid;
     private int width;
     private int height;
 
-    public StickFitnessFunction(final int maxSize) {
+    public LayerFitnessFunction(final int maxSize) {
         this.maxSize = maxSize;
     }
 
@@ -31,21 +32,40 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         this.width = image.getWidth();
         this.height = image.getHeight();
 
-        this.pixelValues = getColorValues(image);
+        this.originalPixelValues = getColorValues(image);
         this.pixelGrid = createGrid();
     }
 
     @Override
-    public Float calculate(StickChromosome element) {
-        if (pixelValues == null) {
-            return 1.0f;
+    public Float calculate(LayerChromosome element) {
+        if (originalPixelValues == null) {
+            return 0.0f;
         }
 
-        float fitness1 = calculate(new Vector2f(element.position.x, element.position.y), new Vector2f(element.rotation.x, element.rotation.z), element.scale.y);
-//        float fitness2 = fitness1;
-        float fitness2 = calculate(new Vector2f(element.position.z, element.position.y), new Vector2f(element.rotation.z, element.rotation.x), element.scale.y);
+        int[][] pixelValues = new int[originalPixelValues.length][originalPixelValues[0].length];
+        for (int i = 0; i < originalPixelValues.length; i++) {
+            for (int j = 0; j < originalPixelValues[i].length; j++) {
+                pixelValues[i][j] = originalPixelValues[i][j];
+            }
+        }
 
-        return overall(fitness1, fitness2) * ratio(fitness1, fitness2);
+        float fitnessOfSticks = 0;
+        for (StickChromosome stickChromosome : element.stickChromosomes) {
+            fitnessOfSticks += fitnessOfStick(pixelValues, stickChromosome);
+        }
+
+        element.stickChromosomes.sort(StickChromosome::compareTo);
+
+        return fitnessOfSticks / element.stickChromosomes.size();
+    }
+
+    private float fitnessOfStick(int[][] pixelValues, StickChromosome element) {
+        float fitness1 = calculate(pixelValues, new Vector2f(element.position.x, element.position.y), new Vector2f(element.rotation.x, element.rotation.z), element.scale.y);
+        float fitness2 = fitness1;
+//        float fitness2 = calculate(new Vector2f(element.position.z, element.position.y), new Vector2f(element.rotation.z, element.rotation.x), element.scale.y);
+
+        element.fitness = overall(fitness1, fitness2) * ratio(fitness1, fitness2);
+        return element.fitness;
     }
 
     private float overall(float fitness1, float fitness2) {
@@ -56,7 +76,7 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         return fitness1 < fitness2 ? nullSafeDivide(fitness1, fitness2) : nullSafeDivide(fitness2, fitness1);
     }
 
-    private float calculate(Vector2f position, Vector2f rotation, float scale) {
+    private float calculate(int[][] pixelValues, Vector2f position, Vector2f rotation, float scale) {
         double length = Math.abs(Math.cos(Math.toRadians(rotation.x))) * scale;
         double rot = Math.toRadians(rotation.y);
         double x = length * Math.sin(rot) / 2;
@@ -69,8 +89,12 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
 
         List<Vector2i> line = BresenhamAlgorithm.findLine(pixelGrid, x0, y0, x1, y1);
 
-        int sum = line.stream().map(point -> pixelValues[point.x][point.y]).reduce(0, Integer::sum);
-        float max = MAX_COLOR_VALUE * line.size();
+        int sum = 0;
+        for (Vector2i point : line) {
+            sum += pixelValues[point.x][point.y];
+            pixelValues[point.x][point.y] = 0;
+        }
+        float max = MAX_COLOR_VALUE * (scale + 1);
 
         return sum / max;
     }
@@ -117,7 +141,7 @@ public class StickFitnessFunction implements FitnessFunction<StickChromosome> {
         return colorValues;
     }
 
-    private static float nullSafeDivide(float dividend, float divisor) {
+    public static float nullSafeDivide(float dividend, float divisor) {
         if (divisor == 0f) {
             return 0f;
         }

@@ -23,6 +23,8 @@ public abstract class GeneticAlgorithm<T> {
     private final MutationOperator<T> mutationOperator;
     private final Random random = new Random();
 
+    private Entity<T> bestElement = null;
+
     private int numberOfGenerations;
 
     public GeneticAlgorithm(FitnessFunction<T> fitnessFunction, CriterionFunction<T> criterionFunction,
@@ -37,32 +39,42 @@ public abstract class GeneticAlgorithm<T> {
 
     public List<T> execute(Collection<T> genoTypes, float mutationRate, float elitismRate) {
         numberOfGenerations = 0;
-        List<Entity<T>> population = createSortedPopulation(genoTypes);
+        List<Entity<T>> sortedPopulation = createSortedPopulation(genoTypes);
 
-        while (!criterionFunction.matches(population)) {
-            List<T> children = nextGeneration(population, mutationRate, elitismRate);
-            population = createSortedPopulation(children);
+        while (!criterionFunction.matches(sortedPopulation)) {
+            List<T> children = nextGeneration(sortedPopulation, mutationRate, elitismRate);
+            sortedPopulation = createSortedPopulation(children);
             numberOfGenerations++;
         }
 
-        return population.stream().map(Entity::getGenoType).collect(Collectors.toList());
+        return sortedPopulation.stream().map(Entity::getGenoType).collect(Collectors.toList());
     }
 
-    public List<T> nextGeneration(List<Entity<T>> population, float mutationRate, float elitismRate) {
-        List<T> newGeneration = new ArrayList<>(population.stream()
+    public List<T> nextGeneration(List<Entity<T>> sortedPopulation, float mutationRate, float elitismRate) {
+        if (bestElement == null || bestElement.getFitness() <= sortedPopulation.get(0).getFitness()) {
+            bestElement = sortedPopulation.get(0);
+        }
+
+        List<T> newGeneration = new ArrayList<>(sortedPopulation.stream()
                 .filter(parent -> parent.getFitness() >= elitismRate)
                 .map(Entity::getGenoType)
                 .collect(Collectors.toList()));
 
-        while (newGeneration.size() < population.size()) {
-            Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(population);
 
+        newGeneration.add(bestElement.getGenoType());
+
+        while (newGeneration.size() < sortedPopulation.size()) {
+            Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(sortedPopulation);
             T child = crossoverOperator.crossover(parents);
-            if (random.nextFloat() >= mutationRate) {
-                child = mutationOperator.mutate(child);
-            }
 
             newGeneration.add(child);
+        }
+
+        for (T element : newGeneration) {
+            Entity<T> calculatedChild = new Entity<>(element, fitnessFunction);
+            if (random.nextFloat() <= mutationRate) {
+                mutationOperator.mutate(calculatedChild.getGenoType());
+            }
         }
 
         return newGeneration;

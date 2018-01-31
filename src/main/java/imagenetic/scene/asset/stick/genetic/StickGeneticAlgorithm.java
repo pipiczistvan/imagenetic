@@ -1,28 +1,28 @@
 package imagenetic.scene.asset.stick.genetic;
 
 import imagenetic.common.algorithm.genetic.GeneticAlgorithm;
-import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
-import imagenetic.scene.asset.stick.genetic.function.StickCriterionFunction;
-import imagenetic.scene.asset.stick.genetic.function.StickCrossoverOperator;
-import imagenetic.scene.asset.stick.genetic.function.StickFitnessFunction;
-import imagenetic.scene.asset.stick.genetic.function.StickMutationOperator;
-import imagenetic.scene.asset.stick.genetic.function.StickSelectionOperator;
+import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.stick.genetic.function.LayerCriterionFunction;
+import imagenetic.scene.asset.stick.genetic.function.LayerCrossoverOperator;
+import imagenetic.scene.asset.stick.genetic.function.LayerFitnessFunction;
+import imagenetic.scene.asset.stick.genetic.function.LayerMutationOperator;
+import imagenetic.scene.asset.stick.genetic.function.LayerSelectionOperator;
 
 import java.awt.image.BufferedImage;
 
-public class StickGeneticAlgorithm extends GeneticAlgorithm<StickChromosome> {
+public class StickGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> {
 
     public StickGeneticAlgorithm(final int maxSize) {
         super(
-                new StickFitnessFunction(maxSize),
-                new StickCriterionFunction(),
-                new StickSelectionOperator(),
-                new StickCrossoverOperator(),
-                new StickMutationOperator(maxSize)
+                new LayerFitnessFunction(maxSize),
+                new LayerCriterionFunction(),
+                new LayerSelectionOperator(),
+                new LayerCrossoverOperator(),
+                new LayerMutationOperator(maxSize)
         );
     }
 
     public void setImage(final BufferedImage image) {
-        ((StickFitnessFunction) super.fitnessFunction).setImage(image);
+        ((LayerFitnessFunction) super.fitnessFunction).setImage(image);
     }
 }

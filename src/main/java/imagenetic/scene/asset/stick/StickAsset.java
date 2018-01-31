@@ -1,10 +1,10 @@
 package imagenetic.scene.asset.stick;
 
 import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import piengine.core.base.resource.ResourceLoader;
 import piengine.core.input.domain.KeyEventType;
 import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.WorldAsset;
@@ -13,101 +13,140 @@ import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
+import piengine.visual.image.manager.ImageManager;
+import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Wire;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class StickAsset extends WorldAsset<StickAssetArgument> {
 
+    private static final int POPULATION_COUNT = 4;
+    private static final int POPULATION_SIZE = 750;
+    private static final int VISIBLE_POPULATION_COUNT = 1;
+
     private final ModelManager modelManager;
     private final InputManager inputManager;
-    private final ResourceLoader imageLoader;
+    private final ImageManager imageManager;
 
     private final Random random = new Random();
-    private final List<Model> sticks = new ArrayList<>();
-    private List<StickChromosome> chromosomes;
+    private final List[] stickModels = new List[VISIBLE_POPULATION_COUNT];
+
+    private List<LayerChromosome> chromosomes = new ArrayList<>();
+    private List<Entity<LayerChromosome>> population = new ArrayList<>();
+
+    private Texture black, red;
+
+    private float elapsedTime = 0;
 
     @Wire
-    public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final InputManager inputManager) {
+    public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final InputManager inputManager, final ImageManager imageManager) {
         super(assetManager);
 
         this.modelManager = modelManager;
         this.inputManager = inputManager;
-        this.imageLoader = new ResourceLoader("/images", "png");
+        this.imageManager = imageManager;
     }
 
     @Override
     public void initialize() {
-        createLotOfSticks();
+        black = imageManager.supply("black");
+        red = imageManager.supply("red");
 
-        chromosomes = convertToChromosomes(sticks);
+        for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
+            stickModels[i] = new ArrayList();
+        }
+
+        createLotOfSticks();
+        createLotOfStickModels();
 
         inputManager.addEvent(GLFW.GLFW_KEY_SPACE, KeyEventType.PRESS, this::evaluateGeneticAlgorithm);
     }
 
-    private void createStick() {
-        Model stick = modelManager.supply(this, "octahedron", "black", false);
-
-        stick.setPosition(0, 0, 0);
-        stick.setRotation(0, 0, 45);
-        stick.setScale(2, 60, 2);
-
-        sticks.add(stick);
-    }
-
-    private void createLotOfSticks() {
-        for (int i = 0; i < 5_000; i++) {
-            Model stick = modelManager.supply(this, "octahedron", "black", false);
-
-            stick.setPosition(
-                    random.nextFloat() * arguments.size - arguments.halfSize,
-                    random.nextFloat() * arguments.size - arguments.halfSize,
-                    random.nextFloat() * arguments.size - arguments.halfSize);
-            stick.setRotation(
-                    random.nextFloat() * 360 - 180,
-                    random.nextFloat() * 360 - 180,
-                    random.nextFloat() * 360 - 180);
-            stick.setScale(2, 20, 2);
-
-            sticks.add(stick);
+    private void createLotOfStickModels() {
+        for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
+            for (int j = 0; j < POPULATION_SIZE; j++) {
+                Model stick = modelManager.supply(this, "octahedron", black, true);
+                stickModels[i].add(stick);
+            }
         }
     }
 
-    private List<StickChromosome> convertToChromosomes(List<Model> models) {
-        return models.stream()
-                .map(m -> new StickChromosome(
-                        new Vector3f(m.getPosition()),
-                        new Vector3f(m.getRotation()),
-                        new Vector3f(m.getScale())))
-                .collect(Collectors.toList());
+    private void createLotOfSticks() {
+        for (int i = 0; i < POPULATION_COUNT; i++) {
+            List<StickChromosome> stickChromosomes = new ArrayList<>();
+            for (int j = 0; j < POPULATION_SIZE; j++) {
+                Vector3f position = new Vector3f(
+                        random.nextFloat() * arguments.size - arguments.halfSize,
+                        random.nextFloat() * arguments.size - arguments.halfSize,
+                        random.nextFloat() * arguments.size - arguments.halfSize);
+                Vector3f rotation = new Vector3f(
+                        random.nextFloat() * 360 - 180,
+                        random.nextFloat() * 360 - 180,
+                        random.nextFloat() * 360 - 180);
+                Vector3f scale = new Vector3f(3, 30, 3);
+
+                stickChromosomes.add(new StickChromosome(position, rotation, scale));
+            }
+            chromosomes.add(new LayerChromosome(stickChromosomes));
+        }
+
+        population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
     }
 
     @Override
     public void update(final float delta) {
-//        evaluateGeneticAlgorithm();
+        if (elapsedTime > 0.1) {
+            elapsedTime = 0;
+            evaluateGeneticAlgorithm();
+        } else {
+            elapsedTime += delta;
+        }
     }
 
     private void evaluateGeneticAlgorithm() {
-        List<Entity<StickChromosome>> population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
-        chromosomes = arguments.geneticAlgorithm.nextGeneration(population, 1f - 1f / population.size(), 0.25f);
+        chromosomes = arguments.geneticAlgorithm.nextGeneration(population, 1f, 2f);
+        population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
 
-        for (int i = 0; i < sticks.size(); i++) {
-            Model stick = sticks.get(i);
-            StickChromosome chromosome = chromosomes.get(i);
+        for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
+            LayerChromosome layerChromosome = population.get(i).getGenoType();
+            for (int j = 0; j < POPULATION_SIZE; j++) {
+                Model stick = (Model) stickModels[i].get(j);
+                StickChromosome chromosome = layerChromosome.stickChromosomes.get(j);
 
-            stick.setPosition(chromosome.position.x, chromosome.position.y, chromosome.position.z);
-            stick.setRotation(chromosome.rotation.x, chromosome.rotation.y, chromosome.rotation.z);
-            stick.setScale(chromosome.scale.x, chromosome.scale.y, chromosome.scale.z);
+                stick.setPosition(chromosome.position);
+                stick.setRotation(chromosome.rotation);
+                stick.setScale(chromosome.scale);
+
+//                if (i == 0) {
+//                    stick.texture = red;
+//                } else {
+//                    stick.texture = black;
+//                }
+            }
         }
+
+
+        System.out.println("Best population fitness: " + population.get(0).getFitness());
     }
 
     @Override
     public WorldRenderAssetContext getAssetContext() {
         return WorldRenderAssetContextBuilder.create()
-                .loadModels(sticks.toArray(new Model[sticks.size()]))
+                .loadModels(getStickModels())
                 .build();
+    }
+
+    private Model[] getStickModels() {
+        Model[] models = new Model[VISIBLE_POPULATION_COUNT * POPULATION_SIZE];
+        for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
+            for (int j = 0; j < POPULATION_SIZE; j++) {
+                models[i * POPULATION_SIZE + j] = (Model) stickModels[i].get(j);
+            }
+        }
+
+        return models;
     }
 }
