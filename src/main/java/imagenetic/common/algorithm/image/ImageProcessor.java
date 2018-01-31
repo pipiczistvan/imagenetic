@@ -53,6 +53,18 @@ public class ImageProcessor {
         return this;
     }
 
+    public ImageProcessor contrast(float contrast) {
+        process((a, r, g, b) -> {
+            int nr = (int) Math.max(0, Math.min((r - 128) * contrast + 128, 255));
+            int ng = (int) Math.max(0, Math.min((g - 128) * contrast + 128, 255));
+            int nb = (int) Math.max(0, Math.min((b - 128) * contrast + 128, 255));
+
+            return (a << 24) | (nr << 16) | (ng << 8) | nb;
+        });
+
+        return this;
+    }
+
     public BufferedImage get() {
         return image;
     }

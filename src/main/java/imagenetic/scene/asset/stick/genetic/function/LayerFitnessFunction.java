@@ -13,10 +13,9 @@ import java.util.List;
 
 public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
 
-    private static final float MAX_COLOR_VALUE = 255f;
-
     private final int maxSize;
 
+    private int maxColorValue;
     private int[][] originalPixelValues;
     private Vector2i[][] pixelGrid;
     private int width;
@@ -94,7 +93,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
             sum += pixelValues[point.x][point.y];
             pixelValues[point.x][point.y] = 0;
         }
-        float max = MAX_COLOR_VALUE * (scale + 1);
+        float max = maxColorValue * (scale + 1);
 
         return sum / max;
     }
@@ -112,6 +111,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
 
     private BufferedImage prepareImage(BufferedImage originalImage, int maxSize) {
         BufferedImage image = ImageProcessor.loadImage(originalImage)
+                .contrast(1f)
                 .toGrayScale()
                 .toNegative()
                 .get();
@@ -131,10 +131,14 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
     }
 
     private int[][] getColorValues(BufferedImage image) {
+        maxColorValue = 0;
         int[][] colorValues = new int[image.getWidth()][image.getHeight()];
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 colorValues[x][y] = image.getRGB(x, y) & 0xff;
+                if (maxColorValue < colorValues[x][y]) {
+                    maxColorValue = colorValues[x][y];
+                }
             }
         }
 

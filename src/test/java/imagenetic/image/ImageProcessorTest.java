@@ -1,6 +1,10 @@
 package imagenetic.image;
 
+import piengine.core.base.resource.ResourceLoader;
+
 public class ImageProcessorTest {
+
+    private ResourceLoader imageLoader = new ResourceLoader("images", "png");
 
 //    @Test
 //    public void convertToGrayScale() throws Exception {
@@ -45,6 +49,23 @@ public class ImageProcessorTest {
 //                .get();
 //
 //        Assert.assertThat(expectedImage, new BufferedImageMatcher(actualImage));
+//    }
+//
+//    @Test
+//    public void contrast() throws Exception {
+//        BufferedImage normalFlag = imageLoader.loadBufferedImage("normalFlag");
+////        String scaledFlag = getClass().getResource("/images/scaledFlag.png").getFile();
+//
+//        BufferedImage actualImage = ImageProcessor.loadImage(normalFlag)
+//                .contrast(0.5f)
+//                .get();
+//
+////        ImageIO.write(actualImage, "PNG", new File("c:\\Users\\pipiczi\\Documents\\contrasted.png"));
+//
+////        BufferedImage expectedImage = ImageProcessor.loadImage(scaledFlag)
+////                .get();
+////
+////        Assert.assertThat(expectedImage, new BufferedImageMatcher(actualImage));
 //    }
 
 }

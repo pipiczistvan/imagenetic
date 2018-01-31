@@ -19,19 +19,18 @@ import puppeteer.annotation.premade.Wire;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class StickAsset extends WorldAsset<StickAssetArgument> {
 
-    private static final int POPULATION_COUNT = 4;
+    private static final int POPULATION_COUNT = 3;
     private static final int POPULATION_SIZE = 750;
     private static final int VISIBLE_POPULATION_COUNT = 1;
+    private static final int VISIBLE_POPULATION_SIZE = 600;
 
     private final ModelManager modelManager;
     private final InputManager inputManager;
     private final ImageManager imageManager;
 
-    private final Random random = new Random();
     private final List[] stickModels = new List[VISIBLE_POPULATION_COUNT];
 
     private List<LayerChromosome> chromosomes = new ArrayList<>();
@@ -67,7 +66,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     private void createLotOfStickModels() {
         for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
-            for (int j = 0; j < POPULATION_SIZE; j++) {
+            for (int j = 0; j < VISIBLE_POPULATION_SIZE; j++) {
                 Model stick = modelManager.supply(this, "octahedron", black, true);
                 stickModels[i].add(stick);
             }
@@ -78,17 +77,11 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         for (int i = 0; i < POPULATION_COUNT; i++) {
             List<StickChromosome> stickChromosomes = new ArrayList<>();
             for (int j = 0; j < POPULATION_SIZE; j++) {
-                Vector3f position = new Vector3f(
-                        random.nextFloat() * arguments.size - arguments.halfSize,
-                        random.nextFloat() * arguments.size - arguments.halfSize,
-                        random.nextFloat() * arguments.size - arguments.halfSize);
-                Vector3f rotation = new Vector3f(
-                        random.nextFloat() * 360 - 180,
-                        random.nextFloat() * 360 - 180,
-                        random.nextFloat() * 360 - 180);
-                Vector3f scale = new Vector3f(3, 30, 3);
-
-                stickChromosomes.add(new StickChromosome(position, rotation, scale));
+                stickChromosomes.add(new StickChromosome(
+                        new Vector3f(),
+                        new Vector3f(),
+                        new Vector3f(3, 25, 3)
+                ));
             }
             chromosomes.add(new LayerChromosome(stickChromosomes));
         }
@@ -112,7 +105,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
         for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
             LayerChromosome layerChromosome = population.get(i).getGenoType();
-            for (int j = 0; j < POPULATION_SIZE; j++) {
+            for (int j = 0; j < VISIBLE_POPULATION_SIZE; j++) {
                 Model stick = (Model) stickModels[i].get(j);
                 StickChromosome chromosome = layerChromosome.stickChromosomes.get(j);
 
@@ -140,10 +133,10 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     }
 
     private Model[] getStickModels() {
-        Model[] models = new Model[VISIBLE_POPULATION_COUNT * POPULATION_SIZE];
+        Model[] models = new Model[VISIBLE_POPULATION_COUNT * VISIBLE_POPULATION_SIZE];
         for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
-            for (int j = 0; j < POPULATION_SIZE; j++) {
-                models[i * POPULATION_SIZE + j] = (Model) stickModels[i].get(j);
+            for (int j = 0; j < VISIBLE_POPULATION_SIZE; j++) {
+                models[i * VISIBLE_POPULATION_SIZE + j] = (Model) stickModels[i].get(j);
             }
         }
 

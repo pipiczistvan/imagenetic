@@ -21,18 +21,19 @@ public class LayerMutationOperator implements MutationOperator<LayerChromosome> 
     @Override
     public void mutate(final LayerChromosome genotype) {
         for (StickChromosome stickChromosome : genotype.stickChromosomes) {
-            if (stickChromosome.fitness < 0.2f) {
+            if (stickChromosome.fitness < 0.15f) {
                 stickChromosome.position.set(
                         random.nextFloat() * maxSize - halfMaxSize,
                         random.nextFloat() * maxSize - halfMaxSize,
                         random.nextFloat() * maxSize - halfMaxSize
                 );
             }
-            if (stickChromosome.fitness < 0.5f) {
-                stickChromosome.rotation.set(
-                        random.nextFloat() * 360 - 180,
-                        random.nextFloat() * 360 - 180,
-                        random.nextFloat() * 360 - 180);
+            if (stickChromosome.fitness < 0.60f) {
+                stickChromosome.rotation.add(
+                        (1.0f - stickChromosome.fitness) * (random.nextFloat() * 45),
+                        (1.0f - stickChromosome.fitness) * (random.nextFloat() * 45),
+                        (1.0f - stickChromosome.fitness) * (random.nextFloat() * 45)
+                );
             }
         }
     }
