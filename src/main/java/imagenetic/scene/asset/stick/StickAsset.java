@@ -91,7 +91,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     @Override
     public void update(final float delta) {
-        if (elapsedTime > 0.1) {
+        if (elapsedTime > 0.001) {
             elapsedTime = 0;
             evaluateGeneticAlgorithm();
         } else {
@@ -120,9 +120,6 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 //                }
             }
         }
-
-
-        System.out.println("Best population fitness: " + population.get(0).getFitness());
     }
 
     @Override

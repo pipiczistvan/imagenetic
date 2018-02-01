@@ -67,11 +67,13 @@ public class UiAsset extends GuiAsset<UiAssetArgument> {
     }
 
     private void onSelected(final File[] files) {
-        try {
-            BufferedImage image = ImageIO.read(files[0]);
-            arguments.geneticAlgorithm.setImage(image);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (files.length > 0) {
+            try {
+                BufferedImage image = ImageIO.read(files[0]);
+                arguments.geneticAlgorithm.setImage(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

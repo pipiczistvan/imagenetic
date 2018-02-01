@@ -13,7 +13,7 @@ public class LayerSelectionOperator implements SelectionOperator<LayerChromosome
     private final Random random = new Random();
 
     @Override
-    public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(List<Entity<LayerChromosome>> orderedPopulation) {
+    public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(final List<Entity<LayerChromosome>> orderedPopulation) {
         int leftIndex = random.nextInt(orderedPopulation.size() / 2);
         int rightIndex;
 

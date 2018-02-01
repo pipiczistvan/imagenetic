@@ -11,6 +11,9 @@ import org.joml.Vector2i;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import static imagenetic.common.util.NumberUtil.nullSafeDivide;
+import static imagenetic.common.util.NumberUtil.positiveMax;
+
 public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
 
     private final int maxSize;
@@ -25,7 +28,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
         this.maxSize = maxSize;
     }
 
-    public void setImage(BufferedImage originalImage) {
+    public void setImage(final BufferedImage originalImage) {
         BufferedImage image = prepareImage(originalImage, maxSize);
 
         this.width = image.getWidth();
@@ -36,7 +39,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
     }
 
     @Override
-    public Float calculate(LayerChromosome element) {
+    public Float calculate(final LayerChromosome element) {
         if (originalPixelValues == null) {
             return 0.0f;
         }
@@ -71,11 +74,11 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
         return (fitness1 + fitness2) / 2f;
     }
 
-    private float ratio(float fitness1, float fitness2) {
+    private float ratio(final float fitness1, final float fitness2) {
         return fitness1 < fitness2 ? nullSafeDivide(fitness1, fitness2) : nullSafeDivide(fitness2, fitness1);
     }
 
-    private float calculate(int[][] pixelValues, Vector2f position, Vector2f rotation, float scale) {
+    private float calculate(final int[][] pixelValues, final Vector2f position, final Vector2f rotation, final float scale) {
         double length = Math.abs(Math.cos(Math.toRadians(rotation.x))) * scale;
         double rot = Math.toRadians(rotation.y);
         double x = length * Math.sin(rot) / 2;
@@ -109,7 +112,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
         return grid;
     }
 
-    private BufferedImage prepareImage(BufferedImage originalImage, int maxSize) {
+    private BufferedImage prepareImage(final BufferedImage originalImage, final int maxSize) {
         BufferedImage image = ImageProcessor.loadImage(originalImage)
                 .contrast(1f)
                 .toGrayScale()
@@ -130,7 +133,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
         return ImageProcessor.loadImage(image).resize(currentWidth, currentHeight).get();
     }
 
-    private int[][] getColorValues(BufferedImage image) {
+    private int[][] getColorValues(final BufferedImage image) {
         maxColorValue = 0;
         int[][] colorValues = new int[image.getWidth()][image.getHeight()];
         for (int x = 0; x < image.getWidth(); x++) {
@@ -143,16 +146,5 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
         }
 
         return colorValues;
-    }
-
-    public static float nullSafeDivide(float dividend, float divisor) {
-        if (divisor == 0f) {
-            return 0f;
-        }
-        return dividend / divisor;
-    }
-
-    private static int positiveMax(int value, int max) {
-        return Math.max(0, Math.min(max, value));
     }
 }

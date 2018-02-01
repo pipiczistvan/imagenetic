@@ -10,7 +10,9 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static imagenetic.scene.asset.stick.genetic.function.LayerFitnessFunction.nullSafeDivide;
+import static imagenetic.common.util.NumberUtil.nullSafeDivide;
+import static imagenetic.common.util.Vector3fUtil.interpolatePosition;
+import static imagenetic.common.util.Vector3fUtil.interpolateRotation;
 
 public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome> {
 
@@ -42,8 +44,8 @@ public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome
                 float progression = 0.5f + (rightScaled - leftScaled) / 2;
 
                 stickChromosomes.add(createNewChromosome(
-                        interpolateVector3f(leftChromosome.position, rightChromosome.position, progression),
-                        interpolateVector3f(leftChromosome.rotation, rightChromosome.rotation, progression),
+                        interpolatePosition(leftChromosome.position, rightChromosome.position, progression),
+                        interpolateRotation(leftChromosome.rotation, rightChromosome.rotation, progression),
                         leftChromosome.scale
                 ));
             }
@@ -56,12 +58,5 @@ public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome
 
     private StickChromosome createNewChromosome(final Vector3f position, final Vector3f rotation, final Vector3f scale) {
         return new StickChromosome(new Vector3f(position), new Vector3f(rotation), new Vector3f(scale));
-    }
-
-    private static Vector3f interpolateVector3f(final Vector3f start, final Vector3f end, final float progression) {
-        float x = start.x + (end.x - start.x) * progression;
-        float y = start.y + (end.y - start.y) * progression;
-        float z = start.z + (end.z - start.z) * progression;
-        return new Vector3f(x, y, z);
     }
 }

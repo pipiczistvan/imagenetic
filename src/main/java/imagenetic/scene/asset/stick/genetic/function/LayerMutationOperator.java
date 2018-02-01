@@ -12,7 +12,7 @@ public class LayerMutationOperator implements MutationOperator<LayerChromosome> 
     private final int halfMaxSize;
     private final Random random;
 
-    public LayerMutationOperator(int maxSize) {
+    public LayerMutationOperator(final int maxSize) {
         this.maxSize = maxSize;
         this.halfMaxSize = maxSize / 2;
         this.random = new Random();
