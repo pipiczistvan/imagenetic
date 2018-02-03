@@ -60,7 +60,7 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
         hoverImage = imageManager.supply(arguments.hoverImageName);
         pressImage = imageManager.supply(arguments.pressImageName);
 
-        font = fontManager.supply("candara");
+        font = fontManager.supply("candara", arguments.viewport);
         label = textManager.supply(textConfig()
                         .withFont(font)
                         .withFontSize(1.2f)

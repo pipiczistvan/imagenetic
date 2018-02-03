@@ -29,15 +29,13 @@ import puppeteer.annotation.premade.Wire;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static piengine.core.base.type.property.ApplicationProperties.get;
-import static piengine.core.base.type.property.PropertyKeys.CAMERA_FAR_PLANE;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_SPEED;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_UP_LIMIT;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_MOVE_SPEED;
-import static piengine.core.base.type.property.PropertyKeys.CAMERA_NEAR_PLANE;
-import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_HEIGHT;
-import static piengine.core.base.type.property.PropertyKeys.CAMERA_VIEWPORT_WIDTH;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_HEIGHT;
+import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.ORTHOGRAPHIC;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
@@ -46,8 +44,8 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
 public class MainScene extends Scene {
 
-    private static final int SIZE = 600;
-    private static final Vector2i VIEWPORT = new Vector2i(get(CAMERA_VIEWPORT_WIDTH), get(CAMERA_VIEWPORT_HEIGHT));
+    private static final Vector2i VIEWPORT = new Vector2i(get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
+    private static final Vector2i STICK_SIZE = new Vector2i(VIEWPORT.y);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -87,7 +85,7 @@ public class MainScene extends Scene {
         mainFbo = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
-        StickGeneticAlgorithm geneticAlgorithm = new StickGeneticAlgorithm(SIZE);
+        StickGeneticAlgorithm geneticAlgorithm = new StickGeneticAlgorithm(STICK_SIZE.x);
 
         // Stick
         ObserverCameraAsset cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
@@ -99,9 +97,9 @@ public class MainScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, new Vector2i(SIZE), new CameraAttribute(get(CAMERA_FOV), get(CAMERA_NEAR_PLANE), get(CAMERA_FAR_PLANE)), VIEWPORT.x / 2, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), VIEWPORT.x / 2, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(geneticAlgorithm, new Vector2i(SIZE)));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(geneticAlgorithm, STICK_SIZE));
 
         // UI
         uiAsset = createAsset(UiAsset.class, new UiAssetArgument(geneticAlgorithm, VIEWPORT));
@@ -137,5 +135,9 @@ public class MainScene extends Scene {
 
     @Override
     public void update(final float delta) {
+    }
+
+    @Override
+    public void resize(final int width, final int height) {
     }
 }

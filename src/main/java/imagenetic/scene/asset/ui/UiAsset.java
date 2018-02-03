@@ -50,7 +50,7 @@ public class UiAsset extends GuiAsset<UiAssetArgument> {
         ));
         selectorAsset.setPosition(0.7f, 0.25f, 0);
 
-        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument());
+        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument(arguments.viewport));
     }
 
     @Override
