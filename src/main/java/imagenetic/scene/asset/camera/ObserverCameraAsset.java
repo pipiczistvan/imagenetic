@@ -8,6 +8,7 @@ import piengine.object.camera.asset.CameraAsset;
 import piengine.visual.window.manager.WindowManager;
 import puppeteer.annotation.premade.Wire;
 
+import static imagenetic.scene.MainScene.STICK_SIZE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static piengine.core.input.domain.KeyEventType.PRESS;
@@ -37,7 +38,7 @@ public class ObserverCameraAsset extends CameraAsset {
 
         inputManager.addEvent(GLFW_MOUSE_BUTTON_LEFT, PRESS, () -> {
             Vector2f pointer = windowManager.getPointer();
-            if (pointer.x <= 600 && pointer.y <= 600) {
+            if (pointer.x <= STICK_SIZE.x && pointer.y <= STICK_SIZE.y) {
                 lookingEnabled = true;
                 lastPos.set(pointer);
             }

@@ -45,7 +45,9 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 public class MainScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i(get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
-    private static final Vector2i STICK_SIZE = new Vector2i(VIEWPORT.y);
+    public static final Vector2i STICK_SIZE = new Vector2i(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
+    private static final int MAX_STICK_SIZE = 600;
+    private static final StickGeneticAlgorithm GENETIC_ALGORITHM = new StickGeneticAlgorithm(MAX_STICK_SIZE);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -75,6 +77,9 @@ public class MainScene extends Scene {
 
     @Override
     public void initialize() {
+        VIEWPORT.set(windowManager.getWidth(), windowManager.getHeight());
+        STICK_SIZE.set(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
+        inputManager.clearEvents();
         super.initialize();
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
     }
@@ -84,8 +89,6 @@ public class MainScene extends Scene {
         // Main
         mainFbo = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
-
-        StickGeneticAlgorithm geneticAlgorithm = new StickGeneticAlgorithm(STICK_SIZE.x);
 
         // Stick
         ObserverCameraAsset cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
@@ -99,10 +102,10 @@ public class MainScene extends Scene {
 
         camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), VIEWPORT.x / 2, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(geneticAlgorithm, STICK_SIZE));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(GENETIC_ALGORITHM, STICK_SIZE.x, MAX_STICK_SIZE));
 
         // UI
-        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(geneticAlgorithm, VIEWPORT));
+        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(GENETIC_ALGORITHM, VIEWPORT));
     }
 
     @Override
@@ -135,9 +138,5 @@ public class MainScene extends Scene {
 
     @Override
     public void update(final float delta) {
-    }
-
-    @Override
-    public void resize(final int width, final int height) {
     }
 }

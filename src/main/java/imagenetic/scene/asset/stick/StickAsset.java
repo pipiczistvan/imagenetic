@@ -4,9 +4,6 @@ import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
-import piengine.core.input.domain.KeyEventType;
-import piengine.core.input.manager.InputManager;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
@@ -28,24 +25,22 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     private static final int VISIBLE_POPULATION_SIZE = 600;
 
     private final ModelManager modelManager;
-    private final InputManager inputManager;
     private final ImageManager imageManager;
 
     private final List[] stickModels = new List[VISIBLE_POPULATION_COUNT];
 
-    private List<LayerChromosome> chromosomes = new ArrayList<>();
-    private List<Entity<LayerChromosome>> population = new ArrayList<>();
+    private static List<LayerChromosome> chromosomes = new ArrayList<>();
+    private static List<Entity<LayerChromosome>> population = new ArrayList<>();
 
     private Texture black, red;
 
     private float elapsedTime = 0;
 
     @Wire
-    public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final InputManager inputManager, final ImageManager imageManager) {
+    public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final ImageManager imageManager) {
         super(assetManager);
 
         this.modelManager = modelManager;
-        this.inputManager = inputManager;
         this.imageManager = imageManager;
     }
 
@@ -54,18 +49,15 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         black = imageManager.supply("black");
         red = imageManager.supply("red");
 
-        for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
-            stickModels[i] = new ArrayList();
+        if (chromosomes.isEmpty()) {
+            createLotOfSticks();
         }
-
-        createLotOfSticks();
         createLotOfStickModels();
-
-        inputManager.addEvent(GLFW.GLFW_KEY_SPACE, KeyEventType.PRESS, this::evaluateGeneticAlgorithm);
     }
 
     private void createLotOfStickModels() {
         for (int i = 0; i < VISIBLE_POPULATION_COUNT; i++) {
+            stickModels[i] = new ArrayList();
             for (int j = 0; j < VISIBLE_POPULATION_SIZE; j++) {
                 Model stick = modelManager.supply(this, "octahedron", black, true);
                 stickModels[i].add(stick);
@@ -109,9 +101,9 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
                 Model stick = (Model) stickModels[i].get(j);
                 StickChromosome chromosome = layerChromosome.stickChromosomes.get(j);
 
-                stick.setPosition(chromosome.position);
-                stick.setRotation(chromosome.rotation);
-                stick.setScale(chromosome.scale);
+                stick.setPosition(new Vector3f(chromosome.position).mul(arguments.viewScale));
+                stick.setRotation(new Vector3f(chromosome.rotation));
+                stick.setScale(new Vector3f(chromosome.scale).mul(arguments.viewScale));
 
 //                if (i == 0) {
 //                    stick.texture = red;
