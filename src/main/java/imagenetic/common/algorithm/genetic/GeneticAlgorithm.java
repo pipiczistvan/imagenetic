@@ -25,7 +25,7 @@ public abstract class GeneticAlgorithm<T> {
 
     private Entity<T> bestElement = null;
 
-    private int numberOfGenerations;
+    protected int numberOfGenerations = 0;
 
     public GeneticAlgorithm(FitnessFunction<T> fitnessFunction, CriterionFunction<T> criterionFunction,
                             SelectionOperator<T> selectionOperator, CrossoverOperator<T> crossoverOperator,
@@ -44,7 +44,6 @@ public abstract class GeneticAlgorithm<T> {
         while (!criterionFunction.matches(sortedPopulation)) {
             List<T> children = nextGeneration(sortedPopulation, mutationRate, elitismRate);
             sortedPopulation = createSortedPopulation(children);
-            numberOfGenerations++;
         }
 
         return sortedPopulation.stream().map(Entity::getGenoType).collect(Collectors.toList());
@@ -76,6 +75,8 @@ public abstract class GeneticAlgorithm<T> {
                 mutationOperator.mutate(calculatedChild.getGenoType());
             }
         }
+
+        numberOfGenerations++;
 
         return newGeneration;
     }

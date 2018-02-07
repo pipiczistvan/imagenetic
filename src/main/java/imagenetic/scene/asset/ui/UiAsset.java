@@ -2,10 +2,10 @@ package imagenetic.scene.asset.ui;
 
 import imagenetic.common.control.button.ButtonAsset;
 import imagenetic.common.control.button.ButtonAssetArgument;
+import imagenetic.common.control.label.LabelAsset;
+import imagenetic.common.control.label.LabelAssetArgument;
 import imagenetic.common.control.selector.SelectorAsset;
 import imagenetic.common.control.selector.SelectorAssetArgument;
-import imagenetic.scene.asset.fps.FpsAsset;
-import imagenetic.scene.asset.fps.FpsAssetArgument;
 import piengine.core.base.api.Resizable;
 import piengine.object.asset.domain.GuiAsset;
 import piengine.object.asset.manager.AssetManager;
@@ -20,11 +20,11 @@ import java.io.IOException;
 
 public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
 
-    private static final float MARGIN = 0.1f;
+    private static final float MARGIN = 0.05f;
 
     private ButtonAsset buttonAsset;
     private SelectorAsset selectorAsset;
-    private FpsAsset fpsAsset;
+    private LabelAsset label1, label2;
 
     @Wire
     public UiAsset(final AssetManager assetManager) {
@@ -51,7 +51,8 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
                 this::onSelected
         ));
 
-        fpsAsset = createAsset(FpsAsset.class, new FpsAssetArgument(arguments.viewport));
+        label1 = createAsset(LabelAsset.class, new LabelAssetArgument("Test text1", arguments.viewport, 0.4f));
+        label2 = createAsset(LabelAsset.class, new LabelAssetArgument("Test text2", arguments.viewport, 0.2f));
 
         setTransformations(arguments.viewport.x, arguments.viewport.y, arguments.viewport.x, arguments.viewport.y);
     }
@@ -61,7 +62,8 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
         return GuiRenderAssetContextBuilder.create()
                 .loadAssets(buttonAsset)
                 .loadAssets(selectorAsset)
-                .loadAssets(fpsAsset)
+                .loadAssets(label1)
+                .loadAssets(label2)
                 .build();
     }
 
@@ -70,29 +72,42 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
         setTransformations(oldWidth, oldHeight, width, height);
     }
 
+    public void updateLabels() {
+        label1.setText("Generaciok szama: " + arguments.geneticAlgorithm.getNumberOfGenerations());
+    }
+
     private void setTransformations(final int oldWidth, final int oldHeight, final int width, final int height) {
         float scaleX = (float) oldWidth / (float) width;
         float scaleY = (float) oldHeight / (float) height;
 
-        float currentPosX = 0;
-        float currentPosY = 0.2f;
-        buttonAsset.scale(scaleX, scaleY, 1);
-        currentPosX += (buttonAsset.getScale().x * ButtonAsset.SCALE_X) + ButtonAsset.SCALE_X * MARGIN;
-        currentPosY += (buttonAsset.getScale().y * ButtonAsset.SCALE_Y) + ButtonAsset.SCALE_X * MARGIN;
-        buttonAsset.setPosition(
-                1f - currentPosX,
-                1f - currentPosY,
-                0);
-//        currentPosX += (buttonAsset.getScale().x * ButtonAsset.SCALE_X * 2) + ButtonAsset.SCALE_X * MARGIN;
-        currentPosY += (buttonAsset.getScale().y * ButtonAsset.SCALE_Y * 2) + ButtonAsset.SCALE_Y * MARGIN;
+        transformLabels(scaleX, scaleY);
+        transformButtons(scaleX, scaleY);
+    }
 
+    private void transformLabels(float scaleX, float scaleY) {
+        label1.scale(scaleX, scaleY, 1);
+        label2.scale(scaleX, scaleY, 1);
+
+        float currentPosX = label1.getScale().x - 1 + label1.getScale().x * MARGIN;
+        float currentPosY = 1 - label1.getScale().y - label1.getScale().y * MARGIN;
+
+        label1.setPosition(currentPosX, currentPosY, 0);
+        currentPosX += label1.getScale().x * label1.getMaxLength() * LabelAsset.FONT_SIZE + label1.getScale().x * MARGIN;
+
+        label2.setPosition(currentPosX, currentPosY, 0);
+    }
+
+    private void transformButtons(float scaleX, float scaleY) {
+        buttonAsset.scale(scaleX, scaleY, 1);
         selectorAsset.scale(scaleX, scaleY, 1);
-        selectorAsset.setPosition(
-                1f - currentPosX,
-                1f - currentPosY,
-                0);
-//        currentPosX += (selectorAsset.getScale().x * ButtonAsset.SCALE_X * 2) + ButtonAsset.SCALE_X * MARGIN;
-        currentPosY += (selectorAsset.getScale().y * ButtonAsset.SCALE_Y * 2) + ButtonAsset.SCALE_Y * MARGIN;
+
+        float currentPosX = buttonAsset.getScale().x * ButtonAsset.SCALE_X + buttonAsset.getScale().x * MARGIN;
+        float currentPosY = buttonAsset.getScale().y * ButtonAsset.SCALE_Y + buttonAsset.getScale().y * MARGIN;
+
+        buttonAsset.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (buttonAsset.getScale().y * ButtonAsset.SCALE_Y * 2) + buttonAsset.getScale().y * MARGIN;
+
+        selectorAsset.setPosition(1f - currentPosX, 1f - currentPosY, 0);
     }
 
     private void onClick() {

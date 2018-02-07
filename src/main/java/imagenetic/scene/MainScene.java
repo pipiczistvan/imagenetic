@@ -95,6 +95,9 @@ public class MainScene extends Scene {
         mainFbo = framebufferManager.supply(VIEWPORT, false, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
+        // UI
+        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(GENETIC_ALGORITHM, VIEWPORT));
+
         // Stick
         ObserverCameraAsset cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
@@ -107,11 +110,8 @@ public class MainScene extends Scene {
 
         camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), STICK_SIZE.x * (float) Math.sqrt(2) / 2, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(GENETIC_ALGORITHM));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(GENETIC_ALGORITHM, uiAsset));
         stickAsset.setViewScale(STICK_SCALE);
-
-        // UI
-        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(GENETIC_ALGORITHM, VIEWPORT));
     }
 
     @Override

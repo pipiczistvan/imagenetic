@@ -87,6 +87,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         if (elapsedTime > 0.001) {
             elapsedTime = 0;
             evaluateGeneticAlgorithm();
+            arguments.uiAsset.updateLabels();
         } else {
             elapsedTime += delta;
         }
