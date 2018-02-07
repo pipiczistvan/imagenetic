@@ -34,6 +34,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     private Texture black, red;
 
+    private float viewScale = 1;
     private float elapsedTime = 0;
 
     @Wire
@@ -101,9 +102,9 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
                 Model stick = (Model) stickModels[i].get(j);
                 StickChromosome chromosome = layerChromosome.stickChromosomes.get(j);
 
-                stick.setPosition(new Vector3f(chromosome.position).mul(arguments.viewScale));
+                stick.setPosition(new Vector3f(chromosome.position).mul(viewScale));
                 stick.setRotation(new Vector3f(chromosome.rotation));
-                stick.setScale(new Vector3f(chromosome.scale).mul(arguments.viewScale));
+                stick.setScale(new Vector3f(chromosome.scale).mul(viewScale));
 
 //                if (i == 0) {
 //                    stick.texture = red;
@@ -119,6 +120,10 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         return WorldRenderAssetContextBuilder.create()
                 .loadModels(getStickModels())
                 .build();
+    }
+
+    public void setViewScale(final float viewScale) {
+        this.viewScale = viewScale;
     }
 
     private Model[] getStickModels() {

@@ -46,8 +46,8 @@ public class MainScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i(get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
     public static final Vector2i STICK_SIZE = new Vector2i(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
-    private static final int MAX_STICK_SIZE = 600;
-    private static final StickGeneticAlgorithm GENETIC_ALGORITHM = new StickGeneticAlgorithm(MAX_STICK_SIZE);
+    private static final float STICK_SCALE = 1.5f;
+    private static final StickGeneticAlgorithm GENETIC_ALGORITHM = new StickGeneticAlgorithm(STICK_SIZE.x);
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -77,17 +77,22 @@ public class MainScene extends Scene {
 
     @Override
     public void initialize() {
-        VIEWPORT.set(windowManager.getWidth(), windowManager.getHeight());
-        STICK_SIZE.set(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
-        inputManager.clearEvents();
         super.initialize();
         inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
     }
 
     @Override
+    public void resize(final int oldWidth, final int oldHeight, final int width, final int height) {
+        VIEWPORT.set(windowManager.getWidth(), windowManager.getHeight());
+        STICK_SIZE.set(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
+
+        uiAsset.resize(oldWidth, oldHeight, width, height);
+    }
+
+    @Override
     protected void createAssets() {
         // Main
-        mainFbo = framebufferManager.supply(VIEWPORT, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
+        mainFbo = framebufferManager.supply(VIEWPORT, false, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
         // Stick
@@ -100,9 +105,10 @@ public class MainScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), VIEWPORT.x / 2, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), STICK_SIZE.x * (float) Math.sqrt(2) / 2, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(GENETIC_ALGORITHM, STICK_SIZE.x, MAX_STICK_SIZE));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(GENETIC_ALGORITHM));
+        stickAsset.setViewScale(STICK_SCALE);
 
         // UI
         uiAsset = createAsset(UiAsset.class, new UiAssetArgument(GENETIC_ALGORITHM, VIEWPORT));

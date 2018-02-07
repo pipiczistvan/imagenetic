@@ -22,8 +22,8 @@ import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
 public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
 
-    private static final float SCALE_X = 0.2f;
-    private static final float SCALE_Y = 0.1f;
+    public static final float SCALE_X = 0.2f;
+    public static final float SCALE_Y = 0.1f;
 
     private final ImageManager imageManager;
     private final CanvasManager canvasManager;
