@@ -1,4 +1,4 @@
-package imagenetic.common.control.button;
+package imagenetic.common.control.icon;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -12,46 +12,36 @@ import piengine.object.canvas.domain.Canvas;
 import piengine.object.canvas.manager.CanvasManager;
 import piengine.visual.image.domain.Image;
 import piengine.visual.image.manager.ImageManager;
-import piengine.visual.writing.font.domain.Font;
-import piengine.visual.writing.font.manager.FontManager;
-import piengine.visual.writing.text.domain.Text;
-import piengine.visual.writing.text.manager.TextManager;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
+public class IconAsset extends GuiAsset<IconAssetArgument> {
 
-public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
-
-    public static final float SCALE_X = 0.2f;
+    public static final float SCALE_X = 0.1f;
     public static final float SCALE_Y = 0.1f;
 
     private final ImageManager imageManager;
     private final CanvasManager canvasManager;
     private final InputManager inputManager;
-    private final FontManager fontManager;
-    private final TextManager textManager;
 
     private Image defaultImage;
     private Image hoverImage;
     private Image pressImage;
+    private Image iconImage;
     private Canvas buttonCanvas;
-    private Font font;
-    private Text label;
+    private Canvas iconCanvas;
 
     private float x, y, width, height;
     private boolean hover = false;
     private boolean pressed = false;
 
     @Wire
-    public ButtonAsset(final AssetManager assetManager, final ImageManager imageManager, final CanvasManager canvasManager,
-                       final InputManager inputManager, final FontManager fontManager, final TextManager textManager) {
+    public IconAsset(final AssetManager assetManager, final ImageManager imageManager, final CanvasManager canvasManager,
+                     final InputManager inputManager) {
         super(assetManager);
 
         this.imageManager = imageManager;
         this.canvasManager = canvasManager;
         this.inputManager = inputManager;
-        this.fontManager = fontManager;
-        this.textManager = textManager;
     }
 
     @Override
@@ -59,17 +49,12 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
         defaultImage = imageManager.supply("buttonDefault");
         hoverImage = imageManager.supply("buttonHover");
         pressImage = imageManager.supply("buttonPress");
-
-        font = fontManager.supply("candara", arguments.viewport);
-        label = textManager.supply(textConfig()
-                        .withFont(font)
-                        .withFontSize(1.2f)
-                        .withMaxLineLength(SCALE_X)
-                        .withText(arguments.text),
-                this);
-
         buttonCanvas = canvasManager.supply(this, defaultImage);
         buttonCanvas.setScale(SCALE_X, SCALE_Y, 1.0f);
+
+        iconImage = imageManager.supply(arguments.icon);
+        iconCanvas = canvasManager.supply(this, iconImage);
+        iconCanvas.setScale(SCALE_X, SCALE_Y, 1.0f);
 
         setupButtonParameters();
 
@@ -113,7 +98,7 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
     public GuiRenderAssetContext getAssetContext() {
         return GuiRenderAssetContextBuilder.create()
                 .loadCanvases(buttonCanvas)
-                .loadTexts(label)
+                .loadCanvases(iconCanvas)
                 .build();
     }
 

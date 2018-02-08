@@ -65,7 +65,7 @@ public class ObserverCameraAsset extends CameraAsset {
         looking.set(0, 0);
     }
 
-    private void resetRotation() {
+    public void resetRotation() {
         setRotation(DEFAULT_ROTATION);
     }
 

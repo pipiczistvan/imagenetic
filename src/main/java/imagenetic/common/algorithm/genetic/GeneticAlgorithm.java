@@ -25,7 +25,7 @@ public abstract class GeneticAlgorithm<T> {
 
     private Entity<T> bestElement = null;
 
-    protected int numberOfGenerations = 0;
+    private int numberOfGenerations = 0;
     private int numberOfPopulation = 0;
     private float averageFitness = 0;
     private float bestFitness = 0;
@@ -38,6 +38,14 @@ public abstract class GeneticAlgorithm<T> {
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
+    }
+
+    public void initialize() {
+        bestElement = null;
+        numberOfGenerations = 0;
+        numberOfPopulation = 0;
+        averageFitness = 0;
+        bestFitness = 0;
     }
 
     public List<T> execute(Collection<T> genoTypes, float mutationRate, float elitismRate) {

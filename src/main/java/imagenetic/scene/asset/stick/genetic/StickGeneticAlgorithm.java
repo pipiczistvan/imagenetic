@@ -24,6 +24,6 @@ public class StickGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> {
 
     public void setImage(final BufferedImage image) {
         ((LayerFitnessFunction) super.fitnessFunction).setImage(image);
-        numberOfGenerations = 0;
+        initialize();
     }
 }

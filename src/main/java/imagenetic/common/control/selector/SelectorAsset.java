@@ -21,14 +21,7 @@ public class SelectorAsset extends GuiAsset<SelectorAssetArgument> {
 
     @Override
     public void initialize() {
-        buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
-                arguments.defaultImageName,
-                arguments.hoverImageName,
-                arguments.pressImageName,
-                arguments.viewport,
-                arguments.text,
-                this::onClick
-        ));
+        buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(arguments.viewport, arguments.text, this::onClick));
     }
 
     @Override

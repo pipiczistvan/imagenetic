@@ -1,18 +1,18 @@
-package imagenetic.common.control.button;
+package imagenetic.common.control.icon;
 
 import imagenetic.common.event.OnClick;
 import org.joml.Vector2i;
 import piengine.object.asset.domain.AssetArgument;
 
-public class ButtonAssetArgument implements AssetArgument {
+public class IconAssetArgument implements AssetArgument {
 
     final Vector2i viewport;
-    final String text;
+    final String icon;
     final OnClick onClick;
 
-    public ButtonAssetArgument(final Vector2i viewport, final String text, final OnClick onClick) {
+    public IconAssetArgument(final Vector2i viewport, final String icon, final OnClick onClick) {
         this.viewport = viewport;
-        this.text = text;
+        this.icon = icon;
         this.onClick = onClick;
     }
 }

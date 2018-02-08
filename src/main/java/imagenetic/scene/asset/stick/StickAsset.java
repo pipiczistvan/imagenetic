@@ -37,6 +37,9 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     private float viewScale = 1;
     private float elapsedTime = 0;
 
+    public float speed = 1;
+    public boolean paused = true;
+
     @Wire
     public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final ImageManager imageManager) {
         super(assetManager);
@@ -50,9 +53,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         black = imageManager.supply("black");
         red = imageManager.supply("red");
 
-        if (chromosomes.isEmpty()) {
-            createLotOfSticks();
-        }
+        createLotOfSticks();
         createLotOfStickModels();
     }
 
@@ -66,7 +67,9 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         }
     }
 
-    private void createLotOfSticks() {
+    public void createLotOfSticks() {
+        chromosomes.clear();
+
         for (int i = 0; i < POPULATION_COUNT; i++) {
             List<StickChromosome> stickChromosomes = new ArrayList<>();
             for (int j = 0; j < POPULATION_SIZE; j++) {
@@ -80,16 +83,19 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         }
 
         population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
+        arguments.geneticAlgorithm.initialize();
     }
 
     @Override
     public void update(final float delta) {
-        if (elapsedTime > 0.001) {
-            elapsedTime = 0;
-            evaluateGeneticAlgorithm();
-            arguments.uiAsset.updateLabels();
-        } else {
-            elapsedTime += delta;
+        if (!paused) {
+            if (elapsedTime > 1) {
+                elapsedTime = 0;
+                evaluateGeneticAlgorithm();
+                arguments.mainScene.uiAsset.updateLabels();
+            } else {
+                elapsedTime += delta * speed;
+            }
         }
     }
 

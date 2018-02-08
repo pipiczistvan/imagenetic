@@ -1,7 +1,8 @@
 package imagenetic.scene.asset.ui;
 
 import imagenetic.common.control.button.ButtonAsset;
-import imagenetic.common.control.button.ButtonAssetArgument;
+import imagenetic.common.control.icon.IconAsset;
+import imagenetic.common.control.icon.IconAssetArgument;
 import imagenetic.common.control.label.LabelAsset;
 import imagenetic.common.control.label.LabelAssetArgument;
 import imagenetic.common.control.selector.SelectorAsset;
@@ -22,8 +23,14 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
 
     private static final float MARGIN = 0.05f;
 
-    private ButtonAsset buttonAsset;
-    private SelectorAsset selectorAsset;
+    private SelectorAsset strImage;
+    private IconAsset icnStart;
+    private IconAsset icnPause;
+    private IconAsset icnRestart;
+    private IconAsset icnReset;
+    private IconAsset icnPlus;
+    private IconAsset icnMinus;
+
     private LabelAsset lblNumberOfGenerations;
     private LabelAsset lblNumberOfPopulations;
     private LabelAsset lblBestFitness;
@@ -36,23 +43,13 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
 
     @Override
     public void initialize() {
-        buttonAsset = createAsset(ButtonAsset.class, new ButtonAssetArgument(
-                "buttonDefault",
-                "buttonHover",
-                "buttonPress",
-                arguments.viewport,
-                "Please press me!",
-                this::onClick));
-
-        selectorAsset = createAsset(SelectorAsset.class, new SelectorAssetArgument(
-                this,
-                "buttonDefault",
-                "buttonHover",
-                "buttonPress",
-                arguments.viewport,
-                "Select file!",
-                this::onSelected
-        ));
+        strImage = createAsset(SelectorAsset.class, new SelectorAssetArgument(this, arguments.viewport, "Select file!", this::onSelected));
+        icnStart = createAsset(IconAsset.class, new IconAssetArgument(arguments.viewport, "start", this::onStartClick));
+        icnPause = createAsset(IconAsset.class, new IconAssetArgument(arguments.viewport, "pause", this::onPauseClick));
+        icnRestart = createAsset(IconAsset.class, new IconAssetArgument(arguments.viewport, "restart", this::onRestartClick));
+        icnReset = createAsset(IconAsset.class, new IconAssetArgument(arguments.viewport, "reset", this::onResetClick));
+        icnPlus = createAsset(IconAsset.class, new IconAssetArgument(arguments.viewport, "up", this::onPlusClick));
+        icnMinus = createAsset(IconAsset.class, new IconAssetArgument(arguments.viewport, "down", this::onMinusClick));
 
         lblNumberOfGenerations = createAsset(LabelAsset.class, new LabelAssetArgument("Generaciok szama: ", arguments.viewport, 0.35f));
         lblNumberOfPopulations = createAsset(LabelAsset.class, new LabelAssetArgument("Populaciok szama: ", arguments.viewport, 0.3f));
@@ -65,8 +62,13 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
     @Override
     public GuiRenderAssetContext getAssetContext() {
         return GuiRenderAssetContextBuilder.create()
-                .loadAssets(buttonAsset)
-                .loadAssets(selectorAsset)
+                .loadAssets(strImage)
+                .loadAssets(icnStart)
+                .loadAssets(icnPause)
+                .loadAssets(icnRestart)
+                .loadAssets(icnReset)
+                .loadAssets(icnPlus)
+                .loadAssets(icnMinus)
                 .loadAssets(lblNumberOfGenerations)
                 .loadAssets(lblNumberOfPopulations)
                 .loadAssets(lblAverageFitness)
@@ -117,20 +119,37 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
     }
 
     private void transformButtons(float scaleX, float scaleY) {
-        buttonAsset.scale(scaleX, scaleY, 1);
-        selectorAsset.scale(scaleX, scaleY, 1);
+        strImage.scale(scaleX, scaleY, 1);
+        icnStart.scale(scaleX, scaleY, 1);
+        icnPause.scale(scaleX, scaleY, 1);
+        icnRestart.scale(scaleX, scaleY, 1);
+        icnReset.scale(scaleX, scaleY, 1);
+        icnPlus.scale(scaleX, scaleY, 1);
+        icnMinus.scale(scaleX, scaleY, 1);
 
-        float currentPosX = buttonAsset.getScale().x * ButtonAsset.SCALE_X + buttonAsset.getScale().x * MARGIN;
-        float currentPosY = buttonAsset.getScale().y * ButtonAsset.SCALE_Y + buttonAsset.getScale().y * MARGIN;
+        float currentPosX = strImage.getScale().x * ButtonAsset.SCALE_X + strImage.getScale().x * MARGIN;
+        float currentPosY = strImage.getScale().y * ButtonAsset.SCALE_Y + strImage.getScale().y * MARGIN;
 
-        buttonAsset.setPosition(1f - currentPosX, 1f - currentPosY, 0);
-        currentPosY += (buttonAsset.getScale().y * ButtonAsset.SCALE_Y * 2) + buttonAsset.getScale().y * MARGIN;
+        strImage.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (strImage.getScale().y * ButtonAsset.SCALE_Y * 2) + strImage.getScale().y * MARGIN;
 
-        selectorAsset.setPosition(1f - currentPosX, 1f - currentPosY, 0);
-    }
+        icnStart.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (icnStart.getScale().y * IconAsset.SCALE_Y * 2) + icnStart.getScale().y * MARGIN;
 
-    private void onClick() {
-        System.out.println("Button clicked");
+        icnPause.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (icnPause.getScale().y * IconAsset.SCALE_Y * 2) + icnPause.getScale().y * MARGIN;
+
+        icnRestart.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (icnRestart.getScale().y * IconAsset.SCALE_Y * 2) + icnRestart.getScale().y * MARGIN;
+
+        icnReset.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (icnReset.getScale().y * IconAsset.SCALE_Y * 2) + icnReset.getScale().y * MARGIN;
+
+        icnPlus.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (icnPlus.getScale().y * IconAsset.SCALE_Y * 2) + icnPlus.getScale().y * MARGIN;
+
+        icnMinus.setPosition(1f - currentPosX, 1f - currentPosY, 0);
+        currentPosY += (icnMinus.getScale().y * IconAsset.SCALE_Y * 2) + icnMinus.getScale().y * MARGIN;
     }
 
     private void onSelected(final File[] files) {
@@ -142,5 +161,29 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void onStartClick() {
+        arguments.mainScene.stickAsset.paused = false;
+    }
+
+    private void onPauseClick() {
+        arguments.mainScene.stickAsset.paused = true;
+    }
+
+    private void onRestartClick() {
+        arguments.mainScene.stickAsset.createLotOfSticks();
+    }
+
+    private void onResetClick() {
+        arguments.mainScene.cameraAsset.resetRotation();
+    }
+
+    private void onPlusClick() {
+        arguments.mainScene.stickAsset.speed += 2;
+    }
+
+    private void onMinusClick() {
+        arguments.mainScene.stickAsset.speed -= 2;
     }
 }

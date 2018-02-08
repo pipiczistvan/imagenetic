@@ -58,10 +58,11 @@ public class MainScene extends Scene {
     private Framebuffer mainFbo;
     private Canvas mainCanvas;
     // Stick
-    private StickAsset stickAsset;
+    public StickAsset stickAsset;
+    public ObserverCameraAsset cameraAsset;
     private Camera camera;
     // UI
-    private UiAsset uiAsset;
+    public UiAsset uiAsset;
 
     @Wire
     public MainScene(final RenderManager renderManager, final AssetManager assetManager,
@@ -96,10 +97,10 @@ public class MainScene extends Scene {
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
         // UI
-        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(GENETIC_ALGORITHM, VIEWPORT));
+        uiAsset = createAsset(UiAsset.class, new UiAssetArgument(this, GENETIC_ALGORITHM, VIEWPORT));
 
         // Stick
-        ObserverCameraAsset cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
+        cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
@@ -110,7 +111,7 @@ public class MainScene extends Scene {
 
         camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), STICK_SIZE.x * (float) Math.sqrt(2) / 2, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(GENETIC_ALGORITHM, uiAsset));
+        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(this, GENETIC_ALGORITHM));
         stickAsset.setViewScale(STICK_SCALE);
     }
 
