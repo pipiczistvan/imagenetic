@@ -46,15 +46,17 @@ public class IconAsset extends GuiAsset<IconAssetArgument> {
 
     @Override
     public void initialize() {
+        float ratio = (float) arguments.viewport.x / (float) arguments.viewport.y;
+
         defaultImage = imageManager.supply("buttonDefault");
         hoverImage = imageManager.supply("buttonHover");
         pressImage = imageManager.supply("buttonPress");
         buttonCanvas = canvasManager.supply(this, defaultImage);
-        buttonCanvas.setScale(SCALE_X, SCALE_Y, 1.0f);
+        buttonCanvas.setScale(SCALE_X / ratio, SCALE_Y, 1.0f);
 
         iconImage = imageManager.supply(arguments.icon);
         iconCanvas = canvasManager.supply(this, iconImage);
-        iconCanvas.setScale(SCALE_X, SCALE_Y, 1.0f);
+        iconCanvas.setScale(SCALE_X / ratio, SCALE_Y, 1.0f);
 
         setupButtonParameters();
 

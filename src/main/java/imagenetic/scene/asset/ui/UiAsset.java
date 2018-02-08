@@ -89,11 +89,11 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
     }
 
     private void setTransformations(final int oldWidth, final int oldHeight, final int width, final int height) {
-        float scaleX = (float) oldWidth / (float) width;
-        float scaleY = (float) oldHeight / (float) height;
+        float scaleX = (float) width / (float) oldWidth;
+        float scaleY = (float) height / (float) oldHeight;
 
-        transformLabels(scaleX, scaleY);
-        transformButtons(scaleX, scaleY);
+        transformLabels(scaleY, scaleX);
+        transformButtons(scaleY, scaleX);
     }
 
     private void transformLabels(float scaleX, float scaleY) {
@@ -125,6 +125,7 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
         icnRestart.scale(scaleX, scaleY, 1);
         icnReset.scale(scaleX, scaleY, 1);
         icnPlus.scale(scaleX, scaleY, 1);
+
         icnMinus.scale(scaleX, scaleY, 1);
 
         float currentPosX = strImage.getScale().x * ButtonAsset.SCALE_X + strImage.getScale().x * MARGIN;
