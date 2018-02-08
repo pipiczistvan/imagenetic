@@ -46,8 +46,10 @@ public class MainScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i(get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
     public static final Vector2i STICK_SIZE = new Vector2i(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
-    private static final float STICK_SCALE = 1.5f;
     private static final StickGeneticAlgorithm GENETIC_ALGORITHM = new StickGeneticAlgorithm(STICK_SIZE.x);
+
+    private static final float MIN_SCALE = 0.1f;
+    private static final float MAX_SCALE = 1.5f;
 
     private final InputManager inputManager;
     private final WindowManager windowManager;
@@ -61,6 +63,7 @@ public class MainScene extends Scene {
     public StickAsset stickAsset;
     public ObserverCameraAsset cameraAsset;
     private Camera camera;
+    private float stickScale = MAX_SCALE;
     // UI
     public UiAsset uiAsset;
 
@@ -79,7 +82,17 @@ public class MainScene extends Scene {
     @Override
     public void initialize() {
         super.initialize();
-        inputManager.addEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
+        inputManager.addKeyEvent(GLFW_KEY_ESCAPE, PRESS, windowManager::closeWindow);
+        inputManager.addScrollEvent(scroll -> {
+            stickScale += scroll.y * 0.1f;
+            if (stickScale > MAX_SCALE) {
+                stickScale = MAX_SCALE;
+            } else if (stickScale < MIN_SCALE) {
+                stickScale = MIN_SCALE;
+            }
+
+            stickAsset.setViewScale(stickScale);
+        });
     }
 
     @Override
@@ -112,7 +125,7 @@ public class MainScene extends Scene {
         camera = new ThirdPersonCamera(cameraAsset, STICK_SIZE, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), STICK_SIZE.x * (float) Math.sqrt(2) / 2, ORTHOGRAPHIC);
 
         stickAsset = createAsset(StickAsset.class, new StickAssetArgument(this, GENETIC_ALGORITHM));
-        stickAsset.setViewScale(STICK_SCALE);
+        stickAsset.setViewScale(stickScale);
     }
 
     @Override

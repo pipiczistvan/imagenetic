@@ -75,7 +75,7 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
 
         setupButtonParameters();
 
-        inputManager.addEvent(v -> {
+        inputManager.addCursorEvent(v -> {
             hover = v.x >= x && v.x <= x + width && v.y >= y && v.y <= y + height;
 
             if (pressed) {
@@ -88,13 +88,13 @@ public class ButtonAsset extends GuiAsset<ButtonAssetArgument> {
                 }
             }
         });
-        inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.PRESS, () -> {
+        inputManager.addKeyEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.PRESS, () -> {
             pressed = hover;
             if (pressed) {
                 buttonCanvas.texture = pressImage;
             }
         });
-        inputManager.addEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
+        inputManager.addKeyEvent(GLFW.GLFW_MOUSE_BUTTON_1, KeyEventType.RELEASE, () -> {
             if (pressed && hover) {
                 arguments.onClick.invoke();
             }

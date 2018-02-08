@@ -36,16 +36,16 @@ public class ObserverCameraAsset extends CameraAsset {
     public void initialize() {
         resetRotation();
 
-        inputManager.addEvent(GLFW_MOUSE_BUTTON_LEFT, PRESS, () -> {
+        inputManager.addKeyEvent(GLFW_MOUSE_BUTTON_LEFT, PRESS, () -> {
             Vector2f pointer = windowManager.getPointer();
             if (pointer.x <= STICK_SIZE.x && pointer.y <= STICK_SIZE.y) {
                 lookingEnabled = true;
                 lastPos.set(pointer);
             }
         });
-        inputManager.addEvent(GLFW_MOUSE_BUTTON_LEFT, RELEASE, () -> lookingEnabled = false);
-        inputManager.addEvent(GLFW_KEY_R, PRESS, this::resetRotation);
-        inputManager.addEvent(v -> {
+        inputManager.addKeyEvent(GLFW_MOUSE_BUTTON_LEFT, RELEASE, () -> lookingEnabled = false);
+        inputManager.addKeyEvent(GLFW_KEY_R, PRESS, this::resetRotation);
+        inputManager.addCursorEvent(v -> {
             if (lookingEnabled) {
                 Vector2f delta = new Vector2f();
                 v.sub(lastPos, delta);
