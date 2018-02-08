@@ -26,6 +26,9 @@ public abstract class GeneticAlgorithm<T> {
     private Entity<T> bestElement = null;
 
     protected int numberOfGenerations = 0;
+    private int numberOfPopulation = 0;
+    private float averageFitness = 0;
+    private float bestFitness = 0;
 
     public GeneticAlgorithm(FitnessFunction<T> fitnessFunction, CriterionFunction<T> criterionFunction,
                             SelectionOperator<T> selectionOperator, CrossoverOperator<T> crossoverOperator,
@@ -77,6 +80,7 @@ public abstract class GeneticAlgorithm<T> {
         }
 
         numberOfGenerations++;
+        numberOfPopulation = newGeneration.size();
 
         return newGeneration;
     }
@@ -85,11 +89,28 @@ public abstract class GeneticAlgorithm<T> {
         return numberOfGenerations;
     }
 
+    public int getNumberOfPopulations() {
+        return numberOfPopulation;
+    }
+
+    public float getAverageFitness() {
+        return averageFitness;
+    }
+
+    public float getBestFitness() {
+        return bestFitness;
+    }
+
     public List<Entity<T>> createSortedPopulation(Collection<T> genoTypes) {
-        return genoTypes.stream()
+        List<Entity<T>> sortedPopulation = genoTypes.stream()
                 .map(g -> new Entity<>(g, fitnessFunction))
                 .sorted()
                 .collect(Collectors.toList());
+
+        bestFitness = sortedPopulation.get(0).getFitness();
+        averageFitness = (float) sortedPopulation.stream().mapToDouble(Entity::getFitness).average().getAsDouble();
+
+        return sortedPopulation;
     }
 
 }

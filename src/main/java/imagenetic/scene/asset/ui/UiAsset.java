@@ -24,7 +24,10 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
 
     private ButtonAsset buttonAsset;
     private SelectorAsset selectorAsset;
-    private LabelAsset label1, label2;
+    private LabelAsset lblNumberOfGenerations;
+    private LabelAsset lblNumberOfPopulations;
+    private LabelAsset lblBestFitness;
+    private LabelAsset lblAverageFitness;
 
     @Wire
     public UiAsset(final AssetManager assetManager) {
@@ -51,8 +54,10 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
                 this::onSelected
         ));
 
-        label1 = createAsset(LabelAsset.class, new LabelAssetArgument("Test text1", arguments.viewport, 0.4f));
-        label2 = createAsset(LabelAsset.class, new LabelAssetArgument("Test text2", arguments.viewport, 0.2f));
+        lblNumberOfGenerations = createAsset(LabelAsset.class, new LabelAssetArgument("Generaciok szama: ", arguments.viewport, 0.35f));
+        lblNumberOfPopulations = createAsset(LabelAsset.class, new LabelAssetArgument("Populaciok szama: ", arguments.viewport, 0.3f));
+        lblAverageFitness = createAsset(LabelAsset.class, new LabelAssetArgument("Atlag fitness: ", arguments.viewport, 0.3f));
+        lblBestFitness = createAsset(LabelAsset.class, new LabelAssetArgument("Legjobb fitness: ", arguments.viewport, 0.3f));
 
         setTransformations(arguments.viewport.x, arguments.viewport.y, arguments.viewport.x, arguments.viewport.y);
     }
@@ -62,8 +67,10 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
         return GuiRenderAssetContextBuilder.create()
                 .loadAssets(buttonAsset)
                 .loadAssets(selectorAsset)
-                .loadAssets(label1)
-                .loadAssets(label2)
+                .loadAssets(lblNumberOfGenerations)
+                .loadAssets(lblNumberOfPopulations)
+                .loadAssets(lblAverageFitness)
+                .loadAssets(lblBestFitness)
                 .build();
     }
 
@@ -73,7 +80,10 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
     }
 
     public void updateLabels() {
-        label1.setText("Generaciok szama: " + arguments.geneticAlgorithm.getNumberOfGenerations());
+        lblNumberOfGenerations.setText(String.format("Generaciok szama: %s", arguments.geneticAlgorithm.getNumberOfGenerations()));
+        lblNumberOfPopulations.setText(String.format("Populaciok szama: %s", arguments.geneticAlgorithm.getNumberOfPopulations()));
+        lblAverageFitness.setText(String.format("Atlag fitness: %1.3f", arguments.geneticAlgorithm.getAverageFitness()));
+        lblBestFitness.setText(String.format("Legjobb fitness: %1.3f", arguments.geneticAlgorithm.getBestFitness()));
     }
 
     private void setTransformations(final int oldWidth, final int oldHeight, final int width, final int height) {
@@ -85,16 +95,25 @@ public class UiAsset extends GuiAsset<UiAssetArgument> implements Resizable {
     }
 
     private void transformLabels(float scaleX, float scaleY) {
-        label1.scale(scaleX, scaleY, 1);
-        label2.scale(scaleX, scaleY, 1);
+        lblNumberOfGenerations.scale(scaleX, scaleY, 1);
+        lblNumberOfPopulations.scale(scaleX, scaleY, 1);
+        lblAverageFitness.scale(scaleX, scaleY, 1);
+        lblBestFitness.scale(scaleX, scaleY, 1);
 
-        float currentPosX = label1.getScale().x - 1 + label1.getScale().x * MARGIN;
-        float currentPosY = 1 - label1.getScale().y - label1.getScale().y * MARGIN;
+        float currentPosX = lblNumberOfGenerations.getScale().x * LabelAsset.FONT_SIZE - 1 + lblNumberOfGenerations.getScale().x * MARGIN;
+        float currentPosY = -lblNumberOfGenerations.getScale().y * LabelAsset.FONT_SIZE - 1 + lblNumberOfGenerations.getScale().y * MARGIN * 2;
 
-        label1.setPosition(currentPosX, currentPosY, 0);
-        currentPosX += label1.getScale().x * label1.getMaxLength() * LabelAsset.FONT_SIZE + label1.getScale().x * MARGIN;
+        lblNumberOfGenerations.setPosition(currentPosX, currentPosY, 0);
+        currentPosX += lblNumberOfGenerations.getScale().x * lblNumberOfGenerations.getMaxLength() * LabelAsset.FONT_SIZE + lblNumberOfGenerations.getScale().x * MARGIN;
 
-        label2.setPosition(currentPosX, currentPosY, 0);
+        lblNumberOfPopulations.setPosition(currentPosX, currentPosY, 0);
+        currentPosX += lblNumberOfPopulations.getScale().x * lblNumberOfPopulations.getMaxLength() * LabelAsset.FONT_SIZE + lblNumberOfPopulations.getScale().x * MARGIN;
+
+        lblAverageFitness.setPosition(currentPosX, currentPosY, 0);
+        currentPosX += lblAverageFitness.getScale().x * lblAverageFitness.getMaxLength() * LabelAsset.FONT_SIZE + lblAverageFitness.getScale().x * MARGIN;
+
+        lblBestFitness.setPosition(currentPosX, currentPosY, 0);
+        currentPosX += lblBestFitness.getScale().x * lblBestFitness.getMaxLength() * LabelAsset.FONT_SIZE + lblBestFitness.getScale().x * MARGIN;
     }
 
     private void transformButtons(float scaleX, float scaleY) {

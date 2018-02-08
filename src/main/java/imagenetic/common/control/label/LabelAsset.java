@@ -18,7 +18,7 @@ import static piengine.visual.writing.text.domain.TextConfiguration.textConfig;
 
 public class LabelAsset extends GuiAsset<LabelAssetArgument> {
 
-    public static final float FONT_SIZE = 1.4f;
+    public static final float FONT_SIZE = 1f;
 
     private final FontManager fontManager;
     private final TextManager textManager;
