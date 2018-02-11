@@ -1,5 +1,6 @@
 package imagenetic.scene.asset.camera;
 
+import imagenetic.common.Bridge;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
@@ -8,7 +9,6 @@ import piengine.object.camera.asset.CameraAsset;
 import piengine.visual.display.manager.DisplayManager;
 import puppeteer.annotation.premade.Wire;
 
-import static imagenetic.scene.MainScene.VIEWPORT;
 import static piengine.core.input.domain.Key.KEY_R;
 import static piengine.core.input.domain.Key.MOUSE_BUTTON_1;
 import static piengine.core.input.domain.KeyEventType.PRESS;
@@ -38,7 +38,16 @@ public class ObserverCameraAsset extends CameraAsset {
 
         inputManager.addKeyEvent(MOUSE_BUTTON_1, PRESS, () -> {
             Vector2f pointer = displayManager.getPointer();
-            if (pointer.x <= VIEWPORT.x && pointer.y <= VIEWPORT.y) {
+
+            int frameX = Bridge.mainFrame.getX();
+            int frameY = Bridge.mainFrame.getY();
+            int canvasX = frameX + Bridge.mainFrame.canvas_main.getX();
+            int canvasY = frameY + Bridge.mainFrame.canvas_main.getY();
+            int canvasWidth = canvasX + Bridge.mainFrame.canvas_main.getWidth();
+            int canvasHeight = canvasY + Bridge.mainFrame.canvas_main.getHeight();
+
+            if (pointer.x >= canvasX && pointer.x <= canvasWidth
+                    && pointer.y >= canvasY && pointer.y <= canvasHeight) {
                 lookingEnabled = true;
                 lastPos.set(pointer);
             }

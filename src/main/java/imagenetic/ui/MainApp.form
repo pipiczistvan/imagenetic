@@ -126,7 +126,7 @@
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <maximum value="15"/>
+                  <maximum value="20"/>
                   <minimum value="1"/>
                   <minimumSize width="200" height="32"/>
                   <paintLabels value="true"/>

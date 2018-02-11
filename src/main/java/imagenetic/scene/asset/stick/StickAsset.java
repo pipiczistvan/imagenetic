@@ -23,7 +23,8 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     private static final int POPULATION_COUNT = 3;
     private static final int POPULATION_SIZE = 750;
     private static final int VISIBLE_POPULATION_COUNT = 1;
-    private static final int VISIBLE_POPULATION_SIZE = 600;
+    private static final int VISIBLE_POPULATION_SIZE = 500;
+    private static final float STICK_SCALE = 2.5f;
 
     private final ModelManager modelManager;
     private final ImageManager imageManager;
@@ -77,7 +78,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
                 stickChromosomes.add(new StickChromosome(
                         new Vector3f(),
                         new Vector3f(),
-                        new Vector3f(3, 25, 3)
+                        new Vector3f(STICK_SCALE, STICK_SCALE * 10, STICK_SCALE)
                 ));
             }
             chromosomes.add(new LayerChromosome(stickChromosomes));
