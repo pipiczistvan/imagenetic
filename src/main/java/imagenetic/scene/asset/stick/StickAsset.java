@@ -1,5 +1,6 @@
 package imagenetic.scene.asset.stick;
 
+import imagenetic.common.Bridge;
 import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
@@ -92,7 +93,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
             if (elapsedTime > 1) {
                 elapsedTime = 0;
                 evaluateGeneticAlgorithm();
-                arguments.mainScene.uiAsset.updateLabels();
+                Bridge.mainFrame.updateLabels();
             } else {
                 elapsedTime += delta * speed;
             }

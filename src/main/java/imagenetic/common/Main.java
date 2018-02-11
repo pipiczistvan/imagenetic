@@ -1,6 +1,7 @@
 package imagenetic.common;
 
 import imagenetic.scene.MainScene;
+import imagenetic.ui.MainFrame;
 import piengine.core.engine.domain.piEngine;
 
 import java.io.File;
@@ -38,6 +39,10 @@ public class Main {
                 singletonList(".*pi-engine.*\\.jar"),
                 emptyList()
         );
+
+        MainFrame frame = new MainFrame();
+
+        engine.createAwtDisplay(frame, frame.canvas_main);
         engine.start(MainScene.class);
     }
 

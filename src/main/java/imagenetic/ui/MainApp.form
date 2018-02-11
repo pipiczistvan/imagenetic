@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="imagenetic.ui.MainApp">
+  <grid id="27dc6" binding="panel_main" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="bef30" binding="panel_opengl" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <grid id="29787" binding="panel_labels" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="bc7d7" class="javax.swing.JLabel" binding="label_populationCount">
+            <constraints/>
+            <properties>
+              <text value="Populációk száma:"/>
+            </properties>
+          </component>
+          <component id="fa61b" class="javax.swing.JLabel" binding="label_populationCount_value">
+            <constraints/>
+            <properties>
+              <text value="0"/>
+            </properties>
+          </component>
+          <component id="e2743" class="javax.swing.JLabel" binding="label_generationCount">
+            <constraints/>
+            <properties>
+              <text value="Generációk száma:"/>
+            </properties>
+          </component>
+          <component id="207c3" class="javax.swing.JLabel" binding="label_generationCount_value">
+            <constraints/>
+            <properties>
+              <text value="0"/>
+            </properties>
+          </component>
+          <component id="9cffc" class="javax.swing.JLabel" binding="label_averageFitness">
+            <constraints/>
+            <properties>
+              <text value="Átlagos fitnesz:"/>
+            </properties>
+          </component>
+          <component id="ec87d" class="javax.swing.JLabel" binding="label_averageFitness_value">
+            <constraints/>
+            <properties>
+              <text value="0"/>
+            </properties>
+          </component>
+          <component id="acb63" class="javax.swing.JLabel" binding="label_bestFitness">
+            <constraints/>
+            <properties>
+              <text value="Legjobb fitnesz:"/>
+            </properties>
+          </component>
+          <component id="ed43e" class="javax.swing.JLabel" binding="label_bestFitness_value">
+            <constraints/>
+            <properties>
+              <text value="0"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="6da9f" binding="panel_control" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="East"/>
+        <properties>
+          <alignmentY value="0.5"/>
+          <autoscrolls value="false"/>
+          <enabled value="true"/>
+          <inheritsPopupMenu value="false"/>
+          <opaque value="true"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="bed7f" binding="panel_buttons" layout-manager="GridBagLayout">
+            <constraints border-constraint="North"/>
+            <properties>
+              <preferredSize width="210" height="90"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="605d2" class="javax.swing.JButton" binding="button_pause">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <label value="Start"/>
+                  <text value="Start"/>
+                </properties>
+              </component>
+              <hspacer id="a8aca">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+              </hspacer>
+              <vspacer id="453d1">
+                <constraints>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+              </vspacer>
+              <vspacer id="b4155">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+              </vspacer>
+              <hspacer id="da141">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+              </hspacer>
+              <component id="25dff" class="javax.swing.JSlider" binding="slider_speed">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <maximum value="15"/>
+                  <minimum value="1"/>
+                  <minimumSize width="200" height="32"/>
+                  <paintLabels value="true"/>
+                  <paintTicks value="true"/>
+                  <preferredSize width="200" height="32"/>
+                  <snapToTicks value="true"/>
+                  <value value="1"/>
+                  <valueIsAdjusting value="false"/>
+                  <verifyInputWhenFocusTarget value="false"/>
+                  <visible value="true"/>
+                </properties>
+              </component>
+              <vspacer id="154a3">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+              </vspacer>
+            </children>
+          </grid>
+          <grid id="c806d" binding="panel_image" layout-manager="GridBagLayout">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="55765" class="javax.swing.JLabel" binding="label_image">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <alignmentX value="0.5"/>
+                  <background color="-11381417"/>
+                  <horizontalAlignment value="0"/>
+                  <horizontalTextPosition value="0"/>
+                  <maximumSize width="1000" height="1000"/>
+                  <minimumSize width="100" height="100"/>
+                  <preferredSize width="200" height="200"/>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
