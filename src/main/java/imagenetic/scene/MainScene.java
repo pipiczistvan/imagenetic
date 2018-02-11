@@ -41,7 +41,7 @@ import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
 public class MainScene extends Scene {
 
-    public static final Vector2i VIEWPORT = new Vector2i();
+    private static final Vector2i VIEWPORT = new Vector2i();
     private static final Vector2i STICK_SIZE = new Vector2i();
 
     private static final float MIN_SCALE = 0.1f;
@@ -117,7 +117,7 @@ public class MainScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, STICK_SIZE.x * (float) Math.sqrt(2)), STICK_SIZE.x * (float) Math.sqrt(2) / 2, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
 
         stickAsset = createAsset(StickAsset.class, new StickAssetArgument(this, geneticAlgorithm));
         stickAsset.setViewScale(stickScale);

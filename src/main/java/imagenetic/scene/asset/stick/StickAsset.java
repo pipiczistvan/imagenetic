@@ -21,9 +21,9 @@ import java.util.List;
 public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     private static final int POPULATION_COUNT = 3;
-    private static final int POPULATION_SIZE = 750;
+    private static final int POPULATION_SIZE = 650;
     private static final int VISIBLE_POPULATION_COUNT = 1;
-    private static final int VISIBLE_POPULATION_SIZE = 500;
+    private static final int VISIBLE_POPULATION_SIZE = 400;
     private static final float STICK_SCALE = 2.5f;
 
     private final ModelManager modelManager;
