@@ -41,7 +41,7 @@ public class PanelControl extends JPanel {
         sliderSpeed.setPaintLabels(true);
         sliderSpeed.setPaintTicks(true);
         sliderSpeed.setSnapToTicks(true);
-        sliderSpeed.setValue(Config.MIN_SPEED);
+        sliderSpeed.setValue(Config.DEFAULT_SPEED);
         sliderSpeed.setMaximum(Config.MAX_SPEED);
         sliderSpeed.setMinimum(Config.MIN_SPEED);
         sliderSpeed.addChangeListener(e -> {
@@ -69,7 +69,7 @@ public class PanelControl extends JPanel {
         panelPopulationCount.add(horizontalStrut);
 
         JSpinner spinnerPopulationCount = new JSpinner();
-        spinnerPopulationCount.setModel(new SpinnerNumberModel(Config.MIN_POPULATION_COUNT, Config.MIN_POPULATION_COUNT, Config.MAX_POPULATION_COUNT, 1));
+        spinnerPopulationCount.setModel(new SpinnerNumberModel(Config.DEFAULT_POPULATION_COUNT, Config.MIN_POPULATION_COUNT, Config.MAX_POPULATION_COUNT, 1));
         spinnerPopulationCount.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             Bridge.sceneSide.setPopulationCount((Integer) spinner.getValue());

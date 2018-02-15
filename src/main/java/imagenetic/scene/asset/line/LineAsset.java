@@ -1,10 +1,10 @@
-package imagenetic.scene.asset.stick;
+package imagenetic.scene.asset.line;
 
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.entity.Entity;
-import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector3f;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
@@ -19,7 +19,7 @@ import puppeteer.annotation.premade.Wire;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StickAsset extends WorldAsset<StickAssetArgument> {
+public class LineAsset extends WorldAsset<LineAssetArgument> {
 
     private static final int POPULATION_SIZE = 500;
     private static final int MODEL_POPULATION_COUNT = Config.MAX_POPULATION_COUNT;
@@ -29,7 +29,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     private final ModelManager modelManager;
     private final ImageManager imageManager;
 
-    private final List[] stickModels = new List[MODEL_POPULATION_COUNT];
+    private final List[] lineModels = new List[MODEL_POPULATION_COUNT];
 
     private static List<LayerChromosome> chromosomes = new ArrayList<>();
     private static List<Entity<LayerChromosome>> population = new ArrayList<>();
@@ -38,14 +38,14 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     private float elapsedTime = 0;
 
-    private int populationCount = Config.MIN_POPULATION_COUNT;
+    private int populationCount = Config.DEFAULT_POPULATION_COUNT;
     public boolean paused = true;
     private boolean showAll = false;
-    public int speed = Config.MIN_SPEED;
+    public int speed = Config.DEFAULT_SPEED;
     private float viewScale = 1;
 
     @Wire
-    public StickAsset(final AssetManager assetManager, final ModelManager modelManager, final ImageManager imageManager) {
+    public LineAsset(final AssetManager assetManager, final ModelManager modelManager, final ImageManager imageManager) {
         super(assetManager);
 
         this.modelManager = modelManager;
@@ -61,15 +61,15 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
         setupChromosomePopulation();
         arguments.geneticAlgorithm.initialize();
 
-        createStickModels();
+        createModels();
     }
 
-    private void createStickModels() {
+    private void createModels() {
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
-            stickModels[i] = new ArrayList();
+            lineModels[i] = new ArrayList();
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                Model stick = modelManager.supply(this, "octahedron", grayTexture, true);
-                stickModels[i].add(stick);
+                Model lineModel = modelManager.supply(this, "octahedron", grayTexture, true);
+                lineModels[i].add(lineModel);
             }
         }
     }
@@ -83,15 +83,15 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
             chromosomes.subList(populationCount, chromosomes.size()).clear();
         } else {
             for (int i = 0; i < populationCount - chromosomes.size(); i++) {
-                List<StickChromosome> stickChromosomes = new ArrayList<>();
+                List<LineChromosome> lineChromosomes = new ArrayList<>();
                 for (int j = 0; j < POPULATION_SIZE; j++) {
-                    stickChromosomes.add(new StickChromosome(
+                    lineChromosomes.add(new LineChromosome(
                             new Vector3f(),
                             new Vector3f(),
                             new Vector3f(STICK_SCALE, STICK_SCALE * 10, STICK_SCALE)
                     ));
                 }
-                chromosomes.add(new LayerChromosome(stickChromosomes));
+                chromosomes.add(new LayerChromosome(lineChromosomes));
             }
         }
 
@@ -104,7 +104,7 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
             if (elapsedTime > 1) {
                 elapsedTime = 0;
                 evaluateGeneticAlgorithm();
-                updateModels();
+                synchronizeModelsWithChromosomes();
                 Bridge.frameSide.updateLabels();
             } else {
                 elapsedTime += delta * speed;
@@ -114,44 +114,44 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
 
     public void setViewScale(final float viewScale) {
         this.viewScale = viewScale;
-        updateModels();
+        synchronizeModelsWithChromosomes();
     }
 
     public void setPopulationCount(int populationCount) {
         this.populationCount = populationCount;
         setupChromosomePopulation();
-        updateModels();
+        synchronizeModelsWithChromosomes();
     }
 
     public void setShowAll(boolean showAll) {
         this.showAll = showAll;
-        updateModels();
+        synchronizeModelsWithChromosomes();
     }
 
-    private void updateModels() {
+    private void synchronizeModelsWithChromosomes() {
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             LayerChromosome layerChromosome = null;
             if (i < population.size()) {
                 layerChromosome = population.get(i).getGenoType();
             }
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                Model stick = (Model) stickModels[i].get(j);
+                Model lineModel = (Model) lineModels[i].get(j);
                 if (layerChromosome != null) {
-                    StickChromosome chromosome = layerChromosome.stickChromosomes.get(j);
+                    LineChromosome chromosome = layerChromosome.lineChromosomes.get(j);
 
-                    stick.setPosition(new Vector3f(chromosome.position).mul(viewScale));
-                    stick.setRotation(new Vector3f(chromosome.rotation));
-                    stick.setScale(new Vector3f(chromosome.scale).mul(viewScale));
+                    lineModel.setPosition(new Vector3f(chromosome.position).mul(viewScale));
+                    lineModel.setRotation(new Vector3f(chromosome.rotation));
+                    lineModel.setScale(new Vector3f(chromosome.scale).mul(viewScale));
 
                     if (i == 0) {
-                        stick.texture = blackTexture;
-                        stick.visible = true;
+                        lineModel.texture = blackTexture;
+                        lineModel.visible = true;
                     } else {
-                        stick.texture = grayTexture;
-                        stick.visible = showAll;
+                        lineModel.texture = grayTexture;
+                        lineModel.visible = showAll;
                     }
                 } else {
-                    stick.visible = false;
+                    lineModel.visible = false;
                 }
             }
         }
@@ -165,15 +165,15 @@ public class StickAsset extends WorldAsset<StickAssetArgument> {
     @Override
     public WorldRenderAssetContext getAssetContext() {
         return WorldRenderAssetContextBuilder.create()
-                .loadModels(getStickModels())
+                .loadModels(getLineModels())
                 .build();
     }
 
-    private Model[] getStickModels() {
+    private Model[] getLineModels() {
         Model[] models = new Model[MODEL_POPULATION_COUNT * MODEL_POPULATION_SIZE];
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                models[i * MODEL_POPULATION_SIZE + j] = (Model) stickModels[i].get(j);
+                models[i * MODEL_POPULATION_SIZE + j] = (Model) lineModels[i].get(j);
             }
         }
 

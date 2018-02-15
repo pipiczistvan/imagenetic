@@ -1,10 +1,10 @@
-package imagenetic.scene.asset.stick.genetic.function;
+package imagenetic.scene.asset.line.genetic.function;
 
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.BresenhamAlgorithm;
 import imagenetic.common.algorithm.image.ImageProcessor;
-import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -52,16 +52,16 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
         }
 
         float fitnessOfSticks = 0;
-        for (StickChromosome stickChromosome : element.stickChromosomes) {
-            fitnessOfSticks += fitnessOfStick(pixelValues, stickChromosome);
+        for (LineChromosome lineChromosome : element.lineChromosomes) {
+            fitnessOfSticks += fitnessOfStick(pixelValues, lineChromosome);
         }
 
-        element.stickChromosomes.sort(StickChromosome::compareTo);
+        element.lineChromosomes.sort(LineChromosome::compareTo);
 
-        return fitnessOfSticks / element.stickChromosomes.size();
+        return fitnessOfSticks / element.lineChromosomes.size();
     }
 
-    private float fitnessOfStick(int[][] pixelValues, StickChromosome element) {
+    private float fitnessOfStick(int[][] pixelValues, LineChromosome element) {
         float fitness1 = calculate(pixelValues, new Vector2f(element.position.x, element.position.y), new Vector2f(element.rotation.x, element.rotation.z), element.scale.y);
         float fitness2 = fitness1;
 //        float fitness2 = calculate(new Vector2f(element.position.z, element.position.y), new Vector2f(element.rotation.z, element.rotation.x), element.scale.y);

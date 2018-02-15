@@ -1,9 +1,9 @@
-package imagenetic.scene.asset.stick.genetic.function;
+package imagenetic.scene.asset.line.genetic.function;
 
 import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.common.algorithm.genetic.function.CrossoverOperator;
-import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import javafx.util.Pair;
 import org.joml.Vector3f;
 
@@ -21,16 +21,16 @@ public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome
         LayerChromosome left = parents.getKey().getGenoType();
         LayerChromosome right = parents.getValue().getGenoType();
 
-        List<StickChromosome> stickChromosomes = new ArrayList<>();
+        List<LineChromosome> lineChromosomes = new ArrayList<>();
 
         int pointer = 0;
-        while (stickChromosomes.size() < left.stickChromosomes.size()) {
-            StickChromosome leftChromosome = left.stickChromosomes.get(pointer);
-            StickChromosome rightChromosome = right.stickChromosomes.get(pointer);
+        while (lineChromosomes.size() < left.lineChromosomes.size()) {
+            LineChromosome leftChromosome = left.lineChromosomes.get(pointer);
+            LineChromosome rightChromosome = right.lineChromosomes.get(pointer);
 
-            if (leftChromosome.fitness >= 1 && rightChromosome.fitness >= 1 && stickChromosomes.size() < left.stickChromosomes.size() - 2) {
-                stickChromosomes.add(createNewChromosome(leftChromosome.position, leftChromosome.rotation, leftChromosome.scale));
-                stickChromosomes.add(createNewChromosome(rightChromosome.position, rightChromosome.rotation, rightChromosome.scale));
+            if (leftChromosome.fitness >= 1 && rightChromosome.fitness >= 1 && lineChromosomes.size() < left.lineChromosomes.size() - 2) {
+                lineChromosomes.add(createNewChromosome(leftChromosome.position, leftChromosome.rotation, leftChromosome.scale));
+                lineChromosomes.add(createNewChromosome(rightChromosome.position, rightChromosome.rotation, rightChromosome.scale));
             } else {
                 float leftScaled, rightScaled;
                 if (leftChromosome.fitness > rightChromosome.fitness) {
@@ -43,7 +43,7 @@ public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome
 
                 float progression = 0.5f + (rightScaled - leftScaled) / 2;
 
-                stickChromosomes.add(createNewChromosome(
+                lineChromosomes.add(createNewChromosome(
                         interpolatePosition(leftChromosome.position, rightChromosome.position, progression),
                         interpolateRotation(leftChromosome.rotation, rightChromosome.rotation, progression),
                         leftChromosome.scale
@@ -53,10 +53,10 @@ public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome
             pointer++;
         }
 
-        return new LayerChromosome(stickChromosomes);
+        return new LayerChromosome(lineChromosomes);
     }
 
-    private StickChromosome createNewChromosome(final Vector3f position, final Vector3f rotation, final Vector3f scale) {
-        return new StickChromosome(new Vector3f(position), new Vector3f(rotation), new Vector3f(scale));
+    private LineChromosome createNewChromosome(final Vector3f position, final Vector3f rotation, final Vector3f scale) {
+        return new LineChromosome(new Vector3f(position), new Vector3f(rotation), new Vector3f(scale));
     }
 }

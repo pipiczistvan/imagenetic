@@ -1,8 +1,8 @@
-package imagenetic.scene.asset.stick.genetic.function;
+package imagenetic.scene.asset.line.genetic.function;
 
 import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.common.algorithm.genetic.function.SelectionOperator;
-import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import javafx.util.Pair;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package imagenetic.scene.asset.stick.genetic.function;
+package imagenetic.scene.asset.line.genetic.function;
 
 import imagenetic.common.algorithm.genetic.function.MutationOperator;
-import imagenetic.scene.asset.stick.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.stick.genetic.entity.StickChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 
 import java.util.Random;
 
@@ -20,19 +20,19 @@ public class LayerMutationOperator implements MutationOperator<LayerChromosome> 
 
     @Override
     public void mutate(final LayerChromosome genotype) {
-        for (StickChromosome stickChromosome : genotype.stickChromosomes) {
-            if (stickChromosome.fitness < 0.1f) {
-                stickChromosome.position.set(
+        for (LineChromosome lineChromosome : genotype.lineChromosomes) {
+            if (lineChromosome.fitness < 0.1f) {
+                lineChromosome.position.set(
                         random.nextFloat() * maxSize - halfMaxSize,
                         random.nextFloat() * maxSize - halfMaxSize,
                         random.nextFloat() * maxSize - halfMaxSize
                 );
             }
-            if (stickChromosome.fitness < 0.4f) {
-                stickChromosome.rotation.add(
-                        (1.0f - stickChromosome.fitness) * (random.nextFloat() * 45),
-                        (1.0f - stickChromosome.fitness) * (random.nextFloat() * 45),
-                        (1.0f - stickChromosome.fitness) * (random.nextFloat() * 45)
+            if (lineChromosome.fitness < 0.4f) {
+                lineChromosome.rotation.add(
+                        (1.0f - lineChromosome.fitness) * (random.nextFloat() * 45),
+                        (1.0f - lineChromosome.fitness) * (random.nextFloat() * 45),
+                        (1.0f - lineChromosome.fitness) * (random.nextFloat() * 45)
                 );
             }
         }

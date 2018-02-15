@@ -3,9 +3,9 @@ package imagenetic.scene;
 import imagenetic.common.Bridge;
 import imagenetic.common.api.SceneSide;
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
-import imagenetic.scene.asset.stick.StickAsset;
-import imagenetic.scene.asset.stick.StickAssetArgument;
-import imagenetic.scene.asset.stick.genetic.StickGeneticAlgorithm;
+import imagenetic.scene.asset.line.LineAsset;
+import imagenetic.scene.asset.line.LineAssetArgument;
+import imagenetic.scene.asset.line.genetic.LineGeneticAlgorithm;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.input.manager.InputManager;
@@ -59,8 +59,8 @@ public class MainScene extends Scene implements SceneSide {
     private Framebuffer mainFbo;
     private Canvas mainCanvas;
     // Stick
-    private StickGeneticAlgorithm geneticAlgorithm;
-    private StickAsset stickAsset;
+    private LineGeneticAlgorithm geneticAlgorithm;
+    private LineAsset lineAsset;
     private ObserverCameraAsset cameraAsset;
     private Camera camera;
     private float viewScale = 1f;
@@ -92,7 +92,7 @@ public class MainScene extends Scene implements SceneSide {
                 viewScale = MIN_SCALE;
             }
 
-            stickAsset.setViewScale(viewScale);
+            lineAsset.setViewScale(viewScale);
         });
     }
 
@@ -109,7 +109,7 @@ public class MainScene extends Scene implements SceneSide {
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
         // Stick
-        geneticAlgorithm = new StickGeneticAlgorithm(STICK_SIZE.x);
+        geneticAlgorithm = new LineGeneticAlgorithm(STICK_SIZE.x);
 
         cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
@@ -122,7 +122,7 @@ public class MainScene extends Scene implements SceneSide {
 
         camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
 
-        stickAsset = createAsset(StickAsset.class, new StickAssetArgument(this, geneticAlgorithm));
+        lineAsset = createAsset(LineAsset.class, new LineAssetArgument(this, geneticAlgorithm));
     }
 
     @Override
@@ -133,7 +133,7 @@ public class MainScene extends Scene implements SceneSide {
                         mainFbo,
                         WorldRenderPlanBuilder
                                 .createPlan(camera)
-                                .loadAssets(stickAsset)
+                                .loadAssets(lineAsset)
                                 .clearScreen(ColorUtils.WHITE)
                                 .render()
                 )
@@ -157,27 +157,27 @@ public class MainScene extends Scene implements SceneSide {
 
     @Override
     public boolean isAlgorithmPaused() {
-        return stickAsset.paused;
+        return lineAsset.paused;
     }
 
     @Override
     public void setAlgorithmStatus(boolean paused) {
-        stickAsset.paused = paused;
+        lineAsset.paused = paused;
     }
 
     @Override
     public void setAlgorithmSpeed(int speed) {
-        stickAsset.speed = speed;
+        lineAsset.speed = speed;
     }
 
     @Override
     public void setPopulationCount(int populationCount) {
-        stickAsset.setPopulationCount(populationCount);
+        lineAsset.setPopulationCount(populationCount);
     }
 
     @Override
     public void showAll(final boolean show) {
-        stickAsset.setShowAll(show);
+        lineAsset.setShowAll(show);
     }
 
     @Override
