@@ -39,12 +39,12 @@ public class ObserverCameraAsset extends CameraAsset {
         inputManager.addKeyEvent(MOUSE_BUTTON_1, PRESS, () -> {
             Vector2f pointer = displayManager.getPointer();
 
-            int frameX = Bridge.mainFrame.getX();
-            int frameY = Bridge.mainFrame.getY();
-            int canvasX = frameX + Bridge.mainFrame.canvas_main.getX();
-            int canvasY = frameY + Bridge.mainFrame.canvas_main.getY();
-            int canvasWidth = canvasX + Bridge.mainFrame.canvas_main.getWidth();
-            int canvasHeight = canvasY + Bridge.mainFrame.canvas_main.getHeight();
+            int frameX = Bridge.frameSide.getX();
+            int frameY = Bridge.frameSide.getY();
+            int canvasX = frameX + Bridge.frameSide.getCanvasX();
+            int canvasY = frameY + Bridge.frameSide.getCanvasY();
+            int canvasWidth = canvasX + Bridge.frameSide.getCanvasWidth();
+            int canvasHeight = canvasY + Bridge.frameSide.getCanvasHeight();
 
             if (pointer.x >= canvasX && pointer.x <= canvasWidth
                     && pointer.y >= canvasY && pointer.y <= canvasHeight) {

@@ -27,11 +27,12 @@
             <artifactId>pi-engine-frame</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.github.pipiczistvan</groupId>-->
-            <!--<artifactId>pi-engine</artifactId>-->
-            <!--<version>${piengine.version}</version>-->
-        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.miglayout/miglayout -->
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout</artifactId>
+            <version>3.7.4</version>
+        </dependency>
     </dependencies>
 
     <build>

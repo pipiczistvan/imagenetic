@@ -1,14 +1,13 @@
 package imagenetic.common;
 
-import imagenetic.scene.MainScene;
-import imagenetic.ui.MainFrame;
+import imagenetic.common.api.FrameSide;
+import imagenetic.common.api.SceneSide;
 
 public class Bridge {
 
-    public static MainScene mainScene;
-    public static MainFrame mainFrame;
+    public static SceneSide sceneSide;
+    public static FrameSide frameSide;
 
     private Bridge() {
     }
-
 }

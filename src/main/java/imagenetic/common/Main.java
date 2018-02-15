@@ -1,12 +1,12 @@
 package imagenetic.common;
 
+import imagenetic.gui.MainFrame;
 import imagenetic.scene.MainScene;
-import imagenetic.ui.MainFrame;
 import piengine.core.engine.domain.piEngine;
 
+import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -19,10 +19,10 @@ public class Main {
     private static final String USER_DIR = Objects.requireNonNull(Main.class.getClassLoader().getResource("")).getPath();
     private static final String APPLICATION_PROPERTIES = "application";
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        /**
-         * Versions may change!
-         */
+    private MainFrame frame;
+
+    public static void main(String[] args) throws MalformedURLException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+
         URL coreLibrary = new File(USER_DIR + "lib/pi-engine-core-0.0.6.jar").toURI().toURL();
         URL frameLibrary = new File(USER_DIR + "lib/pi-engine-frame-0.0.6.jar").toURI().toURL();
         URL guiLibrary = new File(USER_DIR + "lib/pi-engine-gui-0.0.6.jar").toURI().toURL();
@@ -40,10 +40,22 @@ public class Main {
                 emptyList()
         );
 
-        MainFrame frame = new MainFrame();
+        Main window = new Main();
+        window.frame.setVisible(true);
+        Bridge.frameSide = window.frame;
 
-        engine.createAwtDisplay(frame, frame.canvas_main);
+        engine.createAwtDisplay(window.frame, window.frame.getCanvas());
         engine.start(MainScene.class);
     }
 
+    private Main() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+        initialize();
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        SwingUtilities.updateComponentTreeUI(frame);
+    }
+
+    private void initialize() {
+        frame = new MainFrame();
+    }
 }
+

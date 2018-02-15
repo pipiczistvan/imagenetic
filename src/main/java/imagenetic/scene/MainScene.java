@@ -1,6 +1,7 @@
 package imagenetic.scene;
 
 import imagenetic.common.Bridge;
+import imagenetic.common.api.SceneSide;
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
 import imagenetic.scene.asset.stick.StickAsset;
 import imagenetic.scene.asset.stick.StickAssetArgument;
@@ -26,6 +27,8 @@ import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
+import java.awt.image.BufferedImage;
+
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
@@ -39,7 +42,7 @@ import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUF
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
 
-public class MainScene extends Scene {
+public class MainScene extends Scene implements SceneSide {
 
     private static final Vector2i VIEWPORT = new Vector2i();
     private static final Vector2i STICK_SIZE = new Vector2i();
@@ -60,7 +63,7 @@ public class MainScene extends Scene {
     private StickAsset stickAsset;
     private ObserverCameraAsset cameraAsset;
     private Camera camera;
-    private float stickScale = MIN_SCALE + MAX_SCALE / 2;
+    private float viewScale = 1f;
 
     @Wire
     public MainScene(final RenderManager renderManager, final AssetManager assetManager,
@@ -73,7 +76,7 @@ public class MainScene extends Scene {
         this.framebufferManager = framebufferManager;
         this.canvasManager = canvasManager;
 
-        Bridge.mainScene = this;
+        Bridge.sceneSide = this;
     }
 
     @Override
@@ -82,14 +85,14 @@ public class MainScene extends Scene {
         super.initialize();
         inputManager.addKeyEvent(KEY_ESCAPE, PRESS, displayManager::closeDisplay);
         inputManager.addScrollEvent(scroll -> {
-            stickScale += scroll.y * 0.1f;
-            if (stickScale > MAX_SCALE) {
-                stickScale = MAX_SCALE;
-            } else if (stickScale < MIN_SCALE) {
-                stickScale = MIN_SCALE;
+            viewScale += scroll.y * 0.1f;
+            if (viewScale > MAX_SCALE) {
+                viewScale = MAX_SCALE;
+            } else if (viewScale < MIN_SCALE) {
+                viewScale = MIN_SCALE;
             }
 
-            stickAsset.setViewScale(stickScale);
+            stickAsset.setViewScale(viewScale);
         });
     }
 
@@ -120,7 +123,6 @@ public class MainScene extends Scene {
         camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
 
         stickAsset = createAsset(StickAsset.class, new StickAssetArgument(this, geneticAlgorithm));
-        stickAsset.setViewScale(stickScale);
     }
 
     @Override
@@ -148,16 +150,53 @@ public class MainScene extends Scene {
     public void update(final float delta) {
     }
 
-    public StickAsset getStickAsset() {
-        return stickAsset;
-    }
-
-    public StickGeneticAlgorithm getGeneticAlgorithm() {
-        return geneticAlgorithm;
-    }
-
     private void recalculateViewport() {
         VIEWPORT.set(displayManager.getViewport());
         STICK_SIZE.set(VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y);
+    }
+
+    @Override
+    public boolean isAlgorithmPaused() {
+        return stickAsset.paused;
+    }
+
+    @Override
+    public void setAlgorithmStatus(boolean paused) {
+        stickAsset.paused = paused;
+    }
+
+    @Override
+    public void setAlgorithmSpeed(int speed) {
+        stickAsset.speed = speed;
+    }
+
+    @Override
+    public void setPopulationCount(int populationCount) {
+        stickAsset.setPopulationCount(populationCount);
+    }
+
+    @Override
+    public void showAll(final boolean show) {
+        stickAsset.setShowAll(show);
+    }
+
+    @Override
+    public void setImage(final BufferedImage image) {
+        geneticAlgorithm.setImage(image);
+    }
+
+    @Override
+    public int getNumberOfGenerations() {
+        return geneticAlgorithm.getNumberOfGenerations();
+    }
+
+    @Override
+    public float getAverageFitness() {
+        return geneticAlgorithm.getAverageFitness();
+    }
+
+    @Override
+    public float getBestFitness() {
+        return geneticAlgorithm.getBestFitness();
     }
 }
