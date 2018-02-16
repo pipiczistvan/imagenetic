@@ -3,7 +3,6 @@ package imagenetic.gui.panel;
 import imagenetic.common.Bridge;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
 
 public class PanelLabel extends JPanel {
@@ -13,7 +12,6 @@ public class PanelLabel extends JPanel {
     private JLabel lblBestFitnessValue;
 
     public PanelLabel() {
-        this.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
         FlowLayout flowLayout = (FlowLayout) this.getLayout();
         flowLayout.setAlignment(FlowLayout.LEFT);
 

@@ -3,6 +3,8 @@ package imagenetic.scene.asset.line;
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.common.api.SceneSide;
+import imagenetic.scene.asset.line.genetic.LineGeneticAlgorithm;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector3f;
@@ -16,32 +18,41 @@ import piengine.visual.image.manager.ImageManager;
 import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Wire;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineAsset extends WorldAsset<LineAssetArgument> {
+public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSide {
 
-    private static final int POPULATION_SIZE = 500;
     private static final int MODEL_POPULATION_COUNT = Config.MAX_POPULATION_COUNT;
-    private static final int MODEL_POPULATION_SIZE = 300;
+    private static final int MODEL_POPULATION_SIZE = Config.MAX_POPULATION_SIZE;
     private static final float STICK_SCALE = 2.5f;
-
-    private final ModelManager modelManager;
-    private final ImageManager imageManager;
-
-    private final List[] lineModels = new List[MODEL_POPULATION_COUNT];
 
     private static List<LayerChromosome> chromosomes = new ArrayList<>();
     private static List<Entity<LayerChromosome>> population = new ArrayList<>();
 
+    private final ModelManager modelManager;
+    private final ImageManager imageManager;
+
+
+    private LineGeneticAlgorithm geneticAlgorithm;
+    private final List[] lineModels = new List[MODEL_POPULATION_COUNT];
     private Texture blackTexture, grayTexture;
 
     private float elapsedTime = 0;
 
-    private int populationCount = Config.DEFAULT_POPULATION_COUNT;
-    public boolean paused = true;
+    private boolean populationChanged = false;
+    private int populationCount = Config.DEF_POPULATION_COUNT;
+    private int populationSize = Config.DEF_POPULATION_SIZE;
+    private float lineLength = Config.DEF_ENTITY_LENGTH;
+    private float lineThickness = Config.DEF_ENTITY_THICKNESS;
+    private boolean imageChanged = false;
+    private BufferedImage image;
+
+    private boolean paused = true;
     private boolean showAll = false;
-    public int speed = Config.DEFAULT_SPEED;
+    private float threshold = Config.DEF_ENTITY_THRESHOLD;
+    private int speed = Config.DEF_SPEED;
     private float viewScale = 1;
 
     @Wire
@@ -57,9 +68,11 @@ public class LineAsset extends WorldAsset<LineAssetArgument> {
         blackTexture = imageManager.supply("black");
         grayTexture = imageManager.supply("gray");
 
+        geneticAlgorithm = new LineGeneticAlgorithm(arguments.geneticAlgorithmSize);
+
         chromosomes.clear();
         setupChromosomePopulation();
-        arguments.geneticAlgorithm.initialize();
+        geneticAlgorithm.initialize();
 
         createModels();
     }
@@ -75,31 +88,56 @@ public class LineAsset extends WorldAsset<LineAssetArgument> {
     }
 
     private void setupChromosomePopulation() {
-        if (chromosomes.size() == populationCount) {
-            return;
-        }
-
         if (chromosomes.size() > populationCount) {
             chromosomes.subList(populationCount, chromosomes.size()).clear();
-        } else {
-            for (int i = 0; i < populationCount - chromosomes.size(); i++) {
-                List<LineChromosome> lineChromosomes = new ArrayList<>();
-                for (int j = 0; j < POPULATION_SIZE; j++) {
-                    lineChromosomes.add(new LineChromosome(
-                            new Vector3f(),
-                            new Vector3f(),
-                            new Vector3f(STICK_SCALE, STICK_SCALE * 10, STICK_SCALE)
-                    ));
-                }
-                chromosomes.add(new LayerChromosome(lineChromosomes));
+        } else if (chromosomes.size() < populationCount) {
+            while (chromosomes.size() < populationCount) {
+                chromosomes.add(new LayerChromosome(new ArrayList<>()));
             }
         }
 
-        population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
+        for (LayerChromosome layer : chromosomes) {
+            setupChromosomeLayer(layer.lineChromosomes);
+
+        }
+
+        population = geneticAlgorithm.createSortedPopulation(chromosomes);
+    }
+
+    private void setupChromosomeLayer(final List<LineChromosome> lineChromosomes) {
+        if (lineChromosomes.size() > populationSize) {
+            lineChromosomes.subList(populationSize, lineChromosomes.size()).clear();
+        } else if (lineChromosomes.size() < populationSize) {
+            while (lineChromosomes.size() < populationSize) {
+                lineChromosomes.add(new LineChromosome(
+                        new Vector3f(),
+                        new Vector3f(),
+                        new Vector3f()
+                ));
+            }
+        }
+
+        for (LineChromosome lineChromosome : lineChromosomes) {
+            lineChromosome.scale.set(
+                    lineThickness * STICK_SCALE / 10f,
+                    lineLength * STICK_SCALE,
+                    lineThickness * STICK_SCALE / 10f);
+        }
     }
 
     @Override
     public void update(final float delta) {
+        if (imageChanged) {
+            geneticAlgorithm.setImage(image);
+            imageChanged = false;
+        }
+
+        if (populationChanged) {
+            setupChromosomePopulation();
+            synchronizeModelsWithChromosomes();
+            populationChanged = false;
+        }
+
         if (!paused) {
             if (elapsedTime > 1) {
                 elapsedTime = 0;
@@ -117,15 +155,76 @@ public class LineAsset extends WorldAsset<LineAssetArgument> {
         synchronizeModelsWithChromosomes();
     }
 
-    public void setPopulationCount(int populationCount) {
+    @Override
+    public void setPopulationCount(final int populationCount) {
         this.populationCount = populationCount;
-        setupChromosomePopulation();
+        this.populationChanged = true;
+    }
+
+    @Override
+    public void setPopulationSize(final int populationSize) {
+        this.populationSize = populationSize;
+        this.populationChanged = true;
+    }
+
+    @Override
+    public void showAll(final boolean showAll) {
+        this.showAll = showAll;
         synchronizeModelsWithChromosomes();
     }
 
-    public void setShowAll(boolean showAll) {
-        this.showAll = showAll;
+    @Override
+    public void setImage(final BufferedImage image) {
+        this.image = image;
+        this.imageChanged = true;
+    }
+
+    @Override
+    public int getNumberOfGenerations() {
+        return geneticAlgorithm.getNumberOfGenerations();
+    }
+
+    @Override
+    public float getAverageFitness() {
+        return geneticAlgorithm.getAverageFitness();
+    }
+
+    @Override
+    public float getBestFitness() {
+        return geneticAlgorithm.getBestFitness();
+    }
+
+    @Override
+    public boolean isAlgorithmPaused() {
+        return paused;
+    }
+
+    @Override
+    public void setAlgorithmStatus(final boolean paused) {
+        this.paused = paused;
+    }
+
+    @Override
+    public void setAlgorithmSpeed(final int speed) {
+        this.speed = speed;
+    }
+
+    @Override
+    public void setThreshold(final float threshold) {
+        this.threshold = threshold;
         synchronizeModelsWithChromosomes();
+    }
+
+    @Override
+    public void setThickness(final float thickness) {
+        this.lineThickness = thickness;
+        this.populationChanged = true;
+    }
+
+    @Override
+    public void setLength(final float length) {
+        this.lineLength = length;
+        this.populationChanged = true;
     }
 
     private void synchronizeModelsWithChromosomes() {
@@ -137,18 +236,22 @@ public class LineAsset extends WorldAsset<LineAssetArgument> {
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
                 Model lineModel = (Model) lineModels[i].get(j);
                 if (layerChromosome != null) {
-                    LineChromosome chromosome = layerChromosome.lineChromosomes.get(j);
+                    if (j < layerChromosome.lineChromosomes.size()) {
+                        LineChromosome chromosome = layerChromosome.lineChromosomes.get(j);
 
-                    lineModel.setPosition(new Vector3f(chromosome.position).mul(viewScale));
-                    lineModel.setRotation(new Vector3f(chromosome.rotation));
-                    lineModel.setScale(new Vector3f(chromosome.scale).mul(viewScale));
+                        lineModel.setPosition(new Vector3f(chromosome.position).mul(viewScale));
+                        lineModel.setRotation(new Vector3f(chromosome.rotation));
+                        lineModel.setScale(new Vector3f(chromosome.scale).mul(viewScale));
 
-                    if (i == 0) {
-                        lineModel.texture = blackTexture;
-                        lineModel.visible = true;
+                        if (i == 0) {
+                            lineModel.texture = blackTexture;
+                            lineModel.visible = chromosome.fitness >= threshold;
+                        } else {
+                            lineModel.texture = grayTexture;
+                            lineModel.visible = showAll && chromosome.fitness >= threshold;
+                        }
                     } else {
-                        lineModel.texture = grayTexture;
-                        lineModel.visible = showAll;
+                        lineModel.visible = false;
                     }
                 } else {
                     lineModel.visible = false;
@@ -158,8 +261,8 @@ public class LineAsset extends WorldAsset<LineAssetArgument> {
     }
 
     private void evaluateGeneticAlgorithm() {
-        chromosomes = arguments.geneticAlgorithm.nextGeneration(population, 1f, 2f);
-        population = arguments.geneticAlgorithm.createSortedPopulation(chromosomes);
+        chromosomes = geneticAlgorithm.nextGeneration(population, 1f, 2f);
+        population = geneticAlgorithm.createSortedPopulation(chromosomes);
     }
 
     @Override

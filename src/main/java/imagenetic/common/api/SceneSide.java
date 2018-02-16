@@ -12,6 +12,8 @@ public interface SceneSide {
 
     void setPopulationCount(final int populationCount);
 
+    void setPopulationSize(final int populationSize);
+
     void showAll(final boolean show);
 
     void setImage(final BufferedImage image);
@@ -21,4 +23,10 @@ public interface SceneSide {
     float getAverageFitness();
 
     float getBestFitness();
+
+    void setThreshold(final float threshold);
+
+    void setThickness(final float thickness);
+
+    void setLength(final float length);
 }
