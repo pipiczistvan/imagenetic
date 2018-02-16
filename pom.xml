@@ -10,28 +10,29 @@
     <packaging>jar</packaging>
 
     <properties>
-        <piengine.version>0.0.6</piengine.version>
+        <piengine.version>0.0.7</piengine.version>
+        <miglayout.version>3.7.4</miglayout.version>
     </properties>
 
-    <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>jitpack.io</id>-->
-            <!--<url>https://jitpack.io</url>-->
-        <!--</repository>-->
-    <!--</repositories>-->
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- PI ENGINE -->
         <dependency>
-            <groupId>istvan.pipicz.opengl</groupId>
-            <artifactId>pi-engine-frame</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.github.pipiczistvan</groupId>
+            <artifactId>pi-engine</artifactId>
+            <version>${piengine.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.miglayout/miglayout -->
+        <!-- MIG LAYOUT -->
         <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout</artifactId>
-            <version>3.7.4</version>
+            <version>${miglayout.version}</version>
         </dependency>
     </dependencies>
 
