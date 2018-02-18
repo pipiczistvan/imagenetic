@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileSystems;
-import java.util.Collections;
 import java.util.Objects;
 
 import static java.util.Arrays.asList;
@@ -32,7 +30,7 @@ public class Main {
          * Comment out this line for testing, and add this line to program arguments!
          * -Dengine.resources.root=../resources
          */
-        FileSystems.newFileSystem(Main.class.getResource("/imagenetic/common/Main.class").toURI(), Collections.emptyMap());
+//        FileSystems.newFileSystem(Main.class.getResource("/imagenetic/common/Main.class").toURI(), Collections.emptyMap());
 
         piEngine engine = new piEngine(
                 APPLICATION_PROPERTIES,
