@@ -35,8 +35,10 @@ import static piengine.core.input.domain.Key.KEY_ESCAPE;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.object.camera.domain.ProjectionType.ORTHOGRAPHIC;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_BUFFER_MULTISAMPLE_ATTACHMENT;
+import static piengine.visual.framebuffer.domain.FramebufferAttachment.COLOR_TEXTURE_ATTACHMENT;
 import static piengine.visual.framebuffer.domain.FramebufferAttachment.DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT;
 import static piengine.visual.postprocessing.domain.EffectType.ANTIALIAS_EFFECT;
+import static piengine.visual.postprocessing.domain.EffectType.RADIAL_GRADIENT_EFFECT;
 
 public class MainScene extends Scene {
 
@@ -53,6 +55,9 @@ public class MainScene extends Scene {
     // Main
     private Framebuffer mainFbo;
     private Canvas mainCanvas;
+    // Background
+    private Framebuffer backgroundFbo;
+    private Canvas backgroundCanvas;
     // Stick
     private LineAsset lineAsset;
     private ObserverCameraAsset cameraAsset;
@@ -102,6 +107,10 @@ public class MainScene extends Scene {
         mainFbo = framebufferManager.supply(VIEWPORT, false, COLOR_BUFFER_MULTISAMPLE_ATTACHMENT, DEPTH_BUFFER_MULTISAMPLE_ATTACHMENT);
         mainCanvas = canvasManager.supply(this, mainFbo, ANTIALIAS_EFFECT);
 
+        // Background
+        backgroundFbo = framebufferManager.supply(VIEWPORT, false, COLOR_TEXTURE_ATTACHMENT);
+        backgroundCanvas = canvasManager.supply(this, backgroundFbo, RADIAL_GRADIENT_EFFECT);
+
         // Stick
         cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
@@ -121,18 +130,14 @@ public class MainScene extends Scene {
     protected RenderPlan createRenderPlan() {
         return GuiRenderPlanBuilder
                 .createPlan(VIEWPORT)
-                .bindFrameBuffer(
-                        mainFbo,
-                        WorldRenderPlanBuilder
-                                .createPlan(camera)
-                                .loadAssets(lineAsset)
-                                .clearScreen(ColorUtils.WHITE)
-                                .render()
-                )
-                .loadAssetContext(GuiRenderAssetContextBuilder
-                        .create()
-                        .loadCanvases(mainCanvas)
-                        .build()
+                .bindFrameBuffer(backgroundFbo, renderToBackground())
+                .bindFrameBuffer(mainFbo, renderBackground())
+                .bindFrameBuffer(mainFbo, renderLines())
+                .loadAssetContext(
+                        GuiRenderAssetContextBuilder
+                                .create()
+                                .loadCanvases(mainCanvas)
+                                .build()
                 )
                 .clearScreen(ColorUtils.BLACK)
                 .render();
@@ -144,5 +149,30 @@ public class MainScene extends Scene {
 
     private void recalculateViewport() {
         VIEWPORT.set(displayManager.getViewport());
+    }
+
+    private RenderPlan renderToBackground() {
+        return GuiRenderPlanBuilder
+                .createPlan(backgroundFbo.getSize())
+                .clearScreen(ColorUtils.WHITE)
+                .render();
+    }
+
+    private RenderPlan renderBackground() {
+        return GuiRenderPlanBuilder
+                .createPlan(VIEWPORT)
+                .loadAssetContext(GuiRenderAssetContextBuilder
+                        .create()
+                        .loadCanvases(backgroundCanvas)
+                        .build())
+                .clearScreen(ColorUtils.BLACK)
+                .render();
+    }
+
+    private RenderPlan renderLines() {
+        return WorldRenderPlanBuilder
+                .createPlan(camera)
+                .loadAssets(lineAsset)
+                .render();
     }
 }
