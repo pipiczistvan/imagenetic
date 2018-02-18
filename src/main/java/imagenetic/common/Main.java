@@ -7,7 +7,6 @@ import piengine.core.engine.domain.piEngine;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public class Main {
     private static final String USER_DIR = Objects.requireNonNull(Main.class.getClassLoader().getResource("")).getPath();
     private static final String APPLICATION_PROPERTIES = "application";
 
-    public static void main(final String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, URISyntaxException {
+    public static void main(final String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
         URL coreLibrary = new File(USER_DIR + "lib/pi-engine-core-0.0.7.jar").toURI().toURL();
         URL frameLibrary = new File(USER_DIR + "lib/pi-engine-frame-0.0.7.jar").toURI().toURL();
@@ -39,8 +38,8 @@ public class Main {
                 emptyList()
         );
 
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         MainWindow window = new MainWindow();
-        window.initialize();
 
         engine.createAwtDisplay(window.frame, window.frame.getCanvas());
         engine.start(MainScene.class);

@@ -59,7 +59,7 @@ public class PanelControl extends JPanel {
         panelPopulation.setAlignmentY(Component.TOP_ALIGNMENT);
         panelPopulation.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Populáció", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         this.add(panelPopulation);
-        panelPopulation.setLayout(new MigLayout("", "[172px]", "[21px][21px]"));
+        panelPopulation.setLayout(new MigLayout("", "[172px,grow]", "[21px][grow][21px]"));
 
         // population count
 
