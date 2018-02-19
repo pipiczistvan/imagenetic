@@ -22,7 +22,7 @@ public class PanelControl extends JPanel {
 
         JPanel panelButton = new JPanel();
         this.add(panelButton);
-        panelButton.setLayout(new MigLayout("", "[172, grow]", "[23px][14px][45px]"));
+        panelButton.setLayout(new MigLayout("", "[172, grow]", "[23px][14px][14px][45px]"));
 
         JButton btnStart = new JButton("Start");
         btnStart.addActionListener(e -> {
@@ -36,8 +36,23 @@ public class PanelControl extends JPanel {
         panelButton.add(btnStart, "cell 0 0,growx,aligny center");
         btnStart.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JPanel panelInterpolation = new JPanel();
+        panelButton.add(panelInterpolation, "cell 0 1,grow");
+        panelInterpolation.setLayout(new GridLayout(0, 3, 0, 0));
+
+        JLabel lblInterpolation = new JLabel("Interpoláció:");
+        panelInterpolation.add(lblInterpolation);
+
+        Component hstrutInterpolation = Box.createHorizontalStrut(20);
+        panelInterpolation.add(hstrutInterpolation);
+
+        JCheckBox chckbxInterpolation = new JCheckBox("");
+        chckbxInterpolation.setHorizontalAlignment(SwingConstants.RIGHT);
+        chckbxInterpolation.addItemListener(e -> Bridge.sceneSide.setInterpolated(e.getStateChange() == ItemEvent.SELECTED));
+        panelInterpolation.add(chckbxInterpolation);
+
         JLabel lblSpeed = new JLabel("Sebesség:");
-        panelButton.add(lblSpeed, "cell 0 1,alignx left,aligny center");
+        panelButton.add(lblSpeed, "cell 0 2,alignx left,aligny center");
 
         JSlider sliderSpeed = new JSlider();
         sliderSpeed.setMajorTickSpacing(1);
@@ -51,7 +66,7 @@ public class PanelControl extends JPanel {
             JSlider source = (JSlider) e.getSource();
             Bridge.sceneSide.setAlgorithmSpeed(source.getValue());
         });
-        panelButton.add(sliderSpeed, "cell 0 2,alignx center,aligny center");
+        panelButton.add(sliderSpeed, "cell 0 3,alignx center,aligny center");
 
         // PANEL POPULATION
 

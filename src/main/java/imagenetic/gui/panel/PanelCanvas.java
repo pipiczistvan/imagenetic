@@ -6,11 +6,11 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 
-public class PanelOpenGL extends JPanel {
+public class PanelCanvas extends JPanel {
 
     public AwtCanvas canvasOpenGL;
 
-    public PanelOpenGL() {
+    public PanelCanvas() {
         this.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
         this.setLayout(new BorderLayout(0, 0));
 

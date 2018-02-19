@@ -29,4 +29,6 @@ public interface SceneSide {
     void setThickness(final float thickness);
 
     void setLength(final float length);
+
+    void setInterpolated(final boolean interpolated);
 }

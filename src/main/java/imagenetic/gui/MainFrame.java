@@ -2,9 +2,9 @@ package imagenetic.gui;
 
 import imagenetic.common.api.FrameSide;
 import imagenetic.gui.menu.MenuBar;
+import imagenetic.gui.panel.PanelCanvas;
 import imagenetic.gui.panel.PanelControl;
 import imagenetic.gui.panel.PanelLabel;
-import imagenetic.gui.panel.PanelOpenGL;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.visual.display.domain.awt.AwtCanvas;
 
@@ -23,7 +23,7 @@ public class MainFrame extends JFrame implements FrameSide {
 
     private final ResourceLoader imageLoader = new ResourceLoader(get(IMAGES_LOCATION), "png");
 
-    private PanelOpenGL panelOpenGL;
+    private PanelCanvas panelCanvas;
     private PanelControl panelControl;
     private PanelLabel panelLabel;
     private MenuBar menuBar;
@@ -38,8 +38,8 @@ public class MainFrame extends JFrame implements FrameSide {
         this.setLocationRelativeTo(null);
         this.setIconImage(new ImageIcon(imageLoader.getUrl("gene")).getImage());
 
-        panelOpenGL = new PanelOpenGL();
-        this.getContentPane().add(panelOpenGL, BorderLayout.CENTER);
+        panelCanvas = new PanelCanvas();
+        this.getContentPane().add(panelCanvas, BorderLayout.CENTER);
 
         panelControl = new PanelControl();
         this.getContentPane().add(panelControl, BorderLayout.EAST);
@@ -52,7 +52,7 @@ public class MainFrame extends JFrame implements FrameSide {
     }
 
     public AwtCanvas getCanvas() {
-        return panelOpenGL.canvasOpenGL;
+        return panelCanvas.canvasOpenGL;
     }
 
     @Override
@@ -62,21 +62,21 @@ public class MainFrame extends JFrame implements FrameSide {
 
     @Override
     public int getCanvasX() {
-        return panelOpenGL.canvasOpenGL.getX();
+        return panelCanvas.canvasOpenGL.getX();
     }
 
     @Override
     public int getCanvasY() {
-        return panelOpenGL.canvasOpenGL.getY();
+        return panelCanvas.canvasOpenGL.getY();
     }
 
     @Override
     public int getCanvasWidth() {
-        return panelOpenGL.canvasOpenGL.getWidth();
+        return panelCanvas.canvasOpenGL.getWidth();
     }
 
     @Override
     public int getCanvasHeight() {
-        return panelOpenGL.canvasOpenGL.getHeight();
+        return panelCanvas.canvasOpenGL.getHeight();
     }
 }

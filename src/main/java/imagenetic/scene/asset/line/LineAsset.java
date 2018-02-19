@@ -12,10 +12,8 @@ import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
-import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.visual.image.manager.ImageManager;
-import piengine.visual.texture.domain.Texture;
 import puppeteer.annotation.premade.Wire;
 
 import java.awt.image.BufferedImage;
@@ -24,24 +22,17 @@ import java.util.List;
 
 public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSide {
 
-    private static final int MODEL_POPULATION_COUNT = Config.MAX_POPULATION_COUNT;
-    private static final int MODEL_POPULATION_SIZE = Config.MAX_POPULATION_SIZE;
     private static final float STICK_SCALE = 2.5f;
 
-    private static List<LayerChromosome> chromosomes = new ArrayList<>();
-    private static List<Entity<LayerChromosome>> population = new ArrayList<>();
+    private List<LayerChromosome> chromosomes = new ArrayList<>();
+    private List<Entity<LayerChromosome>> population = new ArrayList<>();
 
-    private final ModelManager modelManager;
-    private final ImageManager imageManager;
-
-
+    private final LineModelManager lineModelManager;
     private LineGeneticAlgorithm geneticAlgorithm;
-    private final List[] lineModels = new List[MODEL_POPULATION_COUNT];
-    private Texture blackTexture, grayTexture;
 
     private float elapsedTime = 0;
 
-    private boolean populationChanged = false;
+    private boolean populationConfigChanged = false;
     private int populationCount = Config.DEF_POPULATION_COUNT;
     private int populationSize = Config.DEF_POPULATION_SIZE;
     private float lineLength = Config.DEF_ENTITY_LENGTH;
@@ -49,42 +40,27 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     private boolean imageChanged = false;
     private BufferedImage image;
 
+    private boolean interpolated = false;
+
     private boolean paused = true;
-    private boolean showAll = false;
-    private float threshold = Config.DEF_ENTITY_THRESHOLD;
     private int speed = Config.DEF_SPEED;
-    private float viewScale = 1;
 
     @Wire
     public LineAsset(final AssetManager assetManager, final ModelManager modelManager, final ImageManager imageManager) {
         super(assetManager);
 
-        this.modelManager = modelManager;
-        this.imageManager = imageManager;
+        this.lineModelManager = new LineModelManager(this, modelManager, imageManager);
     }
 
     @Override
     public void initialize() {
-        blackTexture = imageManager.supply("black");
-        grayTexture = imageManager.supply("gray");
-
         geneticAlgorithm = new LineGeneticAlgorithm(arguments.geneticAlgorithmSize);
 
         chromosomes.clear();
         setupChromosomePopulation();
         geneticAlgorithm.initialize();
 
-        createModels();
-    }
-
-    private void createModels() {
-        for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
-            lineModels[i] = new ArrayList();
-            for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                Model lineModel = modelManager.supply(this, "octahedron", grayTexture, true);
-                lineModels[i].add(lineModel);
-            }
-        }
+        lineModelManager.initialize();
     }
 
     private void setupChromosomePopulation() {
@@ -98,10 +74,10 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
 
         for (LayerChromosome layer : chromosomes) {
             setupChromosomeLayer(layer.lineChromosomes);
-
         }
 
         population = geneticAlgorithm.createSortedPopulation(chromosomes);
+        lineModelManager.setActualPopulation(population);
     }
 
     private void setupChromosomeLayer(final List<LineChromosome> lineChromosomes) {
@@ -128,49 +104,62 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     @Override
     public void update(final float delta) {
         if (imageChanged) {
-            geneticAlgorithm.setImage(image);
             imageChanged = false;
+            geneticAlgorithm.setImage(image);
         }
 
-        if (populationChanged) {
+        if (populationConfigChanged) {
+            populationConfigChanged = false;
             setupChromosomePopulation();
-            synchronizeModelsWithChromosomes();
-            populationChanged = false;
+            if (paused) {
+                lineModelManager.synchronize();
+            }
         }
 
         if (!paused) {
             if (elapsedTime > 1) {
                 elapsedTime = 0;
                 evaluateGeneticAlgorithm();
-                synchronizeModelsWithChromosomes();
                 Bridge.frameSide.updateLabels();
             } else {
                 elapsedTime += delta * speed;
+            }
+
+            if (interpolated) {
+                lineModelManager.interpolate(delta);
+            } else {
+                lineModelManager.synchronize();
             }
         }
     }
 
     public void setViewScale(final float viewScale) {
-        this.viewScale = viewScale;
-        synchronizeModelsWithChromosomes();
+        this.lineModelManager.setViewScale(viewScale);
+        this.populationConfigChanged = true;
+    }
+
+    @Override
+    public void showAll(final boolean showAll) {
+        this.lineModelManager.setShowAll(showAll);
+        this.populationConfigChanged = true;
+    }
+
+    @Override
+    public void setThreshold(final float threshold) {
+        this.lineModelManager.setThreshold(threshold);
+        this.populationConfigChanged = true;
     }
 
     @Override
     public void setPopulationCount(final int populationCount) {
         this.populationCount = populationCount;
-        this.populationChanged = true;
+        this.populationConfigChanged = true;
     }
 
     @Override
     public void setPopulationSize(final int populationSize) {
         this.populationSize = populationSize;
-        this.populationChanged = true;
-    }
-
-    @Override
-    public void showAll(final boolean showAll) {
-        this.showAll = showAll;
-        synchronizeModelsWithChromosomes();
+        this.populationConfigChanged = true;
     }
 
     @Override
@@ -210,76 +199,32 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     }
 
     @Override
-    public void setThreshold(final float threshold) {
-        this.threshold = threshold;
-        synchronizeModelsWithChromosomes();
-    }
-
-    @Override
     public void setThickness(final float thickness) {
         this.lineThickness = thickness;
-        this.populationChanged = true;
+        this.populationConfigChanged = true;
     }
 
     @Override
     public void setLength(final float length) {
         this.lineLength = length;
-        this.populationChanged = true;
+        this.populationConfigChanged = true;
     }
 
-    private void synchronizeModelsWithChromosomes() {
-        for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
-            LayerChromosome layerChromosome = null;
-            if (i < population.size()) {
-                layerChromosome = population.get(i).getGenoType();
-            }
-            for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                Model lineModel = (Model) lineModels[i].get(j);
-                if (layerChromosome != null) {
-                    if (j < layerChromosome.lineChromosomes.size()) {
-                        LineChromosome chromosome = layerChromosome.lineChromosomes.get(j);
-
-                        lineModel.setPosition(new Vector3f(chromosome.position).mul(viewScale));
-                        lineModel.setRotation(new Vector3f(chromosome.rotation));
-                        lineModel.setScale(new Vector3f(chromosome.scale).mul(viewScale));
-
-                        if (i == 0) {
-                            lineModel.texture = blackTexture;
-                            lineModel.visible = chromosome.fitness >= threshold;
-                        } else {
-                            lineModel.texture = grayTexture;
-                            lineModel.visible = showAll && chromosome.fitness >= threshold;
-                        }
-                    } else {
-                        lineModel.visible = false;
-                    }
-                } else {
-                    lineModel.visible = false;
-                }
-            }
-        }
+    @Override
+    public void setInterpolated(final boolean interpolated) {
+        this.interpolated = interpolated;
     }
 
     private void evaluateGeneticAlgorithm() {
         chromosomes = geneticAlgorithm.nextGeneration(population, 1f, 2f);
         population = geneticAlgorithm.createSortedPopulation(chromosomes);
+        lineModelManager.setActualPopulation(population);
     }
 
     @Override
     public WorldRenderAssetContext getAssetContext() {
         return WorldRenderAssetContextBuilder.create()
-                .loadModels(getLineModels())
+                .loadModels(lineModelManager.getLineModels())
                 .build();
-    }
-
-    private Model[] getLineModels() {
-        Model[] models = new Model[MODEL_POPULATION_COUNT * MODEL_POPULATION_SIZE];
-        for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
-            for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                models[i * MODEL_POPULATION_SIZE + j] = (Model) lineModels[i].get(j);
-            }
-        }
-
-        return models;
     }
 }
