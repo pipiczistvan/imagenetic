@@ -1,6 +1,7 @@
 package imagenetic.scene.asset.line;
 
 import imagenetic.common.Config;
+import imagenetic.common.algorithm.genetic.Generation;
 import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
@@ -23,23 +24,22 @@ public class LineModelManager implements Initializable {
     private final LineAsset parent;
     private final ModelManager modelManager;
     private final ImageManager imageManager;
+    private final List<Generation<LayerChromosome>> generations;
     private final List[] lineModels;
 
     private Image blackTexture;
     private Image grayTexture;
-
-    private List<Entity<LayerChromosome>> actualPopulation = null;
+    private int currentGeneration = 0;
 
     private boolean showAll = false;
     private float threshold = Config.DEF_ENTITY_THRESHOLD;
     private float viewScale = 1;
 
-    private int interpolationIndex = 0;
-
-    public LineModelManager(final LineAsset parent, final ModelManager modelManager, final ImageManager imageManager) {
+    public LineModelManager(final LineAsset parent, final ModelManager modelManager, final ImageManager imageManager, final List<Generation<LayerChromosome>> generations) {
         this.parent = parent;
         this.modelManager = modelManager;
         this.imageManager = imageManager;
+        this.generations = generations;
         this.lineModels = new List[MODEL_POPULATION_COUNT];
     }
 
@@ -74,36 +74,31 @@ public class LineModelManager implements Initializable {
         this.viewScale = viewScale;
     }
 
-    public void setActualPopulation(final List<Entity<LayerChromosome>> actualPopulation) {
-        this.actualPopulation = actualPopulation;
+    public void interpolate(final float delta) {
+        if (generations.size() % INTERPOLATION_THRESHOLD == 0) {
+            currentGeneration = generations.size() - 1;
+            synchronize();
+        }
     }
 
-    public void interpolate(final float delta) {
-        if (actualPopulation != null) {
-            // oldPopulation
-
-            if (interpolationIndex < INTERPOLATION_THRESHOLD) {
-                interpolationIndex++;
-                actualPopulation = null;
-            } else {
-                interpolationIndex = 0;
-                // newPopulation
-                synchronize();
-            }
-        }
-
-        // interpolation
+    public void extrapolate() {
+        currentGeneration = generations.size() - 1;
+        synchronize();
     }
 
     public void synchronize() {
-        if (actualPopulation == null) {
-            return;
+        if (generations.size() > 0) {
+            syncModelsWithChromosomes();
         }
+    }
 
+    private void syncModelsWithChromosomes() {
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             LayerChromosome layerChromosome = null;
-            if (i < actualPopulation.size()) {
-                layerChromosome = actualPopulation.get(i).getGenoType();
+            List<Entity<LayerChromosome>> population = generations.get(currentGeneration).population;
+
+            if (i < population.size()) {
+                layerChromosome = population.get(i).getGenoType();
             }
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
                 Model lineModel = (Model) lineModels[i].get(j);
@@ -130,8 +125,6 @@ public class LineModelManager implements Initializable {
                 }
             }
         }
-
-        actualPopulation = null;
     }
 
     private void createModels() {

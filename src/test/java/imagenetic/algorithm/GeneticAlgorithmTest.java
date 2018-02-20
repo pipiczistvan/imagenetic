@@ -17,7 +17,7 @@ public class GeneticAlgorithmTest {
         );
 
         NumberGeneticAlgorithm geneticAlgorithm = new NumberGeneticAlgorithm();
-        List<Integer[]> newPopulation = geneticAlgorithm.execute(initialPopulation, 0.01f, 0.8f);
+        List<Integer[]> newPopulation = geneticAlgorithm.execute(0.01f, 0.8f);
 
         System.out.println(Arrays.toString(newPopulation.get(0)));
         System.out.println(geneticAlgorithm.getNumberOfGenerations());

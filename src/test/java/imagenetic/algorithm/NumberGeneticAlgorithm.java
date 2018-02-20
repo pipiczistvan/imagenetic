@@ -1,5 +1,6 @@
 package imagenetic.algorithm;
 
+import imagenetic.algorithm.function.NumberChromosomeCopier;
 import imagenetic.algorithm.function.NumberCriterionFunction;
 import imagenetic.algorithm.function.NumberCrossoverOperator;
 import imagenetic.algorithm.function.NumberFitnessFunction;
@@ -12,6 +13,6 @@ public class NumberGeneticAlgorithm extends GeneticAlgorithm<Integer[]> {
     public NumberGeneticAlgorithm() {
         super(new NumberFitnessFunction(), new NumberCriterionFunction(),
                 new NumberSelectionOperator(), new NumberCrossoverOperator(),
-                new NumberMutationOperator());
+                new NumberMutationOperator(), new NumberChromosomeCopier(), null);//todo
     }
 }

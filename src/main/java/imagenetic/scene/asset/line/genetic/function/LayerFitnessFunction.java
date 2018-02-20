@@ -3,10 +3,12 @@ package imagenetic.scene.asset.line.genetic.function;
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.BresenhamAlgorithm;
 import imagenetic.common.algorithm.image.ImageProcessor;
+import imagenetic.scene.asset.line.genetic.AlgorithmParameters;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import piengine.core.base.api.Initializable;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -14,9 +16,9 @@ import java.util.List;
 import static imagenetic.common.util.NumberUtil.nullSafeDivide;
 import static imagenetic.common.util.NumberUtil.positiveMax;
 
-public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
+public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, Initializable {
 
-    private final int maxSize;
+    private final AlgorithmParameters parameters;
 
     private int maxColorValue;
     private int[][] originalPixelValues;
@@ -24,12 +26,13 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome> {
     private int width;
     private int height;
 
-    public LayerFitnessFunction(final int maxSize) {
-        this.maxSize = maxSize;
+    public LayerFitnessFunction(final AlgorithmParameters parameters) {
+        this.parameters = parameters;
     }
 
-    public void setImage(final BufferedImage originalImage) {
-        BufferedImage image = prepareImage(originalImage, maxSize);
+    @Override
+    public void initialize() {
+        BufferedImage image = prepareImage(parameters.getImage(), parameters.getMaxSize());
 
         this.width = image.getWidth();
         this.height = image.getHeight();

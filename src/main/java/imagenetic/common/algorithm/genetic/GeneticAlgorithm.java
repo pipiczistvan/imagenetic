@@ -1,6 +1,8 @@
 package imagenetic.common.algorithm.genetic;
 
 import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.common.algorithm.genetic.function.ChromosomeCopier;
+import imagenetic.common.algorithm.genetic.function.ChromosomeCreator;
 import imagenetic.common.algorithm.genetic.function.CriterionFunction;
 import imagenetic.common.algorithm.genetic.function.CrossoverOperator;
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
@@ -20,85 +22,90 @@ public abstract class GeneticAlgorithm<T> {
     private final CriterionFunction<T> criterionFunction;
     private final SelectionOperator<T> selectionOperator;
     private final CrossoverOperator<T> crossoverOperator;
-    private final MutationOperator<T> mutationOperator;
+    protected final MutationOperator<T> mutationOperator;
+
+    private final ChromosomeCopier<T> chromosomeCopier;
+    private final ChromosomeCreator<T> chromosomeCreator;
     private final Random random = new Random();
 
+    private final List<Generation<T>> generations = new ArrayList<>();
+    private Generation<T> currentGeneration = null;
     private Entity<T> bestElement = null;
 
-    private int numberOfGenerations = 0;
-    private int numberOfPopulation = 0;
     private float averageFitness = 0;
     private float bestFitness = 0;
 
-    public GeneticAlgorithm(FitnessFunction<T> fitnessFunction, CriterionFunction<T> criterionFunction,
-                            SelectionOperator<T> selectionOperator, CrossoverOperator<T> crossoverOperator,
-                            MutationOperator<T> mutationOperator) {
+    public GeneticAlgorithm(final FitnessFunction<T> fitnessFunction, final CriterionFunction<T> criterionFunction,
+                            final SelectionOperator<T> selectionOperator, final CrossoverOperator<T> crossoverOperator,
+                            final MutationOperator<T> mutationOperator,
+                            final ChromosomeCopier<T> chromosomeCopier, final ChromosomeCreator<T> chromosomeCreator) {
         this.fitnessFunction = fitnessFunction;
         this.criterionFunction = criterionFunction;
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
+
+        this.chromosomeCopier = chromosomeCopier;
+        this.chromosomeCreator = chromosomeCreator;
     }
 
-    public void initialize() {
+    public void initialize(final int populationCount) {
         bestElement = null;
-        numberOfGenerations = 0;
-        numberOfPopulation = 0;
         averageFitness = 0;
         bestFitness = 0;
+
+        generations.clear();
+        addGeneration(new Generation<>(createSortedPopulation(createGenotypes(populationCount))));
     }
 
-    public List<T> execute(Collection<T> genoTypes, float mutationRate, float elitismRate) {
-        numberOfGenerations = 0;
-        List<Entity<T>> sortedPopulation = createSortedPopulation(genoTypes);
+    public List<T> execute(final float mutationRate, final float elitismRate) {
+        Generation<T> lastGeneration = generations.get(generations.size() - 1);
 
-        while (!criterionFunction.matches(sortedPopulation)) {
-            List<T> children = nextGeneration(sortedPopulation, mutationRate, elitismRate);
-            sortedPopulation = createSortedPopulation(children);
+        while (!criterionFunction.matches(lastGeneration.population)) {
+            nextGeneration(mutationRate, elitismRate);
         }
 
-        return sortedPopulation.stream().map(Entity::getGenoType).collect(Collectors.toList());
+        return lastGeneration.population.stream().map(Entity::getGenoType).collect(Collectors.toList());
     }
 
-    public List<T> nextGeneration(List<Entity<T>> sortedPopulation, float mutationRate, float elitismRate) {
-        if (bestElement == null || bestElement.getFitness() <= sortedPopulation.get(0).getFitness()) {
-            bestElement = sortedPopulation.get(0);
+    public void nextGeneration(final float mutationRate, final float elitismRate) {
+        List<Entity<T>> currentPopulation = currentGeneration.population;
+
+        if (bestElement == null || bestElement.getFitness() <= currentPopulation.get(0).getFitness()) {
+            bestElement = currentPopulation.get(0);
         }
 
-        List<T> newGeneration = new ArrayList<>(sortedPopulation.stream()
+        // ELITISM
+        List<T> chromosomes = currentPopulation.stream()
                 .filter(parent -> parent.getFitness() >= elitismRate)
-                .map(Entity::getGenoType)
-                .collect(Collectors.toList()));
+                .map(e -> chromosomeCopier.copy(e.getGenoType()))
+                .collect(Collectors.toList());
+        chromosomes.add(chromosomeCopier.copy(bestElement.getGenoType()));
 
-
-        newGeneration.add(bestElement.getGenoType());
-
-        while (newGeneration.size() < sortedPopulation.size()) {
-            Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(sortedPopulation);
+        // CROSSOVER
+        while (chromosomes.size() < currentPopulation.size()) {
+            Pair<Entity<T>, Entity<T>> parents = selectionOperator.select(currentPopulation);
             T child = crossoverOperator.crossover(parents);
 
-            newGeneration.add(child);
+            chromosomes.add(child);
         }
 
-        for (T element : newGeneration) {
-            Entity<T> calculatedChild = new Entity<>(element, fitnessFunction);
+        // MUTATION
+        List<Entity<T>> newPopulation = createSortedPopulation(chromosomes);
+        for (int i = 0; i < newPopulation.size(); i++) {
             if (random.nextFloat() <= mutationRate) {
-                mutationOperator.mutate(calculatedChild.getGenoType());
+                Entity<T> entity = newPopulation.get(i);
+
+                mutationOperator.mutate(entity.getGenoType());
+                newPopulation.set(i, new Entity<>(entity.getGenoType(), fitnessFunction));
             }
         }
 
-        numberOfGenerations++;
-        numberOfPopulation = newGeneration.size();
-
-        return newGeneration;
+        addGeneration(new Generation<>(newPopulation));
     }
 
     public int getNumberOfGenerations() {
-        return numberOfGenerations;
-    }
-
-    public int getNumberOfPopulations() {
-        return numberOfPopulation;
+        return generations.size();
     }
 
     public float getAverageFitness() {
@@ -109,7 +116,15 @@ public abstract class GeneticAlgorithm<T> {
         return bestFitness;
     }
 
-    public List<Entity<T>> createSortedPopulation(Collection<T> genoTypes) {
+    public List<Generation<T>> getGenerations() {
+        return generations;
+    }
+
+    public Generation<T> getCurrentGeneration() {
+        return currentGeneration;
+    }
+
+    private List<Entity<T>> createSortedPopulation(final Collection<T> genoTypes) {
         List<Entity<T>> sortedPopulation = genoTypes.stream()
                 .map(g -> new Entity<>(g, fitnessFunction))
                 .sorted()
@@ -121,4 +136,17 @@ public abstract class GeneticAlgorithm<T> {
         return sortedPopulation;
     }
 
+    private List<T> createGenotypes(final int populationCount) {
+        List<T> genotypes = new ArrayList<>();
+        for (int i = 0; i < populationCount; i++) {
+            genotypes.add(chromosomeCreator.create());
+        }
+
+        return genotypes;
+    }
+
+    private void addGeneration(final Generation<T> generation) {
+        generations.add(generation);
+        currentGeneration = generation;
+    }
 }
