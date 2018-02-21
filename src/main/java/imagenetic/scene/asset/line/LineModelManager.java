@@ -3,10 +3,10 @@ package imagenetic.scene.asset.line;
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.Generation;
 import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.common.util.Vector3fUtil;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector3f;
-import piengine.core.base.api.Initializable;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
 import piengine.visual.image.domain.Image;
@@ -15,7 +15,7 @@ import piengine.visual.image.manager.ImageManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineModelManager implements Initializable {
+public class LineModelManager {
 
     private static final int INTERPOLATION_THRESHOLD = 5;
     private static final int MODEL_POPULATION_COUNT = Config.MAX_POPULATION_COUNT;
@@ -29,7 +29,13 @@ public class LineModelManager implements Initializable {
 
     private Image blackTexture;
     private Image grayTexture;
-    private int currentGeneration = 0;
+
+    private Generation<LayerChromosome> currentGeneration;
+
+    private int oldGenerationIndex = 0;
+    private int newGenerationIndex = 0;
+    private int lastGenerationSize = -1;
+    private float progression = 0.0f;
 
     private boolean showAll = false;
     private float threshold = Config.DEF_ENTITY_THRESHOLD;
@@ -43,12 +49,18 @@ public class LineModelManager implements Initializable {
         this.lineModels = new List[MODEL_POPULATION_COUNT];
     }
 
-    @Override
-    public void initialize() {
+    public void initializeModels() {
         blackTexture = imageManager.supply("black");
         grayTexture = imageManager.supply("gray");
 
         createModels();
+    }
+
+    public void initializeGenerations() {
+        oldGenerationIndex = 0;
+        newGenerationIndex = 0;
+        lastGenerationSize = -1;
+        progression = 0.0f;
     }
 
     public Model[] getLineModels() {
@@ -74,20 +86,57 @@ public class LineModelManager implements Initializable {
         this.viewScale = viewScale;
     }
 
-    public void interpolate(final float delta) {
-        if (generations.size() % INTERPOLATION_THRESHOLD == 0) {
-            currentGeneration = generations.size() - 1;
-            synchronize();
+    public void interpolate(final float elapsedTime) {
+        if (generations.size() != lastGenerationSize && generations.size() % INTERPOLATION_THRESHOLD == 0) {
+            lastGenerationSize = generations.size();
+
+            oldGenerationIndex = newGenerationIndex;
+            newGenerationIndex = lastGenerationSize - 1;
+
+            progression = 0.0f;
         }
+
+        Generation<LayerChromosome> oldGeneration = generations.get(oldGenerationIndex);
+        Generation<LayerChromosome> newGeneration = generations.get(newGenerationIndex);
+        progression += elapsedTime;
+
+        List<Entity<LayerChromosome>> currentPopulation = new ArrayList<>();
+        for (int i = 0; i < oldGeneration.population.size(); i++) {
+            Entity<LayerChromosome> oldLayer = oldGeneration.population.get(i);
+            Entity<LayerChromosome> newLayer = newGeneration.population.get(i);
+
+            List<LineChromosome> lineChromosomes = new ArrayList<>();
+            for (int j = 0; j < oldLayer.getGenoType().lineChromosomes.size(); j++) {
+                LineChromosome oldChromosome = oldLayer.getGenoType().lineChromosomes.get(j);
+                LineChromosome newChromosome = newLayer.getGenoType().lineChromosomes.get(j);
+
+                float interpolationProgression = progression / INTERPOLATION_THRESHOLD;
+                if (interpolationProgression > 1) {
+                    interpolationProgression = 1;
+                }
+
+                LineChromosome currentChromosome = new LineChromosome(
+                        Vector3fUtil.interpolatePosition(oldChromosome.position, newChromosome.position, interpolationProgression),
+                        Vector3fUtil.interpolateRotation(oldChromosome.rotation, newChromosome.rotation, interpolationProgression),
+                        Vector3fUtil.interpolatePosition(oldChromosome.scale, newChromosome.scale, interpolationProgression),
+                        newChromosome.fitness
+                );
+                lineChromosomes.add(currentChromosome);
+            }
+            currentPopulation.add(new Entity<>(new LayerChromosome(lineChromosomes), element -> newLayer.getFitness()));
+        }
+
+        currentGeneration = new Generation<>(currentPopulation);
+        synchronize();
     }
 
     public void extrapolate() {
-        currentGeneration = generations.size() - 1;
+        currentGeneration = generations.get(generations.size() - 1);
         synchronize();
     }
 
     public void synchronize() {
-        if (generations.size() > 0) {
+        if (currentGeneration != null) {
             syncModelsWithChromosomes();
         }
     }
@@ -95,7 +144,7 @@ public class LineModelManager implements Initializable {
     private void syncModelsWithChromosomes() {
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             LayerChromosome layerChromosome = null;
-            List<Entity<LayerChromosome>> population = generations.get(currentGeneration).population;
+            List<Entity<LayerChromosome>> population = currentGeneration.population;
 
             if (i < population.size()) {
                 layerChromosome = population.get(i).getGenoType();

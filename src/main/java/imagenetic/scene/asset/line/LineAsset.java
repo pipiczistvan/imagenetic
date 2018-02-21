@@ -49,13 +49,14 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
         geneticAlgorithm = new LineGeneticAlgorithm(parameters);
         lineModelManager = new LineModelManager(this, modelManager, imageManager, geneticAlgorithm.getGenerations());
 
-        lineModelManager.initialize();
+        lineModelManager.initializeModels();
     }
 
     @Override
     public void update(final float delta) {
         if (parameters.hasChanged()) {
             geneticAlgorithm.initializePopulation();
+            lineModelManager.initializeGenerations();
             lineModelManager.extrapolate();
         }
 
@@ -65,18 +66,18 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
         }
 
         if (!paused) {
+            if (interpolated) {
+                lineModelManager.interpolate(delta * speed);
+            } else {
+                lineModelManager.extrapolate();
+            }
+
             if (elapsedTime >= 1) {
                 elapsedTime = 0;
                 geneticAlgorithm.nextGeneration(1f, 2f);
                 Bridge.frameSide.updateLabels();
             } else {
                 elapsedTime += delta * speed;
-            }
-
-            if (interpolated) {
-                lineModelManager.interpolate(delta);
-            } else {
-                lineModelManager.extrapolate();
             }
         }
     }

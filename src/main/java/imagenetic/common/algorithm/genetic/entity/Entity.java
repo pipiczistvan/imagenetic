@@ -23,7 +23,7 @@ public class Entity<T> implements Comparable<Entity<T>> {
 
     public void setGenoType(T genoType) {
         this.genoType = genoType;
-        this.fitness = fitnessFunction.calculate(genoType);
+        this.fitness = fitnessFunction != null ? fitnessFunction.calculate(genoType) : 0.0f;
     }
 
     public Float getFitness() {

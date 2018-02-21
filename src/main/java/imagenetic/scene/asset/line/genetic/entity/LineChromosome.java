@@ -15,6 +15,13 @@ public class LineChromosome implements Comparable<LineChromosome> {
         this.scale = scale;
     }
 
+    public LineChromosome(Vector3f position, Vector3f rotation, Vector3f scale, float fitness) {
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = scale;
+        this.fitness = fitness;
+    }
+
     @Override
     public int compareTo(LineChromosome other) {
         return Float.compare(other.fitness, fitness);
