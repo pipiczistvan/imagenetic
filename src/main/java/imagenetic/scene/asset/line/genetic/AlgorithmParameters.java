@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class AlgorithmParameters {
 
+    protected boolean imageChanged = false;
     protected boolean changed = false;
     protected BufferedImage image;
     protected int maxSize;
@@ -12,9 +13,9 @@ public class AlgorithmParameters {
     protected float lineLength;
     protected float lineThickness;
 
-    public AlgorithmParameters(final BufferedImage image, final int maxSize, final int populationCount,
-                               final int populationSize, final float lineLength, final float lineThickness) {
-        this.image = image;
+    public AlgorithmParameters(final int maxSize,
+                               final int populationCount, final int populationSize,
+                               final float lineLength, final float lineThickness) {
         this.maxSize = maxSize;
         this.populationCount = populationCount;
         this.populationSize = populationSize;
@@ -25,6 +26,7 @@ public class AlgorithmParameters {
 
     public void setImage(BufferedImage image) {
         this.image = image;
+        this.imageChanged = true;
         this.changed = true;
     }
 
@@ -79,5 +81,9 @@ public class AlgorithmParameters {
 
     public boolean hasChanged() {
         return changed;
+    }
+
+    public boolean hasImageChanged() {
+        return imageChanged;
     }
 }

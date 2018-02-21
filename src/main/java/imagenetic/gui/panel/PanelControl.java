@@ -130,7 +130,7 @@ public class PanelControl extends JPanel {
         JLabel lblPopulationVisibility = new JLabel("Összes mutatása:");
         panelPopulationVisibility.add(lblPopulationVisibility);
 
-        JCheckBox chckbxPopulationVisibility = new JCheckBox("");
+        JCheckBox chckbxPopulationVisibility = new JCheckBox("", Config.DEF_SHOW_ALL);
         chckbxPopulationVisibility.setHorizontalAlignment(SwingConstants.RIGHT);
         chckbxPopulationVisibility.addItemListener(e -> Bridge.sceneSide.showAll(e.getStateChange() == ItemEvent.SELECTED));
         panelPopulationVisibility.add(chckbxPopulationVisibility);

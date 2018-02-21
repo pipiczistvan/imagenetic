@@ -5,64 +5,60 @@ import imagenetic.common.Config;
 import imagenetic.common.api.SceneSide;
 import imagenetic.scene.asset.line.genetic.AlgorithmParameters;
 import imagenetic.scene.asset.line.genetic.LineGeneticAlgorithm;
+import imagenetic.scene.asset.line.manager.LineModelManager;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
-import piengine.object.model.manager.ModelManager;
-import piengine.visual.image.manager.ImageManager;
 import puppeteer.annotation.premade.Wire;
 
 import java.awt.image.BufferedImage;
 
 public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSide {
 
-    private final ModelManager modelManager;
-    private final ImageManager imageManager;
+    private final LineModelManager lineModelManager;
 
-    private LineModelManager lineModelManager;
     private AlgorithmParameters parameters;
     private LineGeneticAlgorithm geneticAlgorithm;
 
     private float elapsedTime = 0;
     private boolean visualChanged = false;
 
-    private boolean interpolated = false;
     private boolean paused = true;
     private int speed = Config.DEF_SPEED;
 
     @Wire
-    public LineAsset(final AssetManager assetManager, final ModelManager modelManager, final ImageManager imageManager) {
+    public LineAsset(final AssetManager assetManager, final LineModelManager lineModelManager) {
         super(assetManager);
 
-        this.modelManager = modelManager;
-        this.imageManager = imageManager;
+        this.lineModelManager = lineModelManager;
     }
 
     @Override
     public void initialize() {
         parameters = new AlgorithmParameters(
-                null, arguments.geneticAlgorithmSize,
+                arguments.geneticAlgorithmSize,
                 Config.DEF_POPULATION_COUNT, Config.DEF_POPULATION_SIZE,
                 Config.DEF_ENTITY_LENGTH, Config.DEF_ENTITY_THICKNESS
         );
         geneticAlgorithm = new LineGeneticAlgorithm(parameters);
-        lineModelManager = new LineModelManager(this, modelManager, imageManager, geneticAlgorithm.getGenerations());
 
-        lineModelManager.initializeModels();
+        lineModelManager.initialize(this);
     }
 
     @Override
     public void update(final float delta) {
+        if (parameters.hasImageChanged()) {
+            geneticAlgorithm.initializeFitnessFunction();
+        }
         if (parameters.hasChanged()) {
             geneticAlgorithm.initializePopulation();
-            lineModelManager.initializeGenerations();
-            lineModelManager.extrapolate();
+            lineModelManager.setGenerations(geneticAlgorithm.getGenerations());
+            lineModelManager.updateView();
         }
-
         if (visualChanged) {
             visualChanged = false;
-            lineModelManager.synchronize();
+            lineModelManager.updateView();
         }
 
         if (!paused) {
@@ -76,11 +72,7 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
                 progression = 0;
             }
 
-            if (interpolated) {
-                lineModelManager.interpolate(progression);
-            } else {
-                lineModelManager.extrapolate();
-            }
+            lineModelManager.synchronize(progression);
         }
     }
 
@@ -115,7 +107,7 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
 
     @Override
     public void setInterpolated(final boolean interpolated) {
-        this.interpolated = interpolated;
+        this.lineModelManager.setInterpolated(interpolated);
     }
 
     // FUNDAMENTAL
@@ -143,7 +135,6 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     @Override
     public void setImage(final BufferedImage image) {
         this.parameters.setImage(image);
-        this.geneticAlgorithm.initializeFitnessFunction();
     }
 
     // GETTERS

@@ -25,6 +25,8 @@ import piengine.visual.render.domain.plan.WorldRenderPlanBuilder;
 import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
+import static imagenetic.common.Config.MAX_SCALE;
+import static imagenetic.common.Config.MIN_SCALE;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
@@ -43,9 +45,6 @@ import static piengine.visual.postprocessing.domain.EffectType.RADIAL_GRADIENT_E
 public class MainScene extends Scene {
 
     private static final Vector2i VIEWPORT = new Vector2i();
-
-    private static final float MIN_SCALE = 0.1f;
-    private static final float MAX_SCALE = 3.0f;
 
     private final InputManager inputManager;
     private final DisplayManager displayManager;

@@ -2,6 +2,7 @@ package imagenetic.common;
 
 public class Config {
 
+    // UI
     public static final int MIN_POPULATION_COUNT = 2;
     public static final int MAX_POPULATION_COUNT = 10;
     public static final int DEF_POPULATION_COUNT = 6;
@@ -25,6 +26,14 @@ public class Config {
     public static final int MIN_SPEED = 1;
     public static final int MAX_SPEED = 10;
     public static final int DEF_SPEED = 6;
+
+    public static final boolean DEF_SHOW_ALL = false;
+
+    // Scene
+    public static final float MIN_SCALE = 0.1f;
+    public static final float DEF_SCALE = 1.0f;
+    public static final float MAX_SCALE = 3.0f;
+    public static final int INTERPOLATION_THRESHOLD = 10;
 
     private Config() {
     }

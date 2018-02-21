@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.Objects;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class Main {
@@ -34,8 +33,8 @@ public class Main {
         piEngine engine = new piEngine(
                 APPLICATION_PROPERTIES,
                 asList(coreLibrary, frameLibrary, guiLibrary),
-                singletonList(".*pi-engine.*\\.jar"),
-                emptyList()
+                asList(".*pi-engine.*\\.jar", "^.*/target/.*$"),
+                singletonList("imagenetic.*.manager")
         );
 
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");

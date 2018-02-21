@@ -42,5 +42,6 @@ public class LineGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> {
 
     public void initializeFitnessFunction() {
         ((LayerFitnessFunction) fitnessFunction).initialize();
+        parameters.imageChanged = false;
     }
 }
