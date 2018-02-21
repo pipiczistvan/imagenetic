@@ -66,18 +66,20 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
         }
 
         if (!paused) {
-            if (interpolated) {
-                lineModelManager.interpolate(delta * speed);
-            } else {
-                lineModelManager.extrapolate();
-            }
+            float progression = delta * speed;
+            elapsedTime += progression;
 
             if (elapsedTime >= 1) {
                 elapsedTime = 0;
                 geneticAlgorithm.nextGeneration(1f, 2f);
                 Bridge.frameSide.updateLabels();
+                progression = 0;
+            }
+
+            if (interpolated) {
+                lineModelManager.interpolate(progression);
             } else {
-                elapsedTime += delta * speed;
+                lineModelManager.extrapolate();
             }
         }
     }
