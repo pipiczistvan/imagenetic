@@ -99,5 +99,8 @@ public class LineModelManager {
 
     public void setInterpolated(final boolean interpolated) {
         this.interpolated = interpolated;
+        if (interpolated) {
+            continuousSynchronizer.setupGenerations();
+        }
     }
 }

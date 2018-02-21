@@ -19,8 +19,8 @@ public abstract class Synchronizer {
     private final Image grayTexture;
     private final List[] lineModels;
 
+    protected static Generation<LayerChromosome> currentGeneration;
     protected List<Generation<LayerChromosome>> generations;
-    protected Generation<LayerChromosome> currentGeneration;
 
     private float viewScale = Config.DEF_SCALE;
     private boolean showAll = Config.DEF_SHOW_ALL;
@@ -48,7 +48,7 @@ public abstract class Synchronizer {
 
     public void setGenerations(final List<Generation<LayerChromosome>> generations) {
         this.generations = generations;
-        this.currentGeneration = generations.get(0);
+        currentGeneration = generations.get(0);
     }
 
     public void setViewScale(final float viewScale) {
