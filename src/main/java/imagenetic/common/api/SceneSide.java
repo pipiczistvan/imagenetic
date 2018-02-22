@@ -4,7 +4,11 @@ import java.awt.image.BufferedImage;
 
 public interface SceneSide {
 
+    void reset();
+
     boolean isAlgorithmPaused();
+
+    boolean isInterpolated();
 
     void setAlgorithmStatus(final boolean paused);
 
@@ -17,12 +21,6 @@ public interface SceneSide {
     void showAll(final boolean show);
 
     void setImage(final BufferedImage image);
-
-    int getNumberOfGenerations();
-
-    float getAverageFitness();
-
-    float getBestFitness();
 
     void setThreshold(final float threshold);
 

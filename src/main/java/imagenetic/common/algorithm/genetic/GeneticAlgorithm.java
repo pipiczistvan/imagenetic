@@ -105,7 +105,7 @@ public abstract class GeneticAlgorithm<T> {
     }
 
     public int getNumberOfGenerations() {
-        return generations.size();
+        return generations.size() - 1;
     }
 
     public float getAverageFitness() {

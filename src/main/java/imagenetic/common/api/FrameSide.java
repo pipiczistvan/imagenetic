@@ -2,7 +2,7 @@ package imagenetic.common.api;
 
 public interface FrameSide {
 
-    void updateLabels();
+    void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec);
 
     int getX();
 

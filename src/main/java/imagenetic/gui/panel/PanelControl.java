@@ -2,71 +2,125 @@ package imagenetic.gui.panel;
 
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
+import imagenetic.gui.common.ImageChooser;
 import net.miginfocom.swing.MigLayout;
+import piengine.core.base.resource.ResourceLoader;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.IMAGES_LOCATION;
 
 public class PanelControl extends JPanel {
 
+    private final ResourceLoader imageLoader = new ResourceLoader(get(IMAGES_LOCATION), "png");
+    private final ImageIcon backwardButtonIcon;
+    private final ImageIcon forwardButtonIcon;
+    private final ImageIcon pauseButtonIcon;
+    private final ImageIcon playButtonIcon;
+    private final ImageIcon stopButtonIcon;
+
+    private JButton btnPlay;
+    private JButton btnReset;
+    private JSpinner spinnerPopulationCount;
+    private JSpinner spinnerPopulationSize;
+    private JSlider sliderEntityLength;
+    private JSlider sliderEntityThickness;
     private JLabel lblImage;
 
+    private boolean paused = false;
+    private boolean reseted = true;
+    private boolean imageLoaded = false;
+    private int speed = Config.DEF_SPEED;
+
     public PanelControl() {
+        backwardButtonIcon = new ImageIcon(imageLoader.getUrl("backward-button"));
+        forwardButtonIcon = new ImageIcon(imageLoader.getUrl("forward-button"));
+        pauseButtonIcon = new ImageIcon(imageLoader.getUrl("pause-button"));
+        playButtonIcon = new ImageIcon(imageLoader.getUrl("play-button"));
+        stopButtonIcon = new ImageIcon(imageLoader.getUrl("stop-button"));
+
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         // PANEL BUTTON
 
         JPanel panelButton = new JPanel();
         this.add(panelButton);
-        panelButton.setLayout(new MigLayout("", "[172, grow]", "[23px][14px][14px][45px]"));
+        panelButton.setLayout(new MigLayout("", "[200, grow]", "[23px][14px]"));
 
-        JButton btnStart = new JButton("Start");
-        btnStart.addActionListener(e -> {
-            JButton source = (JButton) e.getSource();
-            boolean algorithmPaused = Bridge.sceneSide.isAlgorithmPaused();
+        JPanel panelPlay = new JPanel();
+        panelButton.add(panelPlay, "cell 0 0");
+        panelPlay.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-            source.setText(algorithmPaused ? "Stop" : "Start");
-            Bridge.sceneSide.setAlgorithmStatus(!algorithmPaused);
+        JButton btnSlower = new JButton("");
+        btnSlower.setIcon(backwardButtonIcon);
+        panelPlay.add(btnSlower);
+        btnSlower.addActionListener(e -> {
+            if (speed > Config.MIN_SPEED) {
+                speed--;
+            }
+
+            Bridge.sceneSide.setAlgorithmSpeed(speed);
         });
-        panelButton.add(btnStart, "flowy,cell 0 0,growx,aligny top");
-        panelButton.add(btnStart, "cell 0 0,growx,aligny center");
-        btnStart.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        btnPlay = new JButton("");
+        btnPlay.setIcon(playButtonIcon);
+        panelPlay.add(btnPlay);
+        btnPlay.addActionListener(e -> {
+            JButton source = (JButton) e.getSource();
+            paused = Bridge.sceneSide.isAlgorithmPaused();
+            reseted = false;
+            updatePermissions();
+
+            source.setIcon(paused ? pauseButtonIcon : playButtonIcon);
+            Bridge.sceneSide.setAlgorithmStatus(!paused);
+        });
+        btnPlay.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton btnFaster = new JButton("");
+        btnFaster.setIcon(forwardButtonIcon);
+        panelPlay.add(btnFaster);
+        btnFaster.addActionListener(e -> {
+            if (speed < Config.MAX_SPEED) {
+                speed++;
+            }
+
+            Bridge.sceneSide.setAlgorithmSpeed(speed);
+        });
+
+        btnReset = new JButton("");
+        btnReset.setIcon(stopButtonIcon);
+        panelPlay.add(btnReset);
+        btnReset.addActionListener(e -> {
+            reseted = true;
+            paused = true;
+            btnPlay.setIcon(playButtonIcon);
+            updatePermissions();
+
+            Bridge.sceneSide.setAlgorithmStatus(paused);
+            Bridge.sceneSide.reset();
+        });
 
         JPanel panelInterpolation = new JPanel();
         panelButton.add(panelInterpolation, "cell 0 1,grow");
-        panelInterpolation.setLayout(new GridLayout(0, 3, 0, 0));
+        panelInterpolation.setLayout(new GridLayout(0, 1, 0, 0));
 
-        JLabel lblInterpolation = new JLabel("Interpoláció:");
-        panelInterpolation.add(lblInterpolation);
+        JButton btnInterpolation = new JButton("Diszkrét");
+        panelInterpolation.add(btnInterpolation);
+        btnInterpolation.addActionListener(e -> {
+            JButton source = (JButton) e.getSource();
+            boolean interpolated = Bridge.sceneSide.isInterpolated();
 
-        Component hstrutInterpolation = Box.createHorizontalStrut(20);
-        panelInterpolation.add(hstrutInterpolation);
-
-        JCheckBox chckbxInterpolation = new JCheckBox("");
-        chckbxInterpolation.setHorizontalAlignment(SwingConstants.RIGHT);
-        chckbxInterpolation.addItemListener(e -> Bridge.sceneSide.setInterpolated(e.getStateChange() == ItemEvent.SELECTED));
-        panelInterpolation.add(chckbxInterpolation);
-
-        JLabel lblSpeed = new JLabel("Sebesség:");
-        panelButton.add(lblSpeed, "cell 0 2,alignx left,aligny center");
-
-        JSlider sliderSpeed = new JSlider();
-        sliderSpeed.setMajorTickSpacing(1);
-        sliderSpeed.setPaintLabels(true);
-        sliderSpeed.setPaintTicks(true);
-        sliderSpeed.setSnapToTicks(true);
-        sliderSpeed.setValue(Config.DEF_SPEED);
-        sliderSpeed.setMaximum(Config.MAX_SPEED);
-        sliderSpeed.setMinimum(Config.MIN_SPEED);
-        sliderSpeed.addChangeListener(e -> {
-            JSlider source = (JSlider) e.getSource();
-            Bridge.sceneSide.setAlgorithmSpeed(source.getValue());
+            source.setText(!interpolated ? "Folytonos" : "Diszkrét");
+            Bridge.sceneSide.setInterpolated(!interpolated);
         });
-        panelButton.add(sliderSpeed, "cell 0 3,alignx center,aligny center");
 
         // PANEL POPULATION
 
@@ -74,7 +128,7 @@ public class PanelControl extends JPanel {
         panelPopulation.setAlignmentY(Component.TOP_ALIGNMENT);
         panelPopulation.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Populáció", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         this.add(panelPopulation);
-        panelPopulation.setLayout(new MigLayout("", "[172px,grow]", "[21px][grow][21px]"));
+        panelPopulation.setLayout(new MigLayout("", "[200px,grow]", "[21px][grow][21px]"));
 
         // population count
 
@@ -90,7 +144,7 @@ public class PanelControl extends JPanel {
         Component hstrutPopulationCount = Box.createHorizontalStrut(20);
         panelPopulationCount.add(hstrutPopulationCount);
 
-        JSpinner spinnerPopulationCount = new JSpinner();
+        spinnerPopulationCount = new JSpinner();
         spinnerPopulationCount.setModel(new SpinnerNumberModel(Config.DEF_POPULATION_COUNT, Config.MIN_POPULATION_COUNT, Config.MAX_POPULATION_COUNT, 1));
         spinnerPopulationCount.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
@@ -112,7 +166,7 @@ public class PanelControl extends JPanel {
         Component hstrutPopulationSize = Box.createHorizontalStrut(20);
         panelPopulationSize.add(hstrutPopulationSize);
 
-        JSpinner spinnerPopulationSize = new JSpinner();
+        spinnerPopulationSize = new JSpinner();
         spinnerPopulationSize.setModel(new SpinnerNumberModel(Config.DEF_POPULATION_SIZE, Config.MIN_POPULATION_SIZE, Config.MAX_POPULATION_SIZE, 50));
         spinnerPopulationSize.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
@@ -140,7 +194,7 @@ public class PanelControl extends JPanel {
         JPanel panelEntity = new JPanel();
         panelEntity.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Egyed", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         this.add(panelEntity);
-        panelEntity.setLayout(new MigLayout("", "[172px]", "[26px][26px][20px]"));
+        panelEntity.setLayout(new MigLayout("", "[200px]", "[26px][26px][20px]"));
 
         // entity length
 
@@ -152,7 +206,7 @@ public class PanelControl extends JPanel {
         lblEntityLength.setHorizontalAlignment(SwingConstants.LEFT);
         panelEntityLength.add(lblEntityLength);
 
-        JSlider sliderEntityLength = new JSlider();
+        sliderEntityLength = new JSlider();
         sliderEntityLength.setMajorTickSpacing(1);
         sliderEntityLength.setSnapToTicks(true);
         sliderEntityLength.setValue(Config.DEF_ENTITY_LENGTH);
@@ -174,7 +228,7 @@ public class PanelControl extends JPanel {
         lblEntityThickness.setHorizontalAlignment(SwingConstants.LEFT);
         panelEntityThickness.add(lblEntityThickness);
 
-        JSlider sliderEntityThickness = new JSlider();
+        sliderEntityThickness = new JSlider();
         sliderEntityThickness.setMajorTickSpacing(1);
         sliderEntityThickness.setSnapToTicks(true);
         sliderEntityThickness.setValue(Config.DEF_ENTITY_THICKNESS);
@@ -202,7 +256,7 @@ public class PanelControl extends JPanel {
         spinnerEntityThreshold.setModel(new SpinnerNumberModel(Config.DEF_ENTITY_THRESHOLD, Config.MIN_ENTITY_THRESHOLD, Config.MAX_ENTITY_THRESHOLD, 0.1f));
         spinnerEntityThreshold.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            Bridge.sceneSide.setThreshold((float)(double) spinner.getValue());
+            Bridge.sceneSide.setThreshold((float) (double) spinner.getValue());
         });
         panelEntityThreshold.add(spinnerEntityThreshold);
 
@@ -211,15 +265,30 @@ public class PanelControl extends JPanel {
         JPanel panelImage = new JPanel();
         panelImage.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(panelImage);
-        panelImage.setLayout(new GridLayout(0, 1, 0, 0));
+        panelImage.setLayout(new MigLayout("", "[200px,grow]", "[200px,grow]"));
 
-        lblImage = new JLabel("");
+        lblImage = new JLabel("Kép kiválasztása...");
+        lblImage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblImage.setBorder(BorderFactory.createDashedBorder(Color.BLACK, 2, 4, 3, true));
+        lblImage.setPreferredSize(new Dimension(200, 200));
+        lblImage.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblImage.setHorizontalAlignment(SwingConstants.CENTER);
-        panelImage.add(lblImage);
+        ImageChooser imageChooser = new ImageChooser(lblImage);
+        PanelControl panelControl = this;
+        lblImage.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                imageChooser.choose(panelControl::updateImage);
+            }
+        });
+        panelImage.add(lblImage, "cell 0 0,grow");
 
         JPanel panelBottom = new JPanel();
         this.add(panelBottom);
         panelBottom.setLayout(new BorderLayout(0, 0));
+
+        // PERMISSIONS
+        updatePermissions();
     }
 
     public void updateImage(final BufferedImage image) {
@@ -228,10 +297,10 @@ public class PanelControl extends JPanel {
 
         BufferedImage originalImage = copyImage(image);
         if (originalImage.getWidth() > originalImage.getHeight()) {
-            newImageWidth = lblImage.getWidth();
+            newImageWidth = lblImage.getHeight();
             newImageHeight = (int) (newImageWidth / (float) originalImage.getWidth() * originalImage.getHeight());
         } else {
-            newImageHeight = lblImage.getWidth();
+            newImageHeight = lblImage.getHeight();
             newImageWidth = (int) (newImageHeight / (float) originalImage.getHeight() * originalImage.getWidth());
         }
 
@@ -239,8 +308,22 @@ public class PanelControl extends JPanel {
         ImageIcon imageIcon = new ImageIcon(scaledImage);
 
         lblImage.setIcon(imageIcon);
+        lblImage.setText("");
+
+        imageLoaded = true;
+        updatePermissions();
 
         Bridge.sceneSide.setImage(image);
+    }
+
+    private void updatePermissions() {
+        btnPlay.setEnabled(imageLoaded);
+        btnReset.setEnabled(!reseted);
+
+        spinnerPopulationCount.setEnabled(reseted);
+        spinnerPopulationSize.setEnabled(reseted);
+        sliderEntityLength.setEnabled(reseted);
+        sliderEntityThickness.setEnabled(reseted);
     }
 
     private static BufferedImage copyImage(final BufferedImage source) {

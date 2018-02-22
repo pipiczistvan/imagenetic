@@ -1,42 +1,40 @@
 package imagenetic.gui.panel;
 
-import imagenetic.common.Bridge;
+import imagenetic.common.Config;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class PanelLabel extends JPanel {
 
-    private JLabel lblGenerationCountValue;
-    private JLabel lblAverageFitnessValue;
-    private JLabel lblBestFitnessValue;
+    private JLabel lblGenerationCount;
+    private JLabel lblAverageFitness;
+    private JLabel lblBestFitness;
+    private JLabel lblSpeed;
 
     public PanelLabel() {
         FlowLayout flowLayout = (FlowLayout) this.getLayout();
         flowLayout.setAlignment(FlowLayout.LEFT);
 
-        JLabel lblGenerationCount = new JLabel("Generációk száma:");
+        this.lblGenerationCount = new JLabel("");
         this.add(lblGenerationCount);
 
-        lblGenerationCountValue = new JLabel("0");
-        this.add(lblGenerationCountValue);
-
-        JLabel lblAverageFitness = new JLabel("Átlagos fitness:");
+        this.lblAverageFitness = new JLabel("");
         this.add(lblAverageFitness);
 
-        lblAverageFitnessValue = new JLabel("0");
-        this.add(lblAverageFitnessValue);
-
-        JLabel lblBestFitness = new JLabel("Legjobb fitness:");
+        this.lblBestFitness = new JLabel("");
         this.add(lblBestFitness);
 
-        lblBestFitnessValue = new JLabel("0");
-        this.add(lblBestFitnessValue);
+        lblSpeed = new JLabel("");
+        this.add(lblSpeed);
+
+        updateLabels(0, 0, 0, Config.DEF_SPEED);
     }
 
-    public void updateLabels() {
-        lblGenerationCountValue.setText(String.format("%s", Bridge.sceneSide.getNumberOfGenerations()));
-        lblAverageFitnessValue.setText(String.format("%1.3f", Bridge.sceneSide.getAverageFitness()));
-        lblBestFitnessValue.setText(String.format("%1.3f", Bridge.sceneSide.getBestFitness()));
+    public void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec) {
+        lblGenerationCount.setText(String.format("Generációk száma: %s", numberOfGenerations));
+        lblAverageFitness.setText(String.format("Átlagos fitness: %1.3f", averageFitness));
+        lblBestFitness.setText(String.format("Legjobb fitness: %1.3f", bestFitness));
+        lblSpeed.setText(String.format("Sebesség: %s generáció/mp", generationsPerSec));
     }
 }

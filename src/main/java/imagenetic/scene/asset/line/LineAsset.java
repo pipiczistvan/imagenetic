@@ -52,9 +52,7 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
             geneticAlgorithm.initializeFitnessFunction();
         }
         if (parameters.hasChanged()) {
-            geneticAlgorithm.initializePopulation();
-            lineModelManager.setGenerations(geneticAlgorithm.getGenerations());
-            lineModelManager.updateView();
+            reset();
         }
         if (visualChanged) {
             visualChanged = false;
@@ -68,12 +66,20 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
             if (elapsedTime >= 1) {
                 elapsedTime = 0;
                 geneticAlgorithm.nextGeneration(1f, 2f);
-                Bridge.frameSide.updateLabels();
+                updateLabels();
                 progression = 0;
             }
 
             lineModelManager.synchronize(progression);
         }
+    }
+
+    @Override
+    public void reset() {
+        geneticAlgorithm.initializePopulation();
+        lineModelManager.setGenerations(geneticAlgorithm.getGenerations());
+        lineModelManager.updateView();
+        updateLabels();
     }
 
     // VISUAL
@@ -98,6 +104,7 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     @Override
     public void setAlgorithmSpeed(final int speed) {
         this.speed = speed;
+        updateLabels();
     }
 
     @Override
@@ -140,23 +147,13 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     // GETTERS
 
     @Override
-    public int getNumberOfGenerations() {
-        return geneticAlgorithm.getNumberOfGenerations();
-    }
-
-    @Override
-    public float getAverageFitness() {
-        return geneticAlgorithm.getAverageFitness();
-    }
-
-    @Override
-    public float getBestFitness() {
-        return geneticAlgorithm.getBestFitness();
-    }
-
-    @Override
     public boolean isAlgorithmPaused() {
         return paused;
+    }
+
+    @Override
+    public boolean isInterpolated() {
+        return this.lineModelManager.isInterpolated();
     }
 
     @Override
@@ -164,5 +161,9 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
         return WorldRenderAssetContextBuilder.create()
                 .loadModels(lineModelManager.getLineModels())
                 .build();
+    }
+
+    private void updateLabels() {
+        Bridge.frameSide.updateLabels(geneticAlgorithm.getNumberOfGenerations(), geneticAlgorithm.getAverageFitness(), geneticAlgorithm.getBestFitness(), speed);
     }
 }

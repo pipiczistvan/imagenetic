@@ -103,4 +103,8 @@ public class LineModelManager {
             continuousSynchronizer.setupGenerations();
         }
     }
+
+    public boolean isInterpolated() {
+        return interpolated;
+    }
 }
