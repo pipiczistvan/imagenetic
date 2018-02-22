@@ -6,24 +6,21 @@ import javax.annotation.Nonnull;
 
 public class Entity<T> implements Comparable<Entity<T>> {
 
-    private final FitnessFunction<T> fitnessFunction;
-
     private T genoType;
     private Float fitness;
 
-    public Entity(T genoType, FitnessFunction<T> fitnessFunction) {
-        this.fitnessFunction = fitnessFunction;
+    public Entity(final T genoType, final FitnessFunction<T> fitnessFunction) {
+        this.genoType = genoType;
+        this.fitness = fitnessFunction != null ? fitnessFunction.calculate(genoType) : 0.0f;
+    }
 
-        setGenoType(genoType);
+    public Entity(final T genoType, final float fitness) {
+        this.genoType = genoType;
+        this.fitness = fitness;
     }
 
     public T getGenoType() {
         return genoType;
-    }
-
-    public void setGenoType(T genoType) {
-        this.genoType = genoType;
-        this.fitness = fitnessFunction != null ? fitnessFunction.calculate(genoType) : 0.0f;
     }
 
     public Float getFitness() {

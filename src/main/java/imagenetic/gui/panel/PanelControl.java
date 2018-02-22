@@ -253,10 +253,10 @@ public class PanelControl extends JPanel {
         panelEntityThreshold.add(hstrutEntityThreshold);
 
         JSpinner spinnerEntityThreshold = new JSpinner();
-        spinnerEntityThreshold.setModel(new SpinnerNumberModel(Config.DEF_ENTITY_THRESHOLD, Config.MIN_ENTITY_THRESHOLD, Config.MAX_ENTITY_THRESHOLD, 0.1f));
+        spinnerEntityThreshold.setModel(new SpinnerNumberModel(Config.DEF_ENTITY_THRESHOLD, Config.MIN_ENTITY_THRESHOLD, Config.MAX_ENTITY_THRESHOLD, 0.1d));
         spinnerEntityThreshold.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            Bridge.sceneSide.setThreshold((float) (double) spinner.getValue());
+            Bridge.sceneSide.setThreshold((double) spinner.getValue());
         });
         panelEntityThreshold.add(spinnerEntityThreshold);
 

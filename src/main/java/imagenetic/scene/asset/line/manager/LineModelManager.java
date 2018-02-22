@@ -6,10 +6,10 @@ import imagenetic.scene.asset.line.LineAsset;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.manager.sync.ContinuousSynchronizer;
 import imagenetic.scene.asset.line.manager.sync.DiscreteSynchronizer;
+import piengine.core.base.type.color.Color;
+import piengine.core.utils.ColorUtils;
 import piengine.object.model.domain.Model;
 import piengine.object.model.manager.ModelManager;
-import piengine.visual.image.domain.Image;
-import piengine.visual.image.manager.ImageManager;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -23,7 +23,6 @@ public class LineModelManager {
     private static final int MODEL_POPULATION_SIZE = Config.MAX_POPULATION_SIZE;
 
     private final ModelManager modelManager;
-    private final ImageManager imageManager;
     private final List[] lineModels;
 
     private boolean interpolated = false;
@@ -32,26 +31,22 @@ public class LineModelManager {
     private ContinuousSynchronizer continuousSynchronizer;
 
     @Wire
-    public LineModelManager(final ModelManager modelManager, final ImageManager imageManager) {
+    public LineModelManager(final ModelManager modelManager) {
         this.modelManager = modelManager;
-        this.imageManager = imageManager;
         this.lineModels = new List[MODEL_POPULATION_COUNT];
     }
 
     public void initialize(final LineAsset parent) {
-        Image blackTexture = imageManager.supply("black");
-        Image grayTexture = imageManager.supply("gray");
-
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             lineModels[i] = new ArrayList();
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                Model lineModel = modelManager.supply(parent, "octahedron", grayTexture, true);
+                Model lineModel = modelManager.supply(parent, "octahedron", null, new Color(ColorUtils.BLACK), true);
                 lineModels[i].add(lineModel);
             }
         }
 
-        discreteSynchronizer = new DiscreteSynchronizer(MODEL_POPULATION_COUNT, MODEL_POPULATION_SIZE, blackTexture, grayTexture, lineModels);
-        continuousSynchronizer = new ContinuousSynchronizer(MODEL_POPULATION_COUNT, MODEL_POPULATION_SIZE, blackTexture, grayTexture, lineModels);
+        discreteSynchronizer = new DiscreteSynchronizer(MODEL_POPULATION_COUNT, MODEL_POPULATION_SIZE, lineModels);
+        continuousSynchronizer = new ContinuousSynchronizer(MODEL_POPULATION_COUNT, MODEL_POPULATION_SIZE, lineModels);
     }
 
     public void synchronize(final float delta) {
@@ -87,7 +82,7 @@ public class LineModelManager {
         continuousSynchronizer.setShowAll(showAll);
     }
 
-    public void setThreshold(final float threshold) {
+    public void setThreshold(final double threshold) {
         discreteSynchronizer.setThreshold(threshold);
         continuousSynchronizer.setThreshold(threshold);
     }

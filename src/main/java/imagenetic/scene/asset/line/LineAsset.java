@@ -96,7 +96,7 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     }
 
     @Override
-    public void setThreshold(final float threshold) {
+    public void setThreshold(final double threshold) {
         this.lineModelManager.setThreshold(threshold);
         this.visualChanged = true;
     }

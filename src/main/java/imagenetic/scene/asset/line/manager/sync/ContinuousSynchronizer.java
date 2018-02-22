@@ -7,22 +7,20 @@ import imagenetic.common.util.Vector3fUtil;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector3f;
-import piengine.visual.image.domain.Image;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContinuousSynchronizer extends Synchronizer {
 
-    private Generation<LayerChromosome> oldGeneration;
-    private Generation<LayerChromosome> newGeneration;
+    private Generation<LayerChromosome> srcGeneration;
+    private Generation<LayerChromosome> destGeneration;
 
     private int lastGenerationSize = -1;
     private float progression = 0.0f;
 
-    public ContinuousSynchronizer(final int modelPopulationCount, final int modelPopulationSize,
-                                  final Image blackTexture, final Image grayTexture, final List[] lineModels) {
-        super(modelPopulationCount, modelPopulationSize, blackTexture, grayTexture, lineModels);
+    public ContinuousSynchronizer(final int modelPopulationCount, final int modelPopulationSize, final List[] lineModels) {
+        super(modelPopulationCount, modelPopulationSize, lineModels);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class ContinuousSynchronizer extends Synchronizer {
             interpolationProgression = 1;
         }
 
-        return createInterpolatedGeneration(oldGeneration, newGeneration, interpolationProgression);
+        return createInterpolatedGeneration(srcGeneration, destGeneration, interpolationProgression);
     }
 
     @Override
@@ -53,34 +51,39 @@ public class ContinuousSynchronizer extends Synchronizer {
     }
 
     public void setupGenerations() {
-        this.oldGeneration = currentGeneration;
-        this.newGeneration = generations.get(generations.size() - 1);
+        int srcIndex = generations.size() - 2;
+        if (srcIndex < 0) {
+            srcIndex = 0;
+        }
+
+        this.srcGeneration = generations.get(srcIndex);
+        this.destGeneration = generations.get(generations.size() - 1);
     }
 
     private void sortGenerations(final Generation<LayerChromosome> src, final Generation<LayerChromosome> dest) {
-        List<Entity<LayerChromosome>> nOldLayer = new ArrayList<>();
-        List<Entity<LayerChromosome>> nNewLayer = new ArrayList<>();
+        List<Entity<LayerChromosome>> newSrcLayers = new ArrayList<>();
+        List<Entity<LayerChromosome>> newDestLayers = new ArrayList<>();
         for (int i = 0; i < src.population.size(); i++) {
-            Entity<LayerChromosome> oldLayer = src.population.get(i);
-            Entity<LayerChromosome> newLayer = dest.population.get(i);
+            Entity<LayerChromosome> srcLayer = src.population.get(i);
+            Entity<LayerChromosome> destLayer = dest.population.get(i);
 
-            List<LineChromosome> nOldChromosomes = new ArrayList<>();
-            List<LineChromosome> nNewChromosomes = new ArrayList<>();
-            List<LineChromosome> choosableChromosomes = new ArrayList<>(newLayer.getGenoType().lineChromosomes);
-            for (int j = 0; j < src.population.get(i).getGenoType().lineChromosomes.size(); j++) {
-                LineChromosome oldLineChromosome = src.population.get(i).getGenoType().lineChromosomes.get(j);
-                LineChromosome newLineChromosome = pickClosest(choosableChromosomes, oldLineChromosome);
+            List<LineChromosome> newSrcChromosomes = new ArrayList<>();
+            List<LineChromosome> newDestChromosomes = new ArrayList<>();
+            List<LineChromosome> choosableChromosomes = new ArrayList<>(destLayer.getGenoType().lineChromosomes);
+            for (int j = 0; j < srcLayer.getGenoType().lineChromosomes.size(); j++) {
+                LineChromosome srcLineChromosome = srcLayer.getGenoType().lineChromosomes.get(j);
+                LineChromosome destLineChromosome = pickClosest(choosableChromosomes, srcLineChromosome);
 
-                nOldChromosomes.add(new LineChromosome(oldLineChromosome));
-                nNewChromosomes.add(new LineChromosome(newLineChromosome));
+                newSrcChromosomes.add(new LineChromosome(srcLineChromosome));
+                newDestChromosomes.add(new LineChromosome(destLineChromosome));
             }
 
-            nOldLayer.add(new Entity<>(new LayerChromosome(nOldChromosomes), c -> oldLayer.getFitness()));
-            nNewLayer.add(new Entity<>(new LayerChromosome(nNewChromosomes), c -> newLayer.getFitness()));
+            newSrcLayers.add(new Entity<>(new LayerChromosome(newSrcChromosomes), srcLayer.getFitness()));
+            newDestLayers.add(new Entity<>(new LayerChromosome(newDestChromosomes), destLayer.getFitness()));
         }
 
-        oldGeneration = new Generation<>(nOldLayer);
-        newGeneration = new Generation<>(nNewLayer);
+        srcGeneration = new Generation<>(newSrcLayers);
+        destGeneration = new Generation<>(newDestLayers);
     }
 
     private LineChromosome pickClosest(final List<LineChromosome> choosables, final LineChromosome reference) {
@@ -104,26 +107,26 @@ public class ContinuousSynchronizer extends Synchronizer {
     private Generation<LayerChromosome> createInterpolatedGeneration(final Generation<LayerChromosome> src, final Generation<LayerChromosome> dest, final float progression) {
         List<Entity<LayerChromosome>> currentPopulation = new ArrayList<>();
         for (int i = 0; i < src.population.size(); i++) {
-            Entity<LayerChromosome> oldLayer = src.population.get(i);
-            Entity<LayerChromosome> newLayer = dest.population.get(i);
+            Entity<LayerChromosome> srcLayer = src.population.get(i);
+            Entity<LayerChromosome> destLayer = dest.population.get(i);
 
-            List<LineChromosome> oldLineChromosomes = oldLayer.getGenoType().lineChromosomes;
-            List<LineChromosome> newLineChromosomes = newLayer.getGenoType().lineChromosomes;
+            List<LineChromosome> srcLineChromosomes = srcLayer.getGenoType().lineChromosomes;
+            List<LineChromosome> destLineChromosomes = destLayer.getGenoType().lineChromosomes;
 
             List<LineChromosome> lineChromosomes = new ArrayList<>();
-            for (int j = 0; j < oldLineChromosomes.size(); j++) {
-                LineChromosome oldChromosome = oldLineChromosomes.get(j);
-                LineChromosome newChromosome = newLineChromosomes.get(j);
+            for (int j = 0; j < srcLineChromosomes.size(); j++) {
+                LineChromosome srcChromosome = srcLineChromosomes.get(j);
+                LineChromosome destChromosome = destLineChromosomes.get(j);
 
                 LineChromosome currentChromosome = new LineChromosome(
-                        Vector3fUtil.interpolatePosition(oldChromosome.position, newChromosome.position, progression),
-                        Vector3fUtil.interpolateRotation(oldChromosome.rotation, newChromosome.rotation, progression),
-                        Vector3fUtil.interpolatePosition(oldChromosome.scale, newChromosome.scale, progression),
-                        newChromosome.fitness
+                        Vector3fUtil.interpolatePosition(srcChromosome.position, destChromosome.position, progression),
+                        Vector3fUtil.interpolateRotation(srcChromosome.rotation, destChromosome.rotation, progression),
+                        Vector3fUtil.interpolatePosition(srcChromosome.scale, destChromosome.scale, progression),
+                        destChromosome.fitness
                 );
                 lineChromosomes.add(currentChromosome);
             }
-            currentPopulation.add(new Entity<>(new LayerChromosome(lineChromosomes), element -> newLayer.getFitness()));
+            currentPopulation.add(new Entity<>(new LayerChromosome(lineChromosomes), element -> destLayer.getFitness()));
         }
 
         return new Generation<>(currentPopulation);

@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <piengine.version>0.0.7</piengine.version>
+        <piengine.version>0.0.8</piengine.version>
         <miglayout.version>3.7.4</miglayout.version>
     </properties>
 
@@ -24,9 +24,9 @@
     <dependencies>
         <!-- PI ENGINE -->
         <dependency>
-            <groupId>istvan.pipicz.opengl</groupId>
-            <artifactId>pi-engine-frame</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.github.pipiczistvan</groupId>
+            <artifactId>pi-engine</artifactId>
+            <version>${piengine.version}</version>
         </dependency>
         <!-- MIG LAYOUT -->
         <dependency>

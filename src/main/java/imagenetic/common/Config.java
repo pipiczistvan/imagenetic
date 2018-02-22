@@ -19,9 +19,9 @@ public class Config {
     public static final int MAX_ENTITY_LENGTH = 15;
     public static final int DEF_ENTITY_LENGTH = 10;
 
-    public static final float MIN_ENTITY_THRESHOLD = -0.01f;
-    public static final float MAX_ENTITY_THRESHOLD = 1.01f;
-    public static final float DEF_ENTITY_THRESHOLD = 0.0f;
+    public static final double MIN_ENTITY_THRESHOLD = 0d;
+    public static final double MAX_ENTITY_THRESHOLD = 1d;
+    public static final double DEF_ENTITY_THRESHOLD = 0d;
 
     public static final int MIN_SPEED = 1;
     public static final int MAX_SPEED = 10;

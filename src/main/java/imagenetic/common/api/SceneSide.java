@@ -22,7 +22,7 @@ public interface SceneSide {
 
     void setImage(final BufferedImage image);
 
-    void setThreshold(final float threshold);
+    void setThreshold(final double threshold);
 
     void setThickness(final float thickness);
 

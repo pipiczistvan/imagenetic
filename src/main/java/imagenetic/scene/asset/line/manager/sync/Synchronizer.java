@@ -6,8 +6,8 @@ import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
 import org.joml.Vector3f;
+import piengine.core.utils.ColorUtils;
 import piengine.object.model.domain.Model;
-import piengine.visual.image.domain.Image;
 
 import java.util.List;
 
@@ -15,8 +15,6 @@ public abstract class Synchronizer {
 
     private final int modelPopulationCount;
     private final int modelPopulationSize;
-    private final Image blackTexture;
-    private final Image grayTexture;
     private final List[] lineModels;
 
     protected static Generation<LayerChromosome> currentGeneration;
@@ -24,14 +22,11 @@ public abstract class Synchronizer {
 
     private float viewScale = Config.DEF_SCALE;
     private boolean showAll = Config.DEF_SHOW_ALL;
-    private float threshold = Config.DEF_ENTITY_THRESHOLD;
+    private double threshold = Config.DEF_ENTITY_THRESHOLD;
 
-    public Synchronizer(final int modelPopulationCount, final int modelPopulationSize,
-                        final Image blackTexture, final Image grayTexture, final List[] lineModels) {
+    public Synchronizer(final int modelPopulationCount, final int modelPopulationSize, final List[] lineModels) {
         this.modelPopulationCount = modelPopulationCount;
         this.modelPopulationSize = modelPopulationSize;
-        this.blackTexture = blackTexture;
-        this.grayTexture = grayTexture;
         this.lineModels = lineModels;
     }
 
@@ -59,7 +54,7 @@ public abstract class Synchronizer {
         this.showAll = showAll;
     }
 
-    public void setThreshold(final float threshold) {
+    public void setThreshold(final double threshold) {
         this.threshold = threshold;
     }
 
@@ -84,10 +79,10 @@ public abstract class Synchronizer {
                         lineModel.setScale(new Vector3f(chromosome.scale).mul(viewScale));
 
                         if (i == 0) {
-                            lineModel.texture = blackTexture;
+                            lineModel.color.set(ColorUtils.BLACK);
                             lineModel.visible = chromosome.fitness >= threshold;
                         } else {
-                            lineModel.texture = grayTexture;
+                            lineModel.color.set(0.3f, 0.3f, 0.3f);
                             lineModel.visible = showAll && chromosome.fitness >= threshold;
                         }
                     } else {
