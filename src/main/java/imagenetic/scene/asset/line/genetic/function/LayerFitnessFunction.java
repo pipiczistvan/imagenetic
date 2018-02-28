@@ -117,7 +117,6 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
 
     private BufferedImage prepareImage(final BufferedImage originalImage, final int maxSize) {
         BufferedImage image = ImageProcessor.loadImage(originalImage)
-                .contrast(1f)
                 .toGrayScale()
                 .toNegative()
                 .get();

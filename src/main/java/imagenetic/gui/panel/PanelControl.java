@@ -2,6 +2,7 @@ package imagenetic.gui.panel;
 
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
+import imagenetic.common.algorithm.image.ImageProcessor;
 import imagenetic.gui.common.ImageChooser;
 import net.miginfocom.swing.MigLayout;
 import piengine.core.base.resource.ResourceLoader;
@@ -33,7 +34,11 @@ public class PanelControl extends JPanel {
     private JSpinner spinnerPopulationSize;
     private JSlider sliderEntityLength;
     private JSlider sliderEntityThickness;
+    private JSlider sliderImage;
     private JLabel lblImage;
+
+    private BufferedImage[] imageStages = new BufferedImage[3];
+    private int imageStageIndex = 0;
 
     private boolean paused = false;
     private boolean reseted = true;
@@ -263,9 +268,22 @@ public class PanelControl extends JPanel {
         // PANEL IMAGE
 
         JPanel panelImage = new JPanel();
+        panelImage.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Kép", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         panelImage.setAlignmentX(Component.LEFT_ALIGNMENT);
         this.add(panelImage);
-        panelImage.setLayout(new MigLayout("", "[200px,grow]", "[200px,grow]"));
+        panelImage.setLayout(new MigLayout("", "[200px,grow]", "[20px][200px]"));
+
+        sliderImage = new JSlider();
+        sliderImage.setValue(0);
+        sliderImage.setMaximum(2);
+        sliderImage.setSnapToTicks(true);
+        sliderImage.setPaintTicks(true);
+        sliderImage.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            imageStageIndex = source.getValue();
+            updateLabelImage();
+        });
+        panelImage.add(sliderImage, "cell 0 0,grow");
 
         lblImage = new JLabel("Kép kiválasztása...");
         lblImage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -281,7 +299,9 @@ public class PanelControl extends JPanel {
                 imageChooser.choose(panelControl::updateImage);
             }
         });
-        panelImage.add(lblImage, "cell 0 0,grow");
+        panelImage.add(lblImage, "cell 0 1,grow");
+
+        // PANEL BOTTOM
 
         JPanel panelBottom = new JPanel();
         this.add(panelBottom);
@@ -294,26 +314,30 @@ public class PanelControl extends JPanel {
     public void updateImage(final BufferedImage image) {
         int newImageWidth;
         int newImageHeight;
-
-        BufferedImage originalImage = copyImage(image);
-        if (originalImage.getWidth() > originalImage.getHeight()) {
+        if (image.getWidth() > image.getHeight()) {
             newImageWidth = lblImage.getHeight();
-            newImageHeight = (int) (newImageWidth / (float) originalImage.getWidth() * originalImage.getHeight());
+            newImageHeight = (int) (newImageWidth / (float) image.getWidth() * image.getHeight());
         } else {
             newImageHeight = lblImage.getHeight();
-            newImageWidth = (int) (newImageHeight / (float) originalImage.getHeight() * originalImage.getWidth());
+            newImageWidth = (int) (newImageHeight / (float) image.getHeight() * image.getWidth());
         }
 
-        Image scaledImage = originalImage.getScaledInstance(newImageWidth, newImageHeight, Image.SCALE_SMOOTH);
-        ImageIcon imageIcon = new ImageIcon(scaledImage);
+        imageStages[0] = ImageProcessor.loadImage(copyImage(image)).resize(newImageWidth, newImageHeight).get();
+        imageStages[1] = ImageProcessor.loadImage(copyImage(imageStages[0])).toGrayScale().get();
+        imageStages[2] = ImageProcessor.loadImage(copyImage(imageStages[1])).toNegative().get();
 
-        lblImage.setIcon(imageIcon);
-        lblImage.setText("");
+        updateLabelImage();
 
         imageLoaded = true;
         updatePermissions();
 
         Bridge.sceneSide.setImage(image);
+    }
+
+    private void updateLabelImage() {
+        ImageIcon imageIcon = new ImageIcon(imageStages[imageStageIndex]);
+        lblImage.setIcon(imageIcon);
+        lblImage.setText("");
     }
 
     private void updatePermissions() {
@@ -324,6 +348,7 @@ public class PanelControl extends JPanel {
         spinnerPopulationSize.setEnabled(reseted);
         sliderEntityLength.setEnabled(reseted);
         sliderEntityThickness.setEnabled(reseted);
+        sliderImage.setEnabled(imageLoaded);
     }
 
     private static BufferedImage copyImage(final BufferedImage source) {
