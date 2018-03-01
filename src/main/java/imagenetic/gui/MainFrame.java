@@ -1,7 +1,6 @@
 package imagenetic.gui;
 
 import imagenetic.common.api.FrameSide;
-import imagenetic.gui.menu.MenuBar;
 import imagenetic.gui.panel.PanelCanvas;
 import imagenetic.gui.panel.PanelControl;
 import imagenetic.gui.panel.PanelLabel;
@@ -26,7 +25,6 @@ public class MainFrame extends JFrame implements FrameSide {
     private PanelCanvas panelCanvas;
     private PanelControl panelControl;
     private PanelLabel panelLabel;
-    private MenuBar menuBar;
 
     public MainFrame() {
         this.setBounds(0, 0, get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
@@ -46,9 +44,6 @@ public class MainFrame extends JFrame implements FrameSide {
 
         panelLabel = new PanelLabel();
         this.getContentPane().add(panelLabel, BorderLayout.SOUTH);
-
-        menuBar = new MenuBar(panelControl);
-        this.setJMenuBar(menuBar);
     }
 
     public AwtCanvas getCanvas() {
