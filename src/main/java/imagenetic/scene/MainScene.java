@@ -2,8 +2,8 @@ package imagenetic.scene;
 
 import imagenetic.common.Bridge;
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
-import imagenetic.scene.asset.line.LineAsset;
-import imagenetic.scene.asset.line.LineAssetArgument;
+import imagenetic.scene.asset.voxel.LineAsset;
+import imagenetic.scene.asset.voxel.LineAssetArgument;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.input.manager.InputManager;
@@ -122,7 +122,8 @@ public class MainScene extends Scene {
 
         camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
 
-        lineAsset = createAsset(LineAsset.class, new LineAssetArgument(this, VIEWPORT.x < VIEWPORT.y ? VIEWPORT.x : VIEWPORT.y));
+        //todo: This should by dynamic
+        lineAsset = createAsset(LineAsset.class, new LineAssetArgument(this, 100));
     }
 
     @Override

@@ -1,20 +1,15 @@
-package imagenetic.scene.asset.line.genetic.function;
+package imagenetic.scene.asset.voxel.genetic.function;
 
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
-import imagenetic.common.algorithm.image.BresenhamAlgorithm;
 import imagenetic.common.algorithm.image.ImageProcessor;
-import imagenetic.scene.asset.line.genetic.AlgorithmParameters;
-import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
+import imagenetic.scene.asset.voxel.genetic.AlgorithmParameters;
+import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
 import piengine.core.base.api.Initializable;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import static imagenetic.common.util.NumberUtil.nullSafeDivide;
-import static imagenetic.common.util.NumberUtil.positiveMax;
 
 public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, Initializable {
 
@@ -22,7 +17,6 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
 
     private int maxColorValue;
     private int[][] originalPixelValues;
-    private Vector2i[][] pixelGrid;
     private int width;
     private int height;
 
@@ -38,7 +32,6 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
         this.height = image.getHeight();
 
         this.originalPixelValues = getColorValues(image);
-        this.pixelGrid = createGrid();
     }
 
     @Override
@@ -47,27 +40,29 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
             return 0.0f;
         }
 
-        int[][] pixelValues = new int[originalPixelValues.length][originalPixelValues[0].length];
+        int[][] pixelValues1 = new int[originalPixelValues.length][originalPixelValues[0].length];
+        int[][] pixelValues2 = new int[originalPixelValues.length][originalPixelValues[0].length];
         for (int i = 0; i < originalPixelValues.length; i++) {
             for (int j = 0; j < originalPixelValues[i].length; j++) {
-                pixelValues[i][j] = originalPixelValues[i][j];
+                pixelValues1[i][j] = originalPixelValues[i][j];
+                pixelValues2[i][j] = originalPixelValues[i][j];
             }
         }
 
         float fitnessOfSticks = 0;
-        for (LineChromosome lineChromosome : element.lineChromosomes) {
-            fitnessOfSticks += fitnessOfStick(pixelValues, lineChromosome);
+        for (VoxelChromosome voxelChromosome : element.voxelChromosomes) {
+            fitnessOfSticks += fitnessOfStick(pixelValues1, pixelValues2, voxelChromosome);
         }
 
-        element.lineChromosomes.sort(LineChromosome::compareTo);
+        element.voxelChromosomes.sort(VoxelChromosome::compareTo);
 
-        return fitnessOfSticks / element.lineChromosomes.size();
+        return fitnessOfSticks / element.voxelChromosomes.size();
     }
 
-    private float fitnessOfStick(int[][] pixelValues, LineChromosome element) {
-        float fitness1 = calculate(pixelValues, new Vector2f(element.position.x, element.position.y), new Vector2f(element.rotation.x, element.rotation.z), element.scale.y);
+    private float fitnessOfStick(int[][] pixelValues1,int[][] pixelValues2, VoxelChromosome element) {
+        float fitness1 = calculate(pixelValues1, element.position.x, element.position.y);
         float fitness2 = fitness1;
-//        float fitness2 = calculate(new Vector2f(element.position.z, element.position.y), new Vector2f(element.rotation.z, element.rotation.x), element.scale.y);
+//        float fitness2 = calculate(pixelValues2, element.position.z, element.position.y);
 
         element.fitness = overall(fitness1, fitness2) * ratio(fitness1, fitness2);
         return element.fitness;
@@ -81,38 +76,18 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
         return fitness1 < fitness2 ? nullSafeDivide(fitness1, fitness2) : nullSafeDivide(fitness2, fitness1);
     }
 
-    private float calculate(final int[][] pixelValues, final Vector2f position, final Vector2f rotation, final float scale) {
-        double length = Math.abs(Math.cos(Math.toRadians(rotation.x))) * scale;
-        double rot = Math.toRadians(rotation.y);
-        double x = length * Math.sin(rot) / 2;
-        double y = length * Math.cos(rot) / 2;
+    private float calculate(final int[][] pixelValues, final int posX, final int posY) {
+        int x = posX + width / 2;
+        int y = posY + height / 2;
 
-        int x0 = positiveMax((int) (position.x + width / 2d + x), width - 1);
-        int y0 = positiveMax((int) (position.y + height / 2d + y), height - 1);
-        int x1 = positiveMax((int) (position.x + width / 2d - x), width - 1);
-        int y1 = positiveMax((int) (position.y + height / 2d - y), height - 1);
-
-        List<Vector2i> line = BresenhamAlgorithm.findLine(pixelGrid, x0, y0, x1, y1);
-
-        int sum = 0;
-        for (Vector2i point : line) {
-            sum += pixelValues[point.x][point.y];
-            pixelValues[point.x][point.y] = 0;
-        }
-        float max = maxColorValue * (scale + 1);
-
-        return sum / max;
-    }
-
-    private Vector2i[][] createGrid() {
-        Vector2i[][] grid = new Vector2i[width][height];
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                grid[i][j] = new Vector2i(i, j);
-            }
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            return 0;
         }
 
-        return grid;
+        float value = pixelValues[x][y] / (float) maxColorValue;
+        pixelValues[x][y] = 0;
+
+        return value;
     }
 
     private BufferedImage prepareImage(final BufferedImage originalImage, final int maxSize) {

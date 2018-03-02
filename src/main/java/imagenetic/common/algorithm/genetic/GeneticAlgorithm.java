@@ -120,10 +120,6 @@ public abstract class GeneticAlgorithm<T> {
         return generations;
     }
 
-    public Generation<T> getCurrentGeneration() {
-        return currentGeneration;
-    }
-
     private List<Entity<T>> createSortedPopulation(final Collection<T> genoTypes) {
         List<Entity<T>> sortedPopulation = genoTypes.stream()
                 .map(g -> new Entity<>(g, fitnessFunction))

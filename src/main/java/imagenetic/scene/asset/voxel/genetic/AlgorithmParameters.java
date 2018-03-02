@@ -1,4 +1,4 @@
-package imagenetic.scene.asset.line.genetic;
+package imagenetic.scene.asset.voxel.genetic;
 
 import java.awt.image.BufferedImage;
 

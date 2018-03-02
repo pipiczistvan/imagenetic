@@ -26,7 +26,7 @@ public class Main {
         URL guiLibrary = new File(USER_DIR + "lib/pi-engine-gui-0.0.8.jar").toURI().toURL();
 
         /**
-         * Comment out this line for testing, and add this line to program arguments!
+         * Comment out this voxel for testing, and add this voxel to program arguments!
          * -Dengine.resources.root=../resources
          */
 //        FileSystems.newFileSystem(Main.class.getResource("/imagenetic/common/Main.class").toURI(), Collections.emptyMap());

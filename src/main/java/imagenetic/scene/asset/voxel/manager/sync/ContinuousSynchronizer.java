@@ -1,12 +1,12 @@
-package imagenetic.scene.asset.line.manager.sync;
+package imagenetic.scene.asset.voxel.manager.sync;
 
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.Generation;
 import imagenetic.common.algorithm.genetic.entity.Entity;
-import imagenetic.common.util.Vector3fUtil;
-import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.line.genetic.entity.LineChromosome;
-import org.joml.Vector3f;
+import imagenetic.common.util.Vector3iUtil;
+import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
+import org.joml.Vector3i;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,15 +67,15 @@ public class ContinuousSynchronizer extends Synchronizer {
             Entity<LayerChromosome> srcLayer = src.population.get(i);
             Entity<LayerChromosome> destLayer = dest.population.get(i);
 
-            List<LineChromosome> newSrcChromosomes = new ArrayList<>();
-            List<LineChromosome> newDestChromosomes = new ArrayList<>();
-            List<LineChromosome> choosableChromosomes = new ArrayList<>(destLayer.getGenoType().lineChromosomes);
-            for (int j = 0; j < srcLayer.getGenoType().lineChromosomes.size(); j++) {
-                LineChromosome srcLineChromosome = srcLayer.getGenoType().lineChromosomes.get(j);
-                LineChromosome destLineChromosome = pickClosest(choosableChromosomes, srcLineChromosome);
+            List<VoxelChromosome> newSrcChromosomes = new ArrayList<>();
+            List<VoxelChromosome> newDestChromosomes = new ArrayList<>();
+            List<VoxelChromosome> choosableChromosomes = new ArrayList<>(destLayer.getGenoType().voxelChromosomes);
+            for (int j = 0; j < srcLayer.getGenoType().voxelChromosomes.size(); j++) {
+                VoxelChromosome srcVoxelChromosome = srcLayer.getGenoType().voxelChromosomes.get(j);
+                VoxelChromosome destVoxelChromosome = pickClosest(choosableChromosomes, srcVoxelChromosome);
 
-                newSrcChromosomes.add(new LineChromosome(srcLineChromosome));
-                newDestChromosomes.add(new LineChromosome(destLineChromosome));
+                newSrcChromosomes.add(new VoxelChromosome(srcVoxelChromosome));
+                newDestChromosomes.add(new VoxelChromosome(destVoxelChromosome));
             }
 
             newSrcLayers.add(new Entity<>(new LayerChromosome(newSrcChromosomes), srcLayer.getFitness()));
@@ -86,19 +86,19 @@ public class ContinuousSynchronizer extends Synchronizer {
         destGeneration = new Generation<>(newDestLayers);
     }
 
-    private LineChromosome pickClosest(final List<LineChromosome> choosables, final LineChromosome reference) {
+    private VoxelChromosome pickClosest(final List<VoxelChromosome> choosables, final VoxelChromosome reference) {
         int chosenIndex = 0;
 
-        float closest = new Vector3f(reference.position).sub(choosables.get(chosenIndex).position).length();
+        double closest = new Vector3i(reference.position).sub(choosables.get(chosenIndex).position).length();
         for (int k = 1; k < choosables.size(); k++) {
-            float distance = new Vector3f(reference.position).sub(choosables.get(k).position).length();
+            double distance = new Vector3i(reference.position).sub(choosables.get(k).position).length();
 
             if (distance < closest) {
                 closest = distance;
                 chosenIndex = k;
             }
         }
-        LineChromosome chosenChromosome = choosables.get(chosenIndex);
+        VoxelChromosome chosenChromosome = choosables.get(chosenIndex);
         choosables.remove(chosenIndex);
 
         return chosenChromosome;
@@ -110,23 +110,21 @@ public class ContinuousSynchronizer extends Synchronizer {
             Entity<LayerChromosome> srcLayer = src.population.get(i);
             Entity<LayerChromosome> destLayer = dest.population.get(i);
 
-            List<LineChromosome> srcLineChromosomes = srcLayer.getGenoType().lineChromosomes;
-            List<LineChromosome> destLineChromosomes = destLayer.getGenoType().lineChromosomes;
+            List<VoxelChromosome> srcVoxelChromosomes = srcLayer.getGenoType().voxelChromosomes;
+            List<VoxelChromosome> destVoxelChromosomes = destLayer.getGenoType().voxelChromosomes;
 
-            List<LineChromosome> lineChromosomes = new ArrayList<>();
-            for (int j = 0; j < srcLineChromosomes.size(); j++) {
-                LineChromosome srcChromosome = srcLineChromosomes.get(j);
-                LineChromosome destChromosome = destLineChromosomes.get(j);
+            List<VoxelChromosome> voxelChromosomes = new ArrayList<>();
+            for (int j = 0; j < srcVoxelChromosomes.size(); j++) {
+                VoxelChromosome srcChromosome = srcVoxelChromosomes.get(j);
+                VoxelChromosome destChromosome = destVoxelChromosomes.get(j);
 
-                LineChromosome currentChromosome = new LineChromosome(
-                        Vector3fUtil.interpolatePosition(srcChromosome.position, destChromosome.position, progression),
-                        Vector3fUtil.interpolateRotation(srcChromosome.rotation, destChromosome.rotation, progression),
-                        Vector3fUtil.interpolatePosition(srcChromosome.scale, destChromosome.scale, progression),
+                VoxelChromosome currentChromosome = new VoxelChromosome(
+                        Vector3iUtil.interpolatePosition(srcChromosome.position, destChromosome.position, progression),
                         destChromosome.fitness
                 );
-                lineChromosomes.add(currentChromosome);
+                voxelChromosomes.add(currentChromosome);
             }
-            currentPopulation.add(new Entity<>(new LayerChromosome(lineChromosomes), element -> destLayer.getFitness()));
+            currentPopulation.add(new Entity<>(new LayerChromosome(voxelChromosomes), element -> destLayer.getFitness()));
         }
 
         return new Generation<>(currentPopulation);

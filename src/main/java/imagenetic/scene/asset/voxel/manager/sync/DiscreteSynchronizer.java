@@ -1,7 +1,7 @@
-package imagenetic.scene.asset.line.manager.sync;
+package imagenetic.scene.asset.voxel.manager.sync;
 
 import imagenetic.common.algorithm.genetic.Generation;
-import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 
 import java.util.List;
 

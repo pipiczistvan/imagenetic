@@ -4,12 +4,12 @@ public class Config {
 
     // UI
     public static final int MIN_POPULATION_COUNT = 2;
-    public static final int MAX_POPULATION_COUNT = 10;
-    public static final int DEF_POPULATION_COUNT = 6;
+    public static final int MAX_POPULATION_COUNT = 3;
+    public static final int DEF_POPULATION_COUNT = 2;
 
     public static final int MIN_POPULATION_SIZE = 50;
-    public static final int MAX_POPULATION_SIZE = 500;
-    public static final int DEF_POPULATION_SIZE = 300;
+    public static final int MAX_POPULATION_SIZE = 2000;
+    public static final int DEF_POPULATION_SIZE = 2000;
 
     public static final int MIN_ENTITY_THICKNESS = 5;
     public static final int MAX_ENTITY_THICKNESS = 15;

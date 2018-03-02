@@ -1,11 +1,11 @@
-package imagenetic.scene.asset.line;
+package imagenetic.scene.asset.voxel;
 
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
 import imagenetic.common.api.SceneSide;
-import imagenetic.scene.asset.line.genetic.AlgorithmParameters;
-import imagenetic.scene.asset.line.genetic.LineGeneticAlgorithm;
-import imagenetic.scene.asset.line.manager.LineModelManager;
+import imagenetic.scene.asset.voxel.genetic.AlgorithmParameters;
+import imagenetic.scene.asset.voxel.genetic.LineGeneticAlgorithm;
+import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;

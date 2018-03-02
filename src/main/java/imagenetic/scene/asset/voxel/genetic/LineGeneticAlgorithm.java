@@ -1,14 +1,14 @@
-package imagenetic.scene.asset.line.genetic;
+package imagenetic.scene.asset.voxel.genetic;
 
 import imagenetic.common.algorithm.genetic.GeneticAlgorithm;
-import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.line.genetic.function.LayerChromosomeCopier;
-import imagenetic.scene.asset.line.genetic.function.LayerChromosomeCreator;
-import imagenetic.scene.asset.line.genetic.function.LayerCriterionFunction;
-import imagenetic.scene.asset.line.genetic.function.LayerCrossoverOperator;
-import imagenetic.scene.asset.line.genetic.function.LayerFitnessFunction;
-import imagenetic.scene.asset.line.genetic.function.LayerMutationOperator;
-import imagenetic.scene.asset.line.genetic.function.LayerSelectionOperator;
+import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCopier;
+import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCreator;
+import imagenetic.scene.asset.voxel.genetic.function.LayerCriterionFunction;
+import imagenetic.scene.asset.voxel.genetic.function.LayerCrossoverOperator;
+import imagenetic.scene.asset.voxel.genetic.function.LayerFitnessFunction;
+import imagenetic.scene.asset.voxel.genetic.function.LayerMutationOperator;
+import imagenetic.scene.asset.voxel.genetic.function.LayerSelectionOperator;
 
 public class LineGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> {
 

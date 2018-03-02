@@ -1,11 +1,11 @@
-package imagenetic.scene.asset.line.manager;
+package imagenetic.scene.asset.voxel.manager;
 
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.Generation;
-import imagenetic.scene.asset.line.LineAsset;
-import imagenetic.scene.asset.line.genetic.entity.LayerChromosome;
-import imagenetic.scene.asset.line.manager.sync.ContinuousSynchronizer;
-import imagenetic.scene.asset.line.manager.sync.DiscreteSynchronizer;
+import imagenetic.scene.asset.voxel.LineAsset;
+import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
+import imagenetic.scene.asset.voxel.manager.sync.ContinuousSynchronizer;
+import imagenetic.scene.asset.voxel.manager.sync.DiscreteSynchronizer;
 import piengine.core.base.type.color.Color;
 import piengine.core.utils.ColorUtils;
 import piengine.object.model.domain.Model;
@@ -40,7 +40,7 @@ public class LineModelManager {
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             lineModels[i] = new ArrayList();
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
-                Model lineModel = modelManager.supply(parent, "octahedron", null, new Color(ColorUtils.BLACK), true);
+                Model lineModel = modelManager.supply(parent, "cube", null, new Color(ColorUtils.BLACK), true);
                 lineModels[i].add(lineModel);
             }
         }

@@ -1,4 +1,4 @@
-package imagenetic.scene.asset.line;
+package imagenetic.scene.asset.voxel;
 
 import imagenetic.scene.MainScene;
 import piengine.object.asset.domain.AssetArgument;
