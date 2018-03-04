@@ -1,6 +1,13 @@
 package imagenetic.common;
 
+import piengine.core.base.resource.ResourceLoader;
+
+import static piengine.core.base.type.property.ApplicationProperties.get;
+import static piengine.core.base.type.property.PropertyKeys.IMAGES_LOCATION;
+
 public class Config {
+
+    public static final ResourceLoader IMAGE_LOADER = new ResourceLoader(get(IMAGES_LOCATION), "png");
 
     // UI
     public static final int MIN_POPULATION_COUNT = 2;

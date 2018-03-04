@@ -2,8 +2,8 @@ package imagenetic.scene;
 
 import imagenetic.common.Bridge;
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
-import imagenetic.scene.asset.voxel.LineAsset;
-import imagenetic.scene.asset.voxel.LineAssetArgument;
+import imagenetic.scene.asset.voxel.VoxelAsset;
+import imagenetic.scene.asset.voxel.VoxelAssetArgument;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
 import piengine.core.input.manager.InputManager;
@@ -58,7 +58,7 @@ public class MainScene extends Scene {
     private Framebuffer backgroundFbo;
     private Canvas backgroundCanvas;
     // Stick
-    private LineAsset lineAsset;
+    private VoxelAsset voxelAsset;
     private ObserverCameraAsset cameraAsset;
     private Camera camera;
     private float viewScale = 1f;
@@ -79,7 +79,7 @@ public class MainScene extends Scene {
     public void initialize() {
         recalculateViewport();
         super.initialize();
-        Bridge.sceneSide = lineAsset;
+        Bridge.sceneSide = voxelAsset;
 
         inputManager.addKeyEvent(KEY_ESCAPE, PRESS, displayManager::closeDisplay);
         inputManager.addScrollEvent(scroll -> {
@@ -90,7 +90,7 @@ public class MainScene extends Scene {
                 viewScale = MIN_SCALE;
             }
 
-            lineAsset.setViewScale(viewScale);
+            voxelAsset.setViewScale(viewScale);
         });
     }
 
@@ -123,7 +123,7 @@ public class MainScene extends Scene {
         camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
 
         //todo: This should by dynamic
-        lineAsset = createAsset(LineAsset.class, new LineAssetArgument(this, 100));
+        voxelAsset = supplyAsset(VoxelAsset.class, new VoxelAssetArgument(this, 100));
     }
 
     @Override
@@ -172,7 +172,7 @@ public class MainScene extends Scene {
     private RenderPlan renderLines() {
         return WorldRenderPlanBuilder
                 .createPlan(camera)
-                .loadAssets(lineAsset)
+                .loadAssets(voxelAsset)
                 .render();
     }
 }

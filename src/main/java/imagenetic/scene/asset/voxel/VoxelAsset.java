@@ -3,6 +3,9 @@ package imagenetic.scene.asset.voxel;
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
 import imagenetic.common.api.SceneSide;
+import imagenetic.gui.common.FasterPressedListener;
+import imagenetic.gui.common.PlayPressedListener;
+import imagenetic.gui.common.SlowerPressedListener;
 import imagenetic.scene.asset.voxel.genetic.AlgorithmParameters;
 import imagenetic.scene.asset.voxel.genetic.LineGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
@@ -10,11 +13,13 @@ import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.WorldRenderAssetContext;
 import piengine.object.asset.plan.WorldRenderAssetContextBuilder;
+import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
 import java.awt.image.BufferedImage;
 
-public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSide {
+@Component
+public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneSide, PlayPressedListener, FasterPressedListener, SlowerPressedListener {
 
     private final LineModelManager lineModelManager;
 
@@ -28,7 +33,7 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     private int speed = Config.DEF_SPEED;
 
     @Wire
-    public LineAsset(final AssetManager assetManager, final LineModelManager lineModelManager) {
+    public VoxelAsset(final AssetManager assetManager, final LineModelManager lineModelManager) {
         super(assetManager);
 
         this.lineModelManager = lineModelManager;
@@ -82,6 +87,27 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
         updateLabels();
     }
 
+    @Override
+    public void onPlayPressed() {
+        this.paused = !this.paused;
+    }
+
+    @Override
+    public void onFasterPressed() {
+        if (speed < Config.MAX_SPEED) {
+            speed++;
+            updateLabels();
+        }
+    }
+
+    @Override
+    public void onSlowerPressed() {
+        if (speed > Config.MIN_SPEED) {
+            speed--;
+            updateLabels();
+        }
+    }
+
     // VISUAL
 
     public void setViewScale(final float viewScale) {
@@ -99,17 +125,6 @@ public class LineAsset extends WorldAsset<LineAssetArgument> implements SceneSid
     public void setThreshold(final double threshold) {
         this.lineModelManager.setThreshold(threshold);
         this.visualChanged = true;
-    }
-
-    @Override
-    public void setAlgorithmSpeed(final int speed) {
-        this.speed = speed;
-        updateLabels();
-    }
-
-    @Override
-    public void setAlgorithmStatus(final boolean paused) {
-        this.paused = paused;
     }
 
     @Override

@@ -10,10 +10,6 @@ public interface SceneSide {
 
     boolean isInterpolated();
 
-    void setAlgorithmStatus(final boolean paused);
-
-    void setAlgorithmSpeed(final int speed);
-
     void setPopulationCount(final int populationCount);
 
     void setPopulationSize(final int populationSize);

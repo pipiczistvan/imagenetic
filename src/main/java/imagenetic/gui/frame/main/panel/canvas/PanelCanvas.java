@@ -1,11 +1,13 @@
-package imagenetic.gui.panel;
+package imagenetic.gui.frame.main.panel.canvas;
 
 import piengine.visual.display.domain.awt.AwtCanvas;
+import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 
+@Component
 public class PanelCanvas extends JPanel {
 
     public AwtCanvas canvasOpenGL;

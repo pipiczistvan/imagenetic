@@ -1,11 +1,14 @@
-package imagenetic.gui;
+package imagenetic.gui.frame.main;
 
 import imagenetic.common.api.FrameSide;
-import imagenetic.gui.panel.PanelCanvas;
-import imagenetic.gui.panel.PanelControl;
-import imagenetic.gui.panel.PanelLabel;
+import imagenetic.gui.frame.main.menubar.MainMenuBar;
+import imagenetic.gui.frame.main.panel.canvas.PanelCanvas;
+import imagenetic.gui.frame.main.panel.control.PanelControl;
+import imagenetic.gui.frame.main.panel.label.PanelLabel;
 import piengine.core.base.resource.ResourceLoader;
 import piengine.visual.display.domain.awt.AwtCanvas;
+import puppeteer.annotation.premade.Component;
+import puppeteer.annotation.premade.Wire;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,15 +21,20 @@ import static piengine.core.base.type.property.PropertyKeys.WINDOW_MIN_WIDTH;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_TITLE;
 import static piengine.core.base.type.property.PropertyKeys.WINDOW_WIDTH;
 
+@Component
 public class MainFrame extends JFrame implements FrameSide {
 
     private final ResourceLoader imageLoader = new ResourceLoader(get(IMAGES_LOCATION), "png");
 
-    private PanelCanvas panelCanvas;
-    private PanelControl panelControl;
-    private PanelLabel panelLabel;
+    private final PanelCanvas panelCanvas;
+    private final PanelLabel panelLabel;
 
-    public MainFrame() {
+    @Wire
+    public MainFrame(final MainMenuBar mainMenuBar, final PanelControl panelControl,
+                     final PanelCanvas panelCanvas, final PanelLabel panelLabel) {
+        this.panelCanvas = panelCanvas;
+        this.panelLabel = panelLabel;
+
         this.setBounds(0, 0, get(WINDOW_WIDTH), get(WINDOW_HEIGHT));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -36,13 +44,9 @@ public class MainFrame extends JFrame implements FrameSide {
         this.setLocationRelativeTo(null);
         this.setIconImage(new ImageIcon(imageLoader.getUrl("gene")).getImage());
 
-        panelCanvas = new PanelCanvas();
+        this.setJMenuBar(mainMenuBar);
         this.getContentPane().add(panelCanvas, BorderLayout.CENTER);
-
-        panelControl = new PanelControl();
         this.getContentPane().add(panelControl, BorderLayout.EAST);
-
-        panelLabel = new PanelLabel();
         this.getContentPane().add(panelLabel, BorderLayout.SOUTH);
     }
 

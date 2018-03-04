@@ -2,7 +2,7 @@ package imagenetic.scene.asset.voxel.manager;
 
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.Generation;
-import imagenetic.scene.asset.voxel.LineAsset;
+import imagenetic.scene.asset.voxel.VoxelAsset;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.manager.sync.ContinuousSynchronizer;
 import imagenetic.scene.asset.voxel.manager.sync.DiscreteSynchronizer;
@@ -36,7 +36,7 @@ public class LineModelManager {
         this.lineModels = new List[MODEL_POPULATION_COUNT];
     }
 
-    public void initialize(final LineAsset parent) {
+    public void initialize(final VoxelAsset parent) {
         for (int i = 0; i < MODEL_POPULATION_COUNT; i++) {
             lineModels[i] = new ArrayList();
             for (int j = 0; j < MODEL_POPULATION_SIZE; j++) {
