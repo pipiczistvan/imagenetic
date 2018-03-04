@@ -6,8 +6,7 @@ import imagenetic.common.api.SceneSide;
 import imagenetic.gui.common.FasterPressedListener;
 import imagenetic.gui.common.PlayPressedListener;
 import imagenetic.gui.common.SlowerPressedListener;
-import imagenetic.scene.asset.voxel.genetic.AlgorithmParameters;
-import imagenetic.scene.asset.voxel.genetic.LineGeneticAlgorithm;
+import imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.object.asset.domain.WorldAsset;
 import piengine.object.asset.manager.AssetManager;
@@ -18,13 +17,14 @@ import puppeteer.annotation.premade.Wire;
 
 import java.awt.image.BufferedImage;
 
+import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMETERS;
+
 @Component
 public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneSide, PlayPressedListener, FasterPressedListener, SlowerPressedListener {
 
     private final LineModelManager lineModelManager;
 
-    private AlgorithmParameters parameters;
-    private LineGeneticAlgorithm geneticAlgorithm;
+    private final VoxelGeneticAlgorithm geneticAlgorithm;
 
     private float elapsedTime = 0;
     private boolean visualChanged = false;
@@ -33,30 +33,21 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
     private int speed = Config.DEF_SPEED;
 
     @Wire
-    public VoxelAsset(final AssetManager assetManager, final LineModelManager lineModelManager) {
+    public VoxelAsset(final AssetManager assetManager, final LineModelManager lineModelManager, VoxelGeneticAlgorithm voxelGeneticAlgorithm) {
         super(assetManager);
 
         this.lineModelManager = lineModelManager;
+        this.geneticAlgorithm = voxelGeneticAlgorithm;
     }
 
     @Override
     public void initialize() {
-        parameters = new AlgorithmParameters(
-                arguments.geneticAlgorithmSize,
-                Config.DEF_POPULATION_COUNT, Config.DEF_POPULATION_SIZE,
-                Config.DEF_ENTITY_LENGTH, Config.DEF_ENTITY_THICKNESS
-        );
-        geneticAlgorithm = new LineGeneticAlgorithm(parameters);
-
         lineModelManager.initialize(this);
     }
 
     @Override
     public void update(final float delta) {
-        if (parameters.hasImageChanged()) {
-            geneticAlgorithm.initializeFitnessFunction();
-        }
-        if (parameters.hasChanged()) {
+        if (PARAMETERS.hasChanged()) {
             reset();
         }
         if (visualChanged) {
@@ -136,27 +127,27 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
 
     @Override
     public void setThickness(final float thickness) {
-        this.parameters.setLineThickness(thickness);
+        PARAMETERS.setLineThickness(thickness);
     }
 
     @Override
     public void setLength(final float length) {
-        this.parameters.setLineLength(length);
+        PARAMETERS.setLineLength(length);
     }
 
     @Override
     public void setPopulationCount(final int populationCount) {
-        this.parameters.setPopulationCount(populationCount);
+        PARAMETERS.setPopulationCount(populationCount);
     }
 
     @Override
     public void setPopulationSize(final int populationSize) {
-        this.parameters.setPopulationSize(populationSize);
+        PARAMETERS.setPopulationSize(populationSize);
     }
 
     @Override
     public void setImage(final BufferedImage image) {
-        this.parameters.setImage(image);
+//        this.parameters.setImage(image);
     }
 
     // GETTERS

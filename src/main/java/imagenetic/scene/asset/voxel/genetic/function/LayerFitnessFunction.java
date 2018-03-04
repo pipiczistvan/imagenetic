@@ -2,37 +2,24 @@ package imagenetic.scene.asset.voxel.genetic.function;
 
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.ImageProcessor;
-import imagenetic.scene.asset.voxel.genetic.AlgorithmParameters;
+import imagenetic.gui.common.ImageSelectionListener;
+import imagenetic.gui.common.MultiCheckChangedListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
-import piengine.core.base.api.Initializable;
+import puppeteer.annotation.premade.Component;
 
 import java.awt.image.BufferedImage;
 
 import static imagenetic.common.util.NumberUtil.nullSafeDivide;
 
-public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, Initializable {
+@Component
+public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, ImageSelectionListener, MultiCheckChangedListener {
 
-    private final AlgorithmParameters parameters;
-
+    private boolean multiCheck;
     private int maxColorValue;
     private int[][] originalPixelValues;
     private int width;
     private int height;
-
-    public LayerFitnessFunction(final AlgorithmParameters parameters) {
-        this.parameters = parameters;
-    }
-
-    @Override
-    public void initialize() {
-        BufferedImage image = prepareImage(parameters.getImage(), parameters.getMaxSize());
-
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-
-        this.originalPixelValues = getColorValues(image);
-    }
 
     @Override
     public Float calculate(final LayerChromosome element) {
@@ -59,10 +46,24 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
         return fitnessOfSticks / element.voxelChromosomes.size();
     }
 
-    private float fitnessOfStick(int[][] pixelValues1,int[][] pixelValues2, VoxelChromosome element) {
+    @Override
+    public void onImageSelect(final BufferedImage image) {
+        BufferedImage preparedImage = prepareImage(image, 100);
+
+        this.width = preparedImage.getWidth();
+        this.height = preparedImage.getHeight();
+
+        this.originalPixelValues = getColorValues(preparedImage);
+    }
+
+    @Override
+    public void onMultiCheckChanged(final boolean checked) {
+        this.multiCheck = checked;
+    }
+
+    private float fitnessOfStick(int[][] pixelValues1, int[][] pixelValues2, VoxelChromosome element) {
         float fitness1 = calculate(pixelValues1, element.position.x, element.position.y);
-        float fitness2 = fitness1;
-//        float fitness2 = calculate(pixelValues2, element.position.z, element.position.y);
+        float fitness2 = multiCheck ? calculate(pixelValues2, element.position.z, element.position.y) : fitness1;
 
         element.fitness = overall(fitness1, fitness2) * ratio(fitness1, fitness2);
         return element.fitness;

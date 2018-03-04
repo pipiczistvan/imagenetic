@@ -1,6 +1,8 @@
 package imagenetic.scene.asset.voxel.genetic;
 
+import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.GeneticAlgorithm;
+import imagenetic.gui.common.ImageSelectionListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCopier;
 import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCreator;
@@ -9,23 +11,33 @@ import imagenetic.scene.asset.voxel.genetic.function.LayerCrossoverOperator;
 import imagenetic.scene.asset.voxel.genetic.function.LayerFitnessFunction;
 import imagenetic.scene.asset.voxel.genetic.function.LayerMutationOperator;
 import imagenetic.scene.asset.voxel.genetic.function.LayerSelectionOperator;
+import puppeteer.annotation.premade.Component;
+import puppeteer.annotation.premade.Wire;
 
-public class LineGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> {
+import java.awt.image.BufferedImage;
 
-    private final AlgorithmParameters parameters;
+@Component
+public class VoxelGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> implements ImageSelectionListener {
 
-    public LineGeneticAlgorithm(final AlgorithmParameters parameters) {
+    public static final AlgorithmParameters PARAMETERS = new AlgorithmParameters(
+            100,
+            Config.DEF_POPULATION_COUNT,
+            Config.DEF_POPULATION_SIZE,
+            Config.DEF_ENTITY_LENGTH,
+            Config.DEF_ENTITY_THICKNESS
+    );
+
+    @Wire
+    public VoxelGeneticAlgorithm(final LayerFitnessFunction layerFitnessFunction) {
         super(
-                new LayerFitnessFunction(parameters),
+                layerFitnessFunction,
                 new LayerCriterionFunction(),
                 new LayerSelectionOperator(),
                 new LayerCrossoverOperator(),
-                new LayerMutationOperator(parameters),
+                new LayerMutationOperator(PARAMETERS),
                 new LayerChromosomeCopier(),
-                new LayerChromosomeCreator(parameters)
+                new LayerChromosomeCreator(PARAMETERS)
         );
-
-        this.parameters = parameters;
     }
 
     @Override
@@ -33,15 +45,16 @@ public class LineGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> {
         ((LayerMutationOperator) mutationOperator).initialize();
         super.initialize(populationCount);
 
-        parameters.changed = false;
+        PARAMETERS.changed = false;
     }
 
     public void initializePopulation() {
-        initialize(parameters.populationCount);
+        initialize(PARAMETERS.populationCount);
     }
 
-    public void initializeFitnessFunction() {
-        ((LayerFitnessFunction) fitnessFunction).initialize();
-        parameters.imageChanged = false;
+
+    @Override
+    public void onImageSelect(final BufferedImage image) {
+        PARAMETERS.changed = true;
     }
 }

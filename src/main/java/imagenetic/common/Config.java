@@ -11,7 +11,7 @@ public class Config {
 
     // UI
     public static final int MIN_POPULATION_COUNT = 2;
-    public static final int MAX_POPULATION_COUNT = 3;
+    public static final int MAX_POPULATION_COUNT = 10;
     public static final int DEF_POPULATION_COUNT = 2;
 
     public static final int MIN_POPULATION_SIZE = 50;

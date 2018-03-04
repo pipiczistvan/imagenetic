@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 
 public class AlgorithmParameters {
 
-    protected boolean imageChanged = false;
     protected boolean changed = false;
     protected BufferedImage image;
     protected int maxSize;
@@ -26,7 +25,6 @@ public class AlgorithmParameters {
 
     public void setImage(BufferedImage image) {
         this.image = image;
-        this.imageChanged = true;
         this.changed = true;
     }
 
@@ -81,9 +79,5 @@ public class AlgorithmParameters {
 
     public boolean hasChanged() {
         return changed;
-    }
-
-    public boolean hasImageChanged() {
-        return imageChanged;
     }
 }

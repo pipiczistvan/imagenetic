@@ -42,7 +42,7 @@ public class Main {
                 asList(coreLibrary, frameLibrary, guiLibrary),
                 asList(".*pi-engine.*\\.jar", "^.*/target/.*$"),
 //                asList(".*pi-engine.*\\.jar", ".*imagenetic.*\\.jar"),
-                asList("imagenetic.*.manager", "imagenetic.gui.*", "imagenetic.common.*", "imagenetic.scene.asset.voxel")
+                asList("imagenetic.*.manager", "imagenetic.gui.*", "imagenetic.common.*", "imagenetic.scene.asset.*")
         );
         MainWindow window = new MainWindow();
 
