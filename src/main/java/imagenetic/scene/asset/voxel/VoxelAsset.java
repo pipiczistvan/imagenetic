@@ -6,6 +6,7 @@ import imagenetic.common.api.SceneSide;
 import imagenetic.gui.common.FasterPressedListener;
 import imagenetic.gui.common.PlayPressedListener;
 import imagenetic.gui.common.SlowerPressedListener;
+import imagenetic.gui.common.ViewChangedListener;
 import imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.object.asset.domain.WorldAsset;
@@ -20,7 +21,7 @@ import java.awt.image.BufferedImage;
 import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMETERS;
 
 @Component
-public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneSide, PlayPressedListener, FasterPressedListener, SlowerPressedListener {
+public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneSide, PlayPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener {
 
     private final LineModelManager lineModelManager;
 
@@ -76,6 +77,14 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
         lineModelManager.setGenerations(geneticAlgorithm.getGenerations());
         lineModelManager.updateView();
         updateLabels();
+    }
+
+    @Override
+    public void viewChanged(final VIEW_TYPE view, final boolean zoomReset) {
+        if (zoomReset) {
+            setViewScale(1.0f);
+        }
+        arguments.cameraAsset.resetRotation(view);
     }
 
     @Override

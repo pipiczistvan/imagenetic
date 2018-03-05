@@ -1,10 +1,17 @@
 package imagenetic.gui.frame.main.menubar;
 
+import imagenetic.common.Bridge;
 import imagenetic.gui.common.ImageSelectionListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+
+import static imagenetic.gui.common.ViewChangedListener.VIEW_TYPE.FRONT;
+import static imagenetic.gui.common.ViewChangedListener.VIEW_TYPE.NONE;
+import static imagenetic.gui.common.ViewChangedListener.VIEW_TYPE.SIDE;
 
 @Component
 public class MainMenuBar extends JMenuBar implements ImageSelectionListener {
@@ -21,7 +28,7 @@ public class MainMenuBar extends JMenuBar implements ImageSelectionListener {
 
     private final JMenu mnView;
     private final JMenuItem mntmZoomReset;
-    private final JMenuItem mntmNormalView;
+    private final JMenuItem mntmFrontView;
     private final JMenuItem mntmSideView;
 
     public MainMenuBar() {
@@ -56,17 +63,38 @@ public class MainMenuBar extends JMenuBar implements ImageSelectionListener {
         this.add(mnView);
 
         mntmZoomReset = new JMenuItem("Közelítés visszaállítása");
+        mntmZoomReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
+        mntmZoomReset.addActionListener(this::onZoomResetClick);
         mnView.add(mntmZoomReset);
 
-        mntmNormalView = new JMenuItem("Normál nézet");
-        mnView.add(mntmNormalView);
+        mntmFrontView = new JMenuItem("Normal nézet");
+        mntmFrontView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0));
+        mntmFrontView.addActionListener(this::onFrontViewClick);
+        mnView.add(mntmFrontView);
 
         mntmSideView = new JMenuItem("Oldal nézet");
+        mntmSideView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0));
+        mntmSideView.addActionListener(this::onSideViewClick);
         mnView.add(mntmSideView);
     }
 
     @Override
     public void onImageSelect(final BufferedImage image) {
         System.out.println("Image selected");
+    }
+
+    private void onZoomResetClick(ActionEvent e) {
+        Bridge.LISTENER_CONTAINER.viewChangedListeners.forEach(l ->
+                l.viewChanged(NONE, true));
+    }
+
+    private void onFrontViewClick(ActionEvent e) {
+        Bridge.LISTENER_CONTAINER.viewChangedListeners.forEach(l ->
+                l.viewChanged(FRONT, false));
+    }
+
+    private void onSideViewClick(ActionEvent e) {
+        Bridge.LISTENER_CONTAINER.viewChangedListeners.forEach(l ->
+                l.viewChanged(SIDE, false));
     }
 }

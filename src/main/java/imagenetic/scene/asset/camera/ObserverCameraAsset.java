@@ -1,6 +1,7 @@
 package imagenetic.scene.asset.camera;
 
 import imagenetic.common.Bridge;
+import imagenetic.gui.common.ViewChangedListener.VIEW_TYPE;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;
@@ -9,14 +10,11 @@ import piengine.object.camera.asset.CameraAsset;
 import piengine.visual.display.manager.DisplayManager;
 import puppeteer.annotation.premade.Wire;
 
-import static piengine.core.input.domain.Key.KEY_R;
 import static piengine.core.input.domain.Key.MOUSE_BUTTON_1;
 import static piengine.core.input.domain.KeyEventType.PRESS;
 import static piengine.core.input.domain.KeyEventType.RELEASE;
 
 public class ObserverCameraAsset extends CameraAsset {
-
-    private static final Vector3f DEFAULT_ROTATION = new Vector3f(180, 0, 180);
 
     private final InputManager inputManager;
     private final DisplayManager displayManager;
@@ -34,7 +32,7 @@ public class ObserverCameraAsset extends CameraAsset {
 
     @Override
     public void initialize() {
-        resetRotation();
+        resetRotation(VIEW_TYPE.FRONT);
 
         inputManager.addKeyEvent(MOUSE_BUTTON_1, PRESS, () -> {
             Vector2f pointer = displayManager.getPointer();
@@ -53,7 +51,6 @@ public class ObserverCameraAsset extends CameraAsset {
             }
         });
         inputManager.addKeyEvent(MOUSE_BUTTON_1, RELEASE, () -> lookingEnabled = false);
-        inputManager.addKeyEvent(KEY_R, PRESS, this::resetRotation);
         inputManager.addCursorEvent(v -> {
             if (lookingEnabled) {
                 Vector2f delta = new Vector2f();
@@ -74,8 +71,12 @@ public class ObserverCameraAsset extends CameraAsset {
         looking.set(0, 0);
     }
 
-    private void resetRotation() {
-        setRotation(DEFAULT_ROTATION);
+    public void resetRotation(VIEW_TYPE view) {
+        if (view == VIEW_TYPE.FRONT) {
+            setRotation(180, 0, 180);
+        } else if (view == VIEW_TYPE.SIDE) {
+            setRotation(270, 0, 180);
+        }
     }
 
     private Vector3f calculateRotation(final double delta) {

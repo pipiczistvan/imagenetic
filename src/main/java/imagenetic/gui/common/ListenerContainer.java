@@ -15,12 +15,13 @@ public class ListenerContainer {
     public final List<SlowerPressedListener> slowerPressedListeners;
     public final List<ImageStageChangedListener> imageStageChangedListeners;
     public final List<MultiCheckChangedListener> multiCheckChangedListeners;
+    public final List<ViewChangedListener> viewChangedListeners;
 
     @Wire
     public ListenerContainer(final List<ImageSelectionListener> imageSelectionListeners, final List<PlayPressedListener> playPressedListeners,
                              final List<ResetPressedListener> resetPressedListeners, final List<FasterPressedListener> fasterPressedListeners,
                              final List<SlowerPressedListener> slowerPressedListeners, final List<ImageStageChangedListener> imageStageChangedListeners,
-                             final List<MultiCheckChangedListener> multiCheckChangedListeners) {
+                             final List<MultiCheckChangedListener> multiCheckChangedListeners, final List<ViewChangedListener> viewChangedListeners) {
         this.imageSelectionListeners = imageSelectionListeners;
         this.playPressedListeners = playPressedListeners;
         this.resetPressedListeners = resetPressedListeners;
@@ -28,5 +29,6 @@ public class ListenerContainer {
         this.slowerPressedListeners = slowerPressedListeners;
         this.imageStageChangedListeners = imageStageChangedListeners;
         this.multiCheckChangedListeners = multiCheckChangedListeners;
+        this.viewChangedListeners = viewChangedListeners;
     }
 }

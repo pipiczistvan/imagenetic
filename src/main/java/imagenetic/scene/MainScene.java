@@ -111,7 +111,7 @@ public class MainScene extends Scene {
         backgroundCanvas = canvasManager.supply(this, backgroundFbo, RADIAL_GRADIENT_EFFECT);
 
         // Stick
-        cameraAsset = createAsset(ObserverCameraAsset.class, new CameraAssetArgument(
+        cameraAsset = supplyAsset(ObserverCameraAsset.class, new CameraAssetArgument(
                 null,
                 get(CAMERA_LOOK_UP_LIMIT),
                 get(CAMERA_LOOK_DOWN_LIMIT),
@@ -123,7 +123,7 @@ public class MainScene extends Scene {
         camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
 
         //todo: This should by dynamic
-        voxelAsset = supplyAsset(VoxelAsset.class, new VoxelAssetArgument(this, 100));
+        voxelAsset = supplyAsset(VoxelAsset.class, new VoxelAssetArgument(this, 100, cameraAsset));
     }
 
     @Override
