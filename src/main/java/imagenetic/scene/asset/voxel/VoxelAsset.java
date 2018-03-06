@@ -65,7 +65,6 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
                 elapsedTime = 0;
                 geneticAlgorithm.nextGeneration();
                 updateLabels();
-                progression = 0;
             }
 
             lineModelManager.synchronize(progression);

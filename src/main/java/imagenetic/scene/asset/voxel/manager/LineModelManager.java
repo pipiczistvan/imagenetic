@@ -2,6 +2,7 @@ package imagenetic.scene.asset.voxel.manager;
 
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.Generation;
+import imagenetic.gui.common.api.buttons.SyncPressedListener;
 import imagenetic.scene.asset.voxel.VoxelAsset;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.manager.sync.ContinuousSynchronizer;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class LineModelManager {
+public class LineModelManager implements SyncPressedListener {
 
     private static final int MODEL_POPULATION_COUNT = Config.MAX_POPULATION_COUNT;
     private static final int MODEL_POPULATION_SIZE = Config.MAX_POPULATION_SIZE;
@@ -101,5 +102,10 @@ public class LineModelManager {
 
     public boolean isInterpolated() {
         return interpolated;
+    }
+
+    @Override
+    public void onSyncPressed() {
+        interpolated = !interpolated;
     }
 }

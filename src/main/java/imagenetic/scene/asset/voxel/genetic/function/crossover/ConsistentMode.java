@@ -1,16 +1,19 @@
-package imagenetic.scene.asset.voxel.genetic.function;
+package imagenetic.scene.asset.voxel.genetic.function.crossover;
 
 import imagenetic.common.algorithm.genetic.entity.Entity;
-import imagenetic.common.algorithm.genetic.function.CrossoverOperator;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
 import javafx.util.Pair;
+import puppeteer.annotation.premade.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome> {
+import static imagenetic.scene.asset.voxel.genetic.function.crossover.CrossoverOperatorType.CONSISTENT;
+
+@Component
+public class ConsistentMode implements LayerCrossoverOperatorMode {
 
     private final Random random = new Random();
 
@@ -32,5 +35,10 @@ public class LayerCrossoverOperator implements CrossoverOperator<LayerChromosome
         }
 
         return new LayerChromosome(voxelChromosomes);
+    }
+
+    @Override
+    public CrossoverOperatorType getType() {
+        return CONSISTENT;
     }
 }

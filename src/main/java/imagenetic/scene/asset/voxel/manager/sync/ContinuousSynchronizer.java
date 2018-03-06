@@ -6,12 +6,15 @@ import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.common.util.Vector3iUtil;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
-import org.joml.Vector3i;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContinuousSynchronizer extends Synchronizer {
+
+    private final Vector2i referencePosition = new Vector2i();
+    private final Vector2i chosenPosition = new Vector2i();
 
     private Generation<LayerChromosome> srcGeneration;
     private Generation<LayerChromosome> destGeneration;
@@ -89,9 +92,13 @@ public class ContinuousSynchronizer extends Synchronizer {
     private VoxelChromosome pickClosest(final List<VoxelChromosome> choosables, final VoxelChromosome reference) {
         int chosenIndex = 0;
 
-        double closest = new Vector3i(reference.position).sub(choosables.get(chosenIndex).position).length();
+        referencePosition.set(reference.position.x, reference.position.y);
+        chosenPosition.set(choosables.get(chosenIndex).position.x, choosables.get(chosenIndex).position.y);
+
+        double closest = new Vector2i(referencePosition).sub(chosenPosition).length();
         for (int k = 1; k < choosables.size(); k++) {
-            double distance = new Vector3i(reference.position).sub(choosables.get(k).position).length();
+            chosenPosition.set(choosables.get(k).position.x, choosables.get(k).position.y);
+            double distance = new Vector2i(referencePosition).sub(chosenPosition).length();
 
             if (distance < closest) {
                 closest = distance;

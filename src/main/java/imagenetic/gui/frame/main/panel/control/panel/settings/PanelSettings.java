@@ -15,8 +15,8 @@ public class PanelSettings extends JPanel {
     @Wire
     public PanelSettings(final SpinnerPopulationCount spinnerPopulationCount, final SpinnerMutationRate spinnerMutationRate,
                          final SpinnerElitismRate spinnerElitismRate, final SpinnerCriteriaRate spinnerCriteriaRate,
-                         final ChoiceSelectionOperator choiceSelectionOperator, final ChoiceMutationOperator choiceMutationOperator,
-                         final ChoiceCrossoverOperator choiceCrossoverOperator, final CheckBoxMultiCheck checkBoxMultiCheck) {
+                         final ComboBoxSelectionOperator comboBoxSelectionOperator, final ComboBoxMutationOperator comboBoxMutationOperator,
+                         final ComboBoxCrossoverOperator comboBoxCrossoverOperator, final CheckBoxMultiCheck checkBoxMultiCheck) {
         this.setAlignmentY(TOP_ALIGNMENT);
         this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Beállítások", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         this.setLayout(new MigLayout("", "[][][grow]", "[][][][][][][][]"));
@@ -54,7 +54,7 @@ public class PanelSettings extends JPanel {
         lblSelectionOperatorHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
         this.add(lblSelectionOperatorHelp, "cell 1 4");
 
-        this.add(choiceSelectionOperator, "cell 2 4,growx");
+        this.add(comboBoxSelectionOperator, "cell 2 4,growx");
 
         // CROSSOVER OPERATOR
         JLabel lblCrossoverOperator = new JLabel("Keresztezési operátor:");
@@ -65,7 +65,7 @@ public class PanelSettings extends JPanel {
         lblCrossoverOperatorHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
         this.add(lblCrossoverOperatorHelp, "cell 1 5");
 
-        this.add(choiceCrossoverOperator, "cell 2 5,growx");
+        this.add(comboBoxCrossoverOperator, "cell 2 5,growx");
 
         // MUTATION OPERATOR
         JLabel lblMutationOperator = new JLabel("Mutációs operátor:");
@@ -76,7 +76,7 @@ public class PanelSettings extends JPanel {
         lblMutationOperatorHelp.setFont(new Font("Tahoma", Font.BOLD, 11));
         this.add(lblMutationOperatorHelp, "cell 1 6");
 
-        this.add(choiceMutationOperator, "cell 2 6,growx");
+        this.add(comboBoxMutationOperator, "cell 2 6,growx");
 
         // MULTI CHECK
         JLabel lblMultiCheck = new JLabel("Kétoldali egyezés:");

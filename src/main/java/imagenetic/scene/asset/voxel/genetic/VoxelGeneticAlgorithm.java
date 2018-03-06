@@ -7,10 +7,10 @@ import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCopier;
 import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCreator;
 import imagenetic.scene.asset.voxel.genetic.function.LayerCriterionFunction;
-import imagenetic.scene.asset.voxel.genetic.function.LayerCrossoverOperator;
 import imagenetic.scene.asset.voxel.genetic.function.LayerFitnessFunction;
-import imagenetic.scene.asset.voxel.genetic.function.LayerMutationOperator;
-import imagenetic.scene.asset.voxel.genetic.function.LayerSelectionOperator;
+import imagenetic.scene.asset.voxel.genetic.function.crossover.LayerCrossoverOperator;
+import imagenetic.scene.asset.voxel.genetic.function.mutation.LayerMutationOperator;
+import imagenetic.scene.asset.voxel.genetic.function.selection.LayerSelectionOperator;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -27,12 +27,13 @@ public class VoxelGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> imp
     );
 
     @Wire
-    public VoxelGeneticAlgorithm(final LayerFitnessFunction layerFitnessFunction, final LayerMutationOperator layerMutationOperator) {
+    public VoxelGeneticAlgorithm(final LayerFitnessFunction layerFitnessFunction, final LayerSelectionOperator layerSelectionOperator,
+                                 final LayerCrossoverOperator layerCrossoverOperator, final LayerMutationOperator layerMutationOperator) {
         super(
                 layerFitnessFunction,
                 new LayerCriterionFunction(),
-                new LayerSelectionOperator(),
-                new LayerCrossoverOperator(),
+                layerSelectionOperator,
+                layerCrossoverOperator,
                 layerMutationOperator,
                 new LayerChromosomeCopier(),
                 new LayerChromosomeCreator(PARAMETERS)
