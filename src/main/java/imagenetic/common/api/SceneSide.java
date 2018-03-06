@@ -10,8 +10,6 @@ public interface SceneSide {
 
     boolean isInterpolated();
 
-    void setPopulationCount(final int populationCount);
-
     void setPopulationSize(final int populationSize);
 
     void showAll(final boolean show);

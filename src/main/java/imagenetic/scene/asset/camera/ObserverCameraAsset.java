@@ -1,7 +1,7 @@
 package imagenetic.scene.asset.camera;
 
 import imagenetic.common.Bridge;
-import imagenetic.gui.common.ViewChangedListener.VIEW_TYPE;
+import imagenetic.gui.common.api.ViewChangedListener.VIEW_TYPE;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import piengine.core.input.manager.InputManager;

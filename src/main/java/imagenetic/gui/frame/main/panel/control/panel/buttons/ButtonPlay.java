@@ -1,9 +1,9 @@
 package imagenetic.gui.frame.main.panel.control.panel.buttons;
 
 import imagenetic.common.Bridge;
-import imagenetic.gui.common.ImageSelectionListener;
-import imagenetic.gui.common.PlayPressedListener;
-import imagenetic.gui.common.ResetPressedListener;
+import imagenetic.gui.common.api.buttons.PlayPressedListener;
+import imagenetic.gui.common.api.buttons.ResetPressedListener;
+import imagenetic.gui.common.api.image.ImageSelectionListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;

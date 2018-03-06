@@ -12,7 +12,7 @@ public class Config {
     // UI
     public static final int MIN_POPULATION_COUNT = 2;
     public static final int MAX_POPULATION_COUNT = 10;
-    public static final int DEF_POPULATION_COUNT = 2;
+    public static final int DEF_POPULATION_COUNT = 5;
 
     public static final int MIN_POPULATION_SIZE = 50;
     public static final int MAX_POPULATION_SIZE = 2000;
@@ -29,6 +29,18 @@ public class Config {
     public static final double MIN_ENTITY_THRESHOLD = 0d;
     public static final double MAX_ENTITY_THRESHOLD = 1d;
     public static final double DEF_ENTITY_THRESHOLD = 0d;
+
+    public static final double MIN_MUTATION_RATE = 0.0;
+    public static final double MAX_MUTATION_RATE = 1.0;
+    public static final double DEF_MUTATION_RATE = 0.5;
+
+    public static final double MIN_ELITISM_RATE = 0.0;
+    public static final double MAX_ELITISM_RATE = 1.0;
+    public static final double DEF_ELITISM_RATE = 1.0;
+
+    public static final double MIN_CRITERIA_RATE = 0.0;
+    public static final double MAX_CRITERIA_RATE = 1.0;
+    public static final double DEF_CRITERIA_RATE = 1.0;
 
     public static final int MIN_SPEED = 1;
     public static final int MAX_SPEED = 10;

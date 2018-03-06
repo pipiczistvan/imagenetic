@@ -14,7 +14,7 @@ public class PanelSettings extends JPanel {
 
     @Wire
     public PanelSettings(final SpinnerPopulationCount spinnerPopulationCount, final SpinnerMutationRate spinnerMutationRate,
-                         final SpinnerElitism spinnerElitism, final SpinnerCriteria spinnerCriteria,
+                         final SpinnerElitismRate spinnerElitismRate, final SpinnerCriteriaRate spinnerCriteriaRate,
                          final ChoiceSelectionOperator choiceSelectionOperator, final ChoiceMutationOperator choiceMutationOperator,
                          final ChoiceCrossoverOperator choiceCrossoverOperator, final CheckBoxMultiCheck checkBoxMultiCheck) {
         this.setAlignmentY(TOP_ALIGNMENT);
@@ -37,13 +37,13 @@ public class PanelSettings extends JPanel {
         JLabel lblElitism = new JLabel("Elitizmus:");
         this.add(lblElitism, "cell 0 2");
 
-        this.add(spinnerElitism, "cell 2 2,growx");
+        this.add(spinnerElitismRate, "cell 2 2,growx");
 
         // CRITERIA
         JLabel lblCriteria = new JLabel("Kritérium:");
         this.add(lblCriteria, "cell 0 3");
 
-        this.add(spinnerCriteria, "cell 2 3,growx");
+        this.add(spinnerCriteriaRate, "cell 2 3,growx");
 
         // SELECTION OPERATOR
         JLabel lblSelectionOperator = new JLabel("Szelekciós operátor:");

@@ -2,7 +2,7 @@ package imagenetic.scene.asset.voxel.genetic;
 
 import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.GeneticAlgorithm;
-import imagenetic.gui.common.ImageSelectionListener;
+import imagenetic.gui.common.api.image.ImageSelectionListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCopier;
 import imagenetic.scene.asset.voxel.genetic.function.LayerChromosomeCreator;
@@ -21,37 +21,31 @@ public class VoxelGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> imp
 
     public static final AlgorithmParameters PARAMETERS = new AlgorithmParameters(
             100,
-            Config.DEF_POPULATION_COUNT,
             Config.DEF_POPULATION_SIZE,
             Config.DEF_ENTITY_LENGTH,
             Config.DEF_ENTITY_THICKNESS
     );
 
     @Wire
-    public VoxelGeneticAlgorithm(final LayerFitnessFunction layerFitnessFunction) {
+    public VoxelGeneticAlgorithm(final LayerFitnessFunction layerFitnessFunction, final LayerMutationOperator layerMutationOperator) {
         super(
                 layerFitnessFunction,
                 new LayerCriterionFunction(),
                 new LayerSelectionOperator(),
                 new LayerCrossoverOperator(),
-                new LayerMutationOperator(PARAMETERS),
+                layerMutationOperator,
                 new LayerChromosomeCopier(),
                 new LayerChromosomeCreator(PARAMETERS)
         );
     }
 
     @Override
-    public void initialize(int populationCount) {
+    public void initialize() {
         ((LayerMutationOperator) mutationOperator).initialize();
-        super.initialize(populationCount);
+        super.initialize();
 
         PARAMETERS.changed = false;
     }
-
-    public void initializePopulation() {
-        initialize(PARAMETERS.populationCount);
-    }
-
 
     @Override
     public void onImageSelect(final BufferedImage image) {

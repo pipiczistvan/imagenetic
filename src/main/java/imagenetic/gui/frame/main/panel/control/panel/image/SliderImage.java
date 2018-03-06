@@ -1,7 +1,7 @@
 package imagenetic.gui.frame.main.panel.control.panel.image;
 
 import imagenetic.common.Bridge;
-import imagenetic.gui.common.ImageSelectionListener;
+import imagenetic.gui.common.api.image.ImageSelectionListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;

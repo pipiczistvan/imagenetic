@@ -1,7 +1,7 @@
 package imagenetic.gui.frame.main.panel.control.panel.buttons;
 
 import imagenetic.common.Bridge;
-import imagenetic.gui.common.SlowerPressedListener;
+import imagenetic.gui.common.api.buttons.SlowerPressedListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;

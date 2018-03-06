@@ -2,8 +2,8 @@ package imagenetic.scene.asset.voxel.genetic.function;
 
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.ImageProcessor;
-import imagenetic.gui.common.ImageSelectionListener;
-import imagenetic.gui.common.MultiCheckChangedListener;
+import imagenetic.gui.common.api.image.ImageSelectionListener;
+import imagenetic.gui.common.api.settings.MultiCheckChangedListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
 import puppeteer.annotation.premade.Component;

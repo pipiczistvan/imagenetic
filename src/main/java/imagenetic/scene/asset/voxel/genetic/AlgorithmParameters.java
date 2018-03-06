@@ -7,16 +7,13 @@ public class AlgorithmParameters {
     protected boolean changed = false;
     protected BufferedImage image;
     protected int maxSize;
-    protected int populationCount;
     protected int populationSize;
     protected float lineLength;
     protected float lineThickness;
 
-    public AlgorithmParameters(final int maxSize,
-                               final int populationCount, final int populationSize,
+    public AlgorithmParameters(final int maxSize, final int populationSize,
                                final float lineLength, final float lineThickness) {
         this.maxSize = maxSize;
-        this.populationCount = populationCount;
         this.populationSize = populationSize;
 
         this.lineLength = lineLength;
@@ -30,11 +27,6 @@ public class AlgorithmParameters {
 
     public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
-        this.changed = true;
-    }
-
-    public void setPopulationCount(int populationCount) {
-        this.populationCount = populationCount;
         this.changed = true;
     }
 
@@ -59,10 +51,6 @@ public class AlgorithmParameters {
 
     public int getMaxSize() {
         return maxSize;
-    }
-
-    public int getPopulationCount() {
-        return populationCount;
     }
 
     public int getPopulationSize() {

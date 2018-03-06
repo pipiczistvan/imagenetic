@@ -1,7 +1,7 @@
 package imagenetic.gui.frame.main.panel.control.panel.settings;
 
-import imagenetic.gui.common.PlayPressedListener;
-import imagenetic.gui.common.ResetPressedListener;
+import imagenetic.gui.common.api.buttons.PlayPressedListener;
+import imagenetic.gui.common.api.buttons.ResetPressedListener;
 import puppeteer.annotation.premade.Component;
 
 import java.awt.*;

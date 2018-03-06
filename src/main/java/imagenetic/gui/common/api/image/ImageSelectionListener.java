@@ -1,4 +1,4 @@
-package imagenetic.gui.common;
+package imagenetic.gui.common.api.image;
 
 import java.awt.image.BufferedImage;
 

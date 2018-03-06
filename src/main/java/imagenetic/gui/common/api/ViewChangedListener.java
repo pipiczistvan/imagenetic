@@ -1,4 +1,4 @@
-package imagenetic.gui.common;
+package imagenetic.gui.common.api;
 
 public interface ViewChangedListener {
     void viewChanged(VIEW_TYPE view, boolean zoomReset);

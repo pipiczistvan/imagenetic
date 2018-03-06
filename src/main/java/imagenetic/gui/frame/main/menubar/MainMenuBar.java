@@ -1,7 +1,7 @@
 package imagenetic.gui.frame.main.menubar;
 
 import imagenetic.common.Bridge;
-import imagenetic.gui.common.ImageSelectionListener;
+import imagenetic.gui.common.api.image.ImageSelectionListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;
@@ -9,9 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
-import static imagenetic.gui.common.ViewChangedListener.VIEW_TYPE.FRONT;
-import static imagenetic.gui.common.ViewChangedListener.VIEW_TYPE.NONE;
-import static imagenetic.gui.common.ViewChangedListener.VIEW_TYPE.SIDE;
+import static imagenetic.gui.common.api.ViewChangedListener.VIEW_TYPE.FRONT;
+import static imagenetic.gui.common.api.ViewChangedListener.VIEW_TYPE.NONE;
+import static imagenetic.gui.common.api.ViewChangedListener.VIEW_TYPE.SIDE;
 
 @Component
 public class MainMenuBar extends JMenuBar implements ImageSelectionListener {

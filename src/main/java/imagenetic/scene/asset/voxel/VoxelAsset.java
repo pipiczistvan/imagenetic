@@ -3,10 +3,11 @@ package imagenetic.scene.asset.voxel;
 import imagenetic.common.Bridge;
 import imagenetic.common.Config;
 import imagenetic.common.api.SceneSide;
-import imagenetic.gui.common.FasterPressedListener;
-import imagenetic.gui.common.PlayPressedListener;
-import imagenetic.gui.common.SlowerPressedListener;
-import imagenetic.gui.common.ViewChangedListener;
+import imagenetic.gui.common.api.ViewChangedListener;
+import imagenetic.gui.common.api.buttons.FasterPressedListener;
+import imagenetic.gui.common.api.buttons.PlayPressedListener;
+import imagenetic.gui.common.api.buttons.ResetPressedListener;
+import imagenetic.gui.common.api.buttons.SlowerPressedListener;
 import imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.object.asset.domain.WorldAsset;
@@ -21,7 +22,7 @@ import java.awt.image.BufferedImage;
 import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMETERS;
 
 @Component
-public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneSide, PlayPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener {
+public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneSide, PlayPressedListener, ResetPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener {
 
     private final LineModelManager lineModelManager;
 
@@ -56,13 +57,13 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
             lineModelManager.updateView();
         }
 
-        if (!paused) {
+        if (!paused && !geneticAlgorithm.isDone()) {
             float progression = delta * speed;
             elapsedTime += progression;
 
             if (elapsedTime >= 1) {
                 elapsedTime = 0;
-                geneticAlgorithm.nextGeneration(1f, 2f);
+                geneticAlgorithm.nextGeneration();
                 updateLabels();
                 progression = 0;
             }
@@ -73,7 +74,7 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
 
     @Override
     public void reset() {
-        geneticAlgorithm.initializePopulation();
+        geneticAlgorithm.initialize();
         lineModelManager.setGenerations(geneticAlgorithm.getGenerations());
         lineModelManager.updateView();
         updateLabels();
@@ -90,6 +91,12 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
     @Override
     public void onPlayPressed() {
         this.paused = !this.paused;
+    }
+
+    @Override
+    public void onResetPressed() {
+        this.paused = true;
+        reset();
     }
 
     @Override
@@ -142,11 +149,6 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements SceneS
     @Override
     public void setLength(final float length) {
         PARAMETERS.setLineLength(length);
-    }
-
-    @Override
-    public void setPopulationCount(final int populationCount) {
-        PARAMETERS.setPopulationCount(populationCount);
     }
 
     @Override
