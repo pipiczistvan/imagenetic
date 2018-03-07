@@ -1,6 +1,5 @@
 package imagenetic.scene;
 
-import imagenetic.common.Bridge;
 import imagenetic.scene.asset.camera.ObserverCameraAsset;
 import imagenetic.scene.asset.voxel.VoxelAsset;
 import imagenetic.scene.asset.voxel.VoxelAssetArgument;
@@ -11,7 +10,6 @@ import piengine.core.utils.ColorUtils;
 import piengine.object.asset.manager.AssetManager;
 import piengine.object.asset.plan.GuiRenderAssetContextBuilder;
 import piengine.object.camera.asset.CameraAssetArgument;
-import piengine.object.camera.domain.Camera;
 import piengine.object.camera.domain.CameraAttribute;
 import piengine.object.camera.domain.ThirdPersonCamera;
 import piengine.object.canvas.domain.Canvas;
@@ -26,7 +24,7 @@ import piengine.visual.render.manager.RenderManager;
 import puppeteer.annotation.premade.Wire;
 
 import static imagenetic.common.Config.MAX_SCALE;
-import static imagenetic.common.Config.MIN_SCALE;
+import static imagenetic.common.Config.SCENE_RESOLUTION;
 import static piengine.core.base.type.property.ApplicationProperties.get;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_FOV;
 import static piengine.core.base.type.property.PropertyKeys.CAMERA_LOOK_DOWN_LIMIT;
@@ -60,8 +58,7 @@ public class MainScene extends Scene {
     // Stick
     private VoxelAsset voxelAsset;
     private ObserverCameraAsset cameraAsset;
-    private Camera camera;
-    private float viewScale = 1f;
+    private ThirdPersonCamera camera;
 
     @Wire
     public MainScene(final RenderManager renderManager, final AssetManager assetManager,
@@ -79,19 +76,8 @@ public class MainScene extends Scene {
     public void initialize() {
         recalculateViewport();
         super.initialize();
-        Bridge.sceneSide = voxelAsset;
 
         inputManager.addKeyEvent(KEY_ESCAPE, PRESS, displayManager::closeDisplay);
-        inputManager.addScrollEvent(scroll -> {
-            viewScale += scroll.y * 0.1f;
-            if (viewScale > MAX_SCALE) {
-                viewScale = MAX_SCALE;
-            } else if (viewScale < MIN_SCALE) {
-                viewScale = MIN_SCALE;
-            }
-
-            voxelAsset.setViewScale(viewScale);
-        });
     }
 
     @Override
@@ -120,10 +106,10 @@ public class MainScene extends Scene {
         cameraAsset.movingEnabled = false;
         cameraAsset.lookingEnabled = false;
 
-        camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, 2000f), 1000f, ORTHOGRAPHIC);
+        camera = new ThirdPersonCamera(cameraAsset, VIEWPORT, new CameraAttribute(get(CAMERA_FOV), 0.1f, SCENE_RESOLUTION * MAX_SCALE * 2), SCENE_RESOLUTION * MAX_SCALE, ORTHOGRAPHIC);
 
         //todo: This should by dynamic
-        voxelAsset = supplyAsset(VoxelAsset.class, new VoxelAssetArgument(this, 100, cameraAsset));
+        voxelAsset = supplyAsset(VoxelAsset.class, new VoxelAssetArgument(this, cameraAsset));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package imagenetic.scene.asset.voxel.genetic;
 
-import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.GeneticAlgorithm;
 import imagenetic.gui.common.api.image.ImageSelectionListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
@@ -19,12 +18,7 @@ import java.awt.image.BufferedImage;
 @Component
 public class VoxelGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> implements ImageSelectionListener {
 
-    public static final AlgorithmParameters PARAMETERS = new AlgorithmParameters(
-            100,
-            Config.DEF_POPULATION_SIZE,
-            Config.DEF_ENTITY_LENGTH,
-            Config.DEF_ENTITY_THICKNESS
-    );
+    public static final AlgorithmParameters PARAMETERS = new AlgorithmParameters();
 
     @Wire
     public VoxelGeneticAlgorithm(final LayerFitnessFunction layerFitnessFunction, final LayerSelectionOperator layerSelectionOperator,
@@ -50,6 +44,7 @@ public class VoxelGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> imp
 
     @Override
     public void onImageSelect(final BufferedImage image) {
-        PARAMETERS.changed = true;
+        BufferedImage preparedImage = ((LayerFitnessFunction) fitnessFunction).prepareImage(image);
+        PARAMETERS.setImage(preparedImage);
     }
 }

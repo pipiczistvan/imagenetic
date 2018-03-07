@@ -63,7 +63,6 @@ public class LabelImage extends JLabel implements ImageStageChangedListener {
 
         updateLabelImage();
 
-        Bridge.sceneSide.setImage(image);
         Bridge.LISTENER_CONTAINER.imageSelectionListeners.forEach(l -> l.onImageSelect(image));
     }
 

@@ -2,7 +2,6 @@ package imagenetic.scene.asset.voxel.genetic.function;
 
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.image.ImageProcessor;
-import imagenetic.gui.common.api.image.ImageSelectionListener;
 import imagenetic.gui.common.api.settings.MultiCheckChangedListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
@@ -10,10 +9,11 @@ import puppeteer.annotation.premade.Component;
 
 import java.awt.image.BufferedImage;
 
+import static imagenetic.common.Config.VOXEL_RESOLUTION;
 import static imagenetic.common.util.NumberUtil.nullSafeDivide;
 
 @Component
-public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, ImageSelectionListener, MultiCheckChangedListener {
+public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, MultiCheckChangedListener {
 
     private boolean multiCheck;
     private int maxColorValue;
@@ -46,14 +46,15 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
         return fitnessOfSticks / element.voxelChromosomes.size();
     }
 
-    @Override
-    public void onImageSelect(final BufferedImage image) {
-        BufferedImage preparedImage = prepareImage(image, 100);
+    public BufferedImage prepareImage(final BufferedImage image) {
+        BufferedImage preparedImage = prepareImage(image, VOXEL_RESOLUTION);
 
         this.width = preparedImage.getWidth();
         this.height = preparedImage.getHeight();
 
         this.originalPixelValues = getColorValues(preparedImage);
+
+        return preparedImage;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
         int[][] colorValues = new int[image.getWidth()][image.getHeight()];
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-                colorValues[x][y] = image.getRGB(x, y) & 0xff;
+                colorValues[x][y] = getPixelValue(image.getRGB(x, y)) > 0 ? 1 : 0;
                 if (maxColorValue < colorValues[x][y]) {
                     maxColorValue = colorValues[x][y];
                 }
@@ -124,5 +125,14 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, I
         }
 
         return colorValues;
+    }
+
+    public static int getPixelValue(final int p) {
+        int a = (p >> 24) & 0xff;
+        int r = (p >> 16) & 0xff;
+        int g = (p >> 8) & 0xff;
+        int b = p & 0xff;
+
+        return a < 255 ? 0 : (r + g + b) / 3;
     }
 }

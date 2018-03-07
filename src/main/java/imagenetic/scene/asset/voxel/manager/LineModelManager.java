@@ -21,7 +21,7 @@ import java.util.List;
 public class LineModelManager implements SyncPressedListener {
 
     private static final int MODEL_POPULATION_COUNT = Config.MAX_POPULATION_COUNT;
-    private static final int MODEL_POPULATION_SIZE = Config.MAX_POPULATION_SIZE;
+    private static final int MODEL_POPULATION_SIZE = Config.POPULATION_SIZE;
 
     private final ModelManager modelManager;
     private final List[] lineModels;
@@ -81,11 +81,6 @@ public class LineModelManager implements SyncPressedListener {
     public void setShowAll(final boolean showAll) {
         discreteSynchronizer.setShowAll(showAll);
         continuousSynchronizer.setShowAll(showAll);
-    }
-
-    public void setThreshold(final double threshold) {
-        discreteSynchronizer.setThreshold(threshold);
-        continuousSynchronizer.setThreshold(threshold);
     }
 
     public void setViewScale(final float viewScale) {

@@ -2,67 +2,28 @@ package imagenetic.scene.asset.voxel.genetic;
 
 import java.awt.image.BufferedImage;
 
+import static imagenetic.scene.asset.voxel.genetic.function.LayerFitnessFunction.getPixelValue;
+
 public class AlgorithmParameters {
 
     protected boolean changed = false;
     protected BufferedImage image;
-    protected int maxSize;
-    protected int populationSize;
-    protected float lineLength;
-    protected float lineThickness;
+    public int relevantPixelCount = 0;
 
-    public AlgorithmParameters(final int maxSize, final int populationSize,
-                               final float lineLength, final float lineThickness) {
-        this.maxSize = maxSize;
-        this.populationSize = populationSize;
-
-        this.lineLength = lineLength;
-        this.lineThickness = lineThickness;
-    }
-
-    public void setImage(BufferedImage image) {
+    public void setImage(final BufferedImage image) {
         this.image = image;
         this.changed = true;
-    }
 
-    public void setMaxSize(int maxSize) {
-        this.maxSize = maxSize;
-        this.changed = true;
-    }
-
-    public void setPopulationSize(int populationSize) {
-        this.populationSize = populationSize;
-        this.changed = true;
-    }
-
-    public void setLineLength(float lineLength) {
-        this.lineLength = lineLength;
-        this.changed = true;
-    }
-
-    public void setLineThickness(float lineThickness) {
-        this.lineThickness = lineThickness;
-        this.changed = true;
+        this.relevantPixelCount = 0;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                this.relevantPixelCount += getPixelValue(image.getRGB(x, y)) > 0 ? 1 : 0;
+            }
+        }
     }
 
     public BufferedImage getImage() {
         return image;
-    }
-
-    public int getMaxSize() {
-        return maxSize;
-    }
-
-    public int getPopulationSize() {
-        return populationSize;
-    }
-
-    public float getLineLength() {
-        return lineLength;
-    }
-
-    public float getLineThickness() {
-        return lineThickness;
     }
 
     public boolean hasChanged() {
