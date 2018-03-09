@@ -13,7 +13,7 @@ import static imagenetic.scene.asset.voxel.genetic.function.selection.SelectionO
 public class RankingMode implements LayerSelectionOperatorMode {
 
     @Override
-    public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(List<Entity<LayerChromosome>> orderedPopulation) {
+    public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(final List<Entity<LayerChromosome>> orderedPopulation) {
         return new Pair<>(orderedPopulation.get(0), orderedPopulation.get(1));
     }
 

@@ -17,7 +17,7 @@ public class TournamentMode implements LayerSelectionOperatorMode {
 
     @Override
     public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(List<Entity<LayerChromosome>> orderedPopulation) {
-        int leftIndex = random.nextInt(orderedPopulation.size() / 2);
+        int leftIndex = random.nextInt(orderedPopulation.size());
         int rightIndex;
 
         do {
