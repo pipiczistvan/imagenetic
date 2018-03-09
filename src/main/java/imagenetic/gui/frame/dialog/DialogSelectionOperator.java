@@ -28,11 +28,28 @@ public class DialogSelectionOperator extends JDialog {
                 JPanel panelRanking = new JPanel();
                 tabbedPane.addTab("Rangsor", null, panelRanking, null);
                 panelRanking.setLayout(new BorderLayout(0, 0));
+                {
+                    JTextArea textareaRank = new JTextArea();
+                    textareaRank.setBackground(Color.WHITE);
+                    textareaRank.setWrapStyleWord(true);
+                    textareaRank.setLineWrap(true);
+                    textareaRank.setEditable(false);
+                    textareaRank.setText("Ennél a szelekciós módszernél az egyedek között fitneszeltérés nagysága nem játszik szerepet, hanem a kiválasztás a fitnesz alapján betöltött hely szerint történik. Így a nagyobb fitnesz értékű egyed nagyobb eséllyel versenyez, viszont a kisebbek is kapnak esélyt.");
+                    panelRanking.add(textareaRank);
+                }
             }
             {
                 JPanel panelTournament = new JPanel();
                 tabbedPane.addTab("Versenyeztetés", null, panelTournament, null);
-                panelTournament.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+                panelTournament.setLayout(new BorderLayout(0, 0));
+                {
+                    JTextArea textareaTournament = new JTextArea();
+                    textareaTournament.setLineWrap(true);
+                    textareaTournament.setWrapStyleWord(true);
+                    textareaTournament.setEditable(false);
+                    textareaTournament.setText("A módszer két egyed véletlesznerű kiválasztásával kezdődik, amelyek közül az kerül ki győztesen, amelyiknek nagyobb a fitnesze.");
+                    panelTournament.add(textareaTournament, BorderLayout.CENTER);
+                }
             }
         }
     }

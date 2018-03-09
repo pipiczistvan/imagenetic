@@ -25,9 +25,17 @@ public class DialogMutationOperator extends JDialog {
             JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
             getContentPane().add(tabbedPane, BorderLayout.CENTER);
             {
-                JPanel panelRanking = new JPanel();
-                tabbedPane.addTab("Véletlenszerű", null, panelRanking, null);
-                panelRanking.setLayout(new BorderLayout(0, 0));
+                JPanel panelRandom = new JPanel();
+                tabbedPane.addTab("Véletlenszerű", null, panelRandom, null);
+                panelRandom.setLayout(new BorderLayout(0, 0));
+                {
+                    JTextArea textareaRandom = new JTextArea();
+                    textareaRandom.setLineWrap(true);
+                    textareaRandom.setWrapStyleWord(true);
+                    textareaRandom.setEditable(false);
+                    textareaRandom.setText("Az egyed minden tulajdonsága véletlenszerűen megváltozik.");
+                    panelRandom.add(textareaRandom, BorderLayout.CENTER);
+                }
             }
         }
     }

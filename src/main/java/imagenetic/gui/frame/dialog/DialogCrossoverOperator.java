@@ -25,9 +25,17 @@ public class DialogCrossoverOperator extends JDialog {
             JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
             getContentPane().add(tabbedPane, BorderLayout.CENTER);
             {
-                JPanel panelRanking = new JPanel();
-                tabbedPane.addTab("Egyenletes", null, panelRanking, null);
-                panelRanking.setLayout(new BorderLayout(0, 0));
+                JPanel panelConsistent = new JPanel();
+                tabbedPane.addTab("Egyenletes", null, panelConsistent, null);
+                panelConsistent.setLayout(new BorderLayout(0, 0));
+                {
+                    JTextArea textareaConsistent = new JTextArea();
+                    textareaConsistent.setLineWrap(true);
+                    textareaConsistent.setWrapStyleWord(true);
+                    textareaConsistent.setEditable(false);
+                    textareaConsistent.setText("A szülőegyedek tulajdonságai egyenlő esélyekkel öröklődnek.");
+                    panelConsistent.add(textareaConsistent, BorderLayout.CENTER);
+                }
             }
         }
     }
