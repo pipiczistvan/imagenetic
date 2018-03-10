@@ -88,19 +88,11 @@ public class LineModelManager implements SyncPressedListener {
         continuousSynchronizer.setViewScale(viewScale);
     }
 
-    public void setInterpolated(final boolean interpolated) {
+    @Override
+    public void onSyncPressed(final boolean interpolated) {
         this.interpolated = interpolated;
         if (interpolated) {
             continuousSynchronizer.setupGenerations();
         }
-    }
-
-    public boolean isInterpolated() {
-        return interpolated;
-    }
-
-    @Override
-    public void onSyncPressed() {
-        interpolated = !interpolated;
     }
 }

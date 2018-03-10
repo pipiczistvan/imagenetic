@@ -42,7 +42,7 @@ public class MainFrame extends JFrame implements FrameSide {
         this.setPreferredSize(new Dimension(get(WINDOW_WIDTH), get(WINDOW_HEIGHT)));
         this.setMinimumSize(new Dimension(get(WINDOW_MIN_WIDTH), get(WINDOW_MIN_HEIGHT)));
         this.setLocationRelativeTo(null);
-        this.setIconImage(new ImageIcon(imageLoader.getUrl("gene")).getImage());
+        this.setIconImage(new ImageIcon(imageLoader.getUrl("icon")).getImage());
 
         this.setJMenuBar(mainMenuBar);
         this.getContentPane().add(panelCanvas, BorderLayout.CENTER);

@@ -15,6 +15,7 @@ import imagenetic.gui.common.api.settings.MutationOperatorChangedListener;
 import imagenetic.gui.common.api.settings.MutationRateChangedListener;
 import imagenetic.gui.common.api.settings.PopulationCountChangedListener;
 import imagenetic.gui.common.api.settings.SelectionOperatorChangedListener;
+import imagenetic.gui.common.api.settings.ShowAllChangedListener;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -31,6 +32,7 @@ public class ListenerContainer {
     public final List<SlowerPressedListener> slowerPressedListeners;
     public final List<ImageStageChangedListener> imageStageChangedListeners;
     public final List<MultiCheckChangedListener> multiCheckChangedListeners;
+    public final List<ShowAllChangedListener> showAllChangedListeners;
     public final List<ViewChangedListener> viewChangedListeners;
     public final List<MutationRateChangedListener> mutationRateChangedListeners;
     public final List<ElitismRateChangedListener> elitismRateChangedListeners;
@@ -42,7 +44,7 @@ public class ListenerContainer {
 
     @Wire
     public ListenerContainer(final List<ImageSelectionListener> imageSelectionListeners, final List<PlayPressedListener> playPressedListeners,
-                             final List<SyncPressedListener> syncPressedListeners,
+                             final List<SyncPressedListener> syncPressedListeners, final List<ShowAllChangedListener> showAllChangedListeners,
                              final List<ResetPressedListener> resetPressedListeners, final List<FasterPressedListener> fasterPressedListeners,
                              final List<SlowerPressedListener> slowerPressedListeners, final List<ImageStageChangedListener> imageStageChangedListeners,
                              final List<MultiCheckChangedListener> multiCheckChangedListeners, final List<ViewChangedListener> viewChangedListeners,
@@ -58,6 +60,7 @@ public class ListenerContainer {
         this.slowerPressedListeners = slowerPressedListeners;
         this.imageStageChangedListeners = imageStageChangedListeners;
         this.multiCheckChangedListeners = multiCheckChangedListeners;
+        this.showAllChangedListeners = showAllChangedListeners;
         this.viewChangedListeners = viewChangedListeners;
         this.mutationRateChangedListeners = mutationRateChangedListeners;
         this.elitismRateChangedListeners = elitismRateChangedListeners;

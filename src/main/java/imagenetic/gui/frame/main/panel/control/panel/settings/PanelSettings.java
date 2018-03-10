@@ -21,10 +21,11 @@ public class PanelSettings extends JPanel {
     public PanelSettings(final SpinnerPopulationCount spinnerPopulationCount, final SpinnerMutationRate spinnerMutationRate,
                          final SpinnerElitismRate spinnerElitismRate, final SpinnerCriteriaRate spinnerCriteriaRate,
                          final ComboBoxSelectionOperator comboBoxSelectionOperator, final ComboBoxMutationOperator comboBoxMutationOperator,
-                         final ComboBoxCrossoverOperator comboBoxCrossoverOperator, final CheckBoxMultiCheck checkBoxMultiCheck) {
+                         final ComboBoxCrossoverOperator comboBoxCrossoverOperator, final CheckBoxMultiCheck checkBoxMultiCheck,
+                         final CheckBoxShowAll checkBoxShowAll) {
         this.setAlignmentY(TOP_ALIGNMENT);
         this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Beállítások", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        this.setLayout(new MigLayout("", "[][][grow]", "[][][][][][][][]"));
+        this.setLayout(new MigLayout("", "[][][grow]", "[][][][][][][][][]"));
 
         // POPULATION COUNT
         JLabel lblPopulationCount = new JLabel("Populáció számossága:");
@@ -112,5 +113,11 @@ public class PanelSettings extends JPanel {
         this.add(lblMultiCheck, "cell 0 7");
 
         this.add(checkBoxMultiCheck, "cell 2 7,alignx right");
+
+        // SHOW ALL
+        JLabel lblShowAll = new JLabel("Mindet mutat:");
+        this.add(lblShowAll, "cell 0 8");
+
+        this.add(checkBoxShowAll, "cell 2 8,alignx right");
     }
 }

@@ -1,4 +1,4 @@
-package imagenetic.gui.frame.main.panel.control.panel.buttons;
+package imagenetic.gui.frame.main.menubar.control;
 
 import imagenetic.common.Bridge;
 import imagenetic.gui.common.api.buttons.PlayPressedListener;
@@ -7,25 +7,16 @@ import imagenetic.gui.common.api.image.ImageSelectionListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 
-import static imagenetic.common.Config.IMAGE_LOADER;
-
 @Component
-public class ButtonPlay extends JButton implements ImageSelectionListener, ResetPressedListener, PlayPressedListener {
-
-    private final ImageIcon pauseButtonIcon = new ImageIcon(IMAGE_LOADER.getUrl("pause-button"));
-    private final ImageIcon playButtonIcon = new ImageIcon(IMAGE_LOADER.getUrl("play-button"));
+public class MenuItemPlay extends JMenuItem implements ImageSelectionListener, ResetPressedListener, PlayPressedListener {
 
     private boolean paused = true;
 
-    public ButtonPlay() {
-        this.setToolTipText("Indítás");
-        this.setFocusPainted(false);
-        this.setMaximumSize(new Dimension(40, 40));
-        this.setIcon(playButtonIcon);
+    public MenuItemPlay() {
+        super("Indítás");
         this.addActionListener(this::onClick);
         this.setEnabled(false);
     }
@@ -38,18 +29,15 @@ public class ButtonPlay extends JButton implements ImageSelectionListener, Reset
     @Override
     public void onResetPressed() {
         this.paused = true;
-        this.setIcon(playButtonIcon);
-        this.setToolTipText("Indítás");
+        this.setText("Indítás");
     }
 
     @Override
     public void onPlayPressed(final boolean paused) {
         if (paused) {
-            this.setIcon(playButtonIcon);
-            this.setToolTipText("Indítás");
+            this.setText("Indítás");
         } else {
-            this.setIcon(pauseButtonIcon);
-            this.setToolTipText("Megállítás");
+            this.setText("Megállítás");
         }
 
         this.paused = paused;

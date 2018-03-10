@@ -7,6 +7,7 @@ import imagenetic.gui.common.api.buttons.FasterPressedListener;
 import imagenetic.gui.common.api.buttons.PlayPressedListener;
 import imagenetic.gui.common.api.buttons.ResetPressedListener;
 import imagenetic.gui.common.api.buttons.SlowerPressedListener;
+import imagenetic.gui.common.api.settings.ShowAllChangedListener;
 import imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.core.input.manager.InputManager;
@@ -22,7 +23,7 @@ import static imagenetic.common.Config.MIN_SCALE;
 import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMETERS;
 
 @Component
-public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPressedListener, ResetPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener {
+public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPressedListener, ResetPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener, ShowAllChangedListener {
 
     private final LineModelManager lineModelManager;
     private final InputManager inputManager;
@@ -90,6 +91,12 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
     }
 
     @Override
+    public void onShowAllChanged(boolean checked) {
+        lineModelManager.setShowAll(checked);
+        visualChanged = true;
+    }
+
+    @Override
     public void viewChanged(final VIEW_TYPE view, final boolean zoomReset) {
         if (zoomReset) {
             setViewScale(1.0f);
@@ -98,8 +105,8 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
     }
 
     @Override
-    public void onPlayPressed() {
-        this.paused = !this.paused;
+    public void onPlayPressed(final boolean paused) {
+        this.paused = paused;
     }
 
     @Override

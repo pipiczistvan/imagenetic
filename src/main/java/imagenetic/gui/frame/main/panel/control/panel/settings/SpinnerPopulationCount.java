@@ -21,7 +21,7 @@ public class SpinnerPopulationCount extends JSpinner implements PlayPressedListe
     }
 
     @Override
-    public void onPlayPressed() {
+    public void onPlayPressed(final boolean paused) {
         this.setEnabled(false);
     }
 

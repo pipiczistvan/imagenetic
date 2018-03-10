@@ -3,6 +3,7 @@ package imagenetic.gui.frame.main.panel.control.panel.image;
 import imagenetic.common.Bridge;
 import imagenetic.common.algorithm.image.ImageProcessor;
 import imagenetic.gui.common.ImageChooser;
+import imagenetic.gui.common.api.image.ImageSelectionListener;
 import imagenetic.gui.common.api.image.ImageStageChangedListener;
 import puppeteer.annotation.premade.Component;
 
@@ -12,8 +13,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import static imagenetic.common.util.ImageUtil.copyImage;
+
+
 @Component
-public class LabelImage extends JLabel implements ImageStageChangedListener {
+public class LabelImage extends JLabel implements ImageStageChangedListener, ImageSelectionListener {
 
     private final BufferedImage[] imageStages = new BufferedImage[3];
     private final ImageChooser imageChooser = new ImageChooser(this);
@@ -42,11 +46,8 @@ public class LabelImage extends JLabel implements ImageStageChangedListener {
         updateLabelImage();
     }
 
-    private void chooseImage() {
-        imageChooser.choose(this::updateImage);
-    }
-
-    private void updateImage(final BufferedImage image) {
+    @Override
+    public void onImageSelect(final BufferedImage image) {
         int newImageWidth;
         int newImageHeight;
         if (image.getWidth() > image.getHeight()) {
@@ -62,21 +63,19 @@ public class LabelImage extends JLabel implements ImageStageChangedListener {
         imageStages[2] = ImageProcessor.loadImage(copyImage(imageStages[1])).toNegative().get();
 
         updateLabelImage();
+    }
 
-        Bridge.LISTENER_CONTAINER.imageSelectionListeners.forEach(l -> l.onImageSelect(image));
+    private void chooseImage() {
+        imageChooser.choose(this::updateImage);
+    }
+
+    private void updateImage(final BufferedImage image) {
+        Bridge.LISTENER_CONTAINER.imageSelectionListeners.forEach(l -> l.onImageSelect(copyImage(image)));
     }
 
     private void updateLabelImage() {
         ImageIcon imageIcon = new ImageIcon(imageStages[imageStageIndex]);
         this.setIcon(imageIcon);
         this.setText("");
-    }
-
-    private static BufferedImage copyImage(final BufferedImage source) {
-        BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
-        Graphics g = b.getGraphics();
-        g.drawImage(source, 0, 0, null);
-        g.dispose();
-        return b;
     }
 }

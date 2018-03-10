@@ -18,7 +18,7 @@ public class DialogCrossoverOperator extends JDialog {
         setTitle("Keresztezési operátorok");
         setModalityType(ModalityType.APPLICATION_MODAL);
         setBounds(0, 0, 450, 300);
-        setIconImage(new ImageIcon(imageLoader.getUrl("gene")).getImage());
+        setIconImage(new ImageIcon(imageLoader.getUrl("icon")).getImage());
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         {

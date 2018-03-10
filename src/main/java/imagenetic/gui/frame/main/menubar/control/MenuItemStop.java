@@ -1,4 +1,4 @@
-package imagenetic.gui.frame.main.panel.control.panel.buttons;
+package imagenetic.gui.frame.main.menubar.control;
 
 import imagenetic.common.Bridge;
 import imagenetic.gui.common.api.buttons.PlayPressedListener;
@@ -6,21 +6,13 @@ import imagenetic.gui.common.api.buttons.ResetPressedListener;
 import puppeteer.annotation.premade.Component;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
-import static imagenetic.common.Config.IMAGE_LOADER;
-
 @Component
-public class ButtonReset extends JButton implements PlayPressedListener {
+public class MenuItemStop extends JMenuItem implements PlayPressedListener {
 
-    private final ImageIcon stopButtonIcon = new ImageIcon(IMAGE_LOADER.getUrl("stop-button"));
-
-    public ButtonReset() {
-        this.setToolTipText("Legállítás");
-        this.setFocusPainted(false);
-        this.setMaximumSize(new Dimension(40, 40));
-        this.setIcon(stopButtonIcon);
+    public MenuItemStop() {
+        super("Leállítás");
         this.addActionListener(this::onClick);
         this.setEnabled(false);
     }
