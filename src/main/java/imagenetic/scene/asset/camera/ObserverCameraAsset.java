@@ -16,10 +16,16 @@ import static piengine.core.input.domain.KeyEventType.RELEASE;
 
 public class ObserverCameraAsset extends CameraAsset {
 
+    private static final float ANIMATION_SPEED = 8;
+    private static final Vector3f TARGET_ROTATION = new Vector3f(180, 0, 180);
+
     private final InputManager inputManager;
     private final DisplayManager displayManager;
     private final Vector2f lastPos;
     private final Vector2f looking;
+    private final Vector2f animationDelta;
+
+    private boolean animating = false;
 
     @Wire
     public ObserverCameraAsset(final AssetManager assetManager, final InputManager inputManager, final DisplayManager displayManager) {
@@ -28,6 +34,7 @@ public class ObserverCameraAsset extends CameraAsset {
         this.displayManager = displayManager;
         this.lastPos = new Vector2f();
         this.looking = new Vector2f();
+        this.animationDelta = new Vector2f();
     }
 
     @Override
@@ -52,7 +59,7 @@ public class ObserverCameraAsset extends CameraAsset {
         });
         inputManager.addKeyEvent(MOUSE_BUTTON_1, RELEASE, () -> lookingEnabled = false);
         inputManager.addCursorEvent(v -> {
-            if (lookingEnabled) {
+            if (lookingEnabled && !animating) {
                 Vector2f delta = new Vector2f();
                 v.sub(lastPos, delta);
 
@@ -64,18 +71,41 @@ public class ObserverCameraAsset extends CameraAsset {
 
     @Override
     public void update(final float delta) {
-        Vector3f newRotation = calculateRotation(delta);
+        Vector3f newRotation;
+        if (animating) {
+            Vector3f currentRotation = getRotation();
+            newRotation = new Vector3f(
+                    currentRotation.x + animationDelta.x * delta * ANIMATION_SPEED,
+                    currentRotation.y + animationDelta.y * delta * ANIMATION_SPEED,
+                    currentRotation.z
+            );
+
+            if (((animationDelta.x >= 0 && newRotation.x >= TARGET_ROTATION.x) || (animationDelta.x < 0 && newRotation.x <= TARGET_ROTATION.x))
+                    && ((animationDelta.y >= 0 && newRotation.y >= TARGET_ROTATION.y) || (animationDelta.y < 0 && newRotation.y <= TARGET_ROTATION.y))) {
+                newRotation.set(TARGET_ROTATION);
+                animating = false;
+            }
+        } else {
+            newRotation = calculateRotation(delta);
+        }
 
         setRotation(newRotation);
 
         looking.set(0, 0);
     }
 
-    public void resetRotation(VIEW_TYPE view) {
-        if (view == VIEW_TYPE.FRONT) {
-            setRotation(180, 0, 180);
-        } else if (view == VIEW_TYPE.SIDE) {
-            setRotation(270, 0, 180);
+    public void resetRotation(final VIEW_TYPE view) {
+        if (!animating) {
+            if (view == VIEW_TYPE.FRONT) {
+                TARGET_ROTATION.set(180, 0, 180);
+            } else {
+                TARGET_ROTATION.set(270, 0, 180);
+            }
+
+            Vector3f currentRotation = getRotation();
+
+            animationDelta.set(TARGET_ROTATION.x - currentRotation.x, TARGET_ROTATION.y - currentRotation.y);
+            animating = true;
         }
     }
 

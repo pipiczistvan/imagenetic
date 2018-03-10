@@ -25,6 +25,9 @@ import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMET
 @Component
 public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPressedListener, ResetPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener, ShowAllChangedListener {
 
+    private static final float TARGET_ZOOM = 1;
+    private static final float ANIMATION_SPEED = 8;
+
     private final LineModelManager lineModelManager;
     private final InputManager inputManager;
     private final VoxelGeneticAlgorithm geneticAlgorithm;
@@ -33,7 +36,10 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
     private boolean visualChanged = false;
     private boolean paused = true;
     private int speed = Config.DEF_SPEED;
-    private float viewScale = 1f;
+    private float viewScale = TARGET_ZOOM;
+
+    private boolean animating = false;
+    private float deltaZoom = 0;
 
     @Wire
     public VoxelAsset(final AssetManager assetManager, final LineModelManager lineModelManager, final InputManager inputManager, final VoxelGeneticAlgorithm voxelGeneticAlgorithm) {
@@ -47,20 +53,32 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
     @Override
     public void initialize() {
         inputManager.addScrollEvent(scroll -> {
-            viewScale += scroll.y * 0.1f;
-            if (viewScale > MAX_SCALE) {
-                viewScale = MAX_SCALE;
-            } else if (viewScale < MIN_SCALE) {
-                viewScale = MIN_SCALE;
-            }
+            if (!animating) {
+                viewScale += scroll.y * 0.1f;
+                if (viewScale > MAX_SCALE) {
+                    viewScale = MAX_SCALE;
+                } else if (viewScale < MIN_SCALE) {
+                    viewScale = MIN_SCALE;
+                }
 
-            setViewScale(viewScale);
+                setViewScale(viewScale);
+            }
         });
         lineModelManager.initialize(this);
     }
 
     @Override
     public void update(final float delta) {
+        if (animating) {
+            viewScale += deltaZoom * delta * ANIMATION_SPEED;
+
+            if ((deltaZoom < 0 && viewScale <= TARGET_ZOOM) || (deltaZoom >= 0 && viewScale >= TARGET_ZOOM)) {
+                animating = false;
+                viewScale = TARGET_ZOOM;
+            }
+            setViewScale(viewScale);
+        }
+
         if (PARAMETERS.hasChanged()) {
             reset();
         }
@@ -98,10 +116,13 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
 
     @Override
     public void viewChanged(final VIEW_TYPE view, final boolean zoomReset) {
-        if (zoomReset) {
-            setViewScale(1.0f);
+        if (zoomReset && !animating) {
+            animating = true;
+            deltaZoom = TARGET_ZOOM - viewScale;
         }
-        arguments.cameraAsset.resetRotation(view);
+        if (view != VIEW_TYPE.NONE) {
+            arguments.cameraAsset.resetRotation(view);
+        }
     }
 
     @Override

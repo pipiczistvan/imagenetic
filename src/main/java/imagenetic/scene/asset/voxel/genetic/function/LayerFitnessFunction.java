@@ -93,13 +93,8 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, M
     }
 
     private BufferedImage prepareImage(final BufferedImage originalImage, final int maxSize) {
-        BufferedImage image = ImageProcessor.loadImage(originalImage)
-                .toGrayScale()
-                .toNegative()
-                .get();
-
-        int currentWidth = image.getWidth();
-        int currentHeight = image.getHeight();
+        int currentWidth = originalImage.getWidth();
+        int currentHeight = originalImage.getHeight();
 
         if (currentWidth > currentHeight) {
             currentHeight = maxSize * currentHeight / currentWidth;
@@ -109,7 +104,11 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, M
             currentHeight = maxSize;
         }
 
-        return ImageProcessor.loadImage(image).resize(currentWidth, currentHeight).get();
+        return ImageProcessor.loadImage(originalImage)
+                .resize(currentWidth, currentHeight)
+                .toGrayScale()
+                .toNegative()
+                .get();
     }
 
     private int[][] getColorValues(final BufferedImage image) {
