@@ -47,4 +47,8 @@ public class VoxelGeneticAlgorithm extends GeneticAlgorithm<LayerChromosome> imp
         BufferedImage preparedImage = ((LayerFitnessFunction) fitnessFunction).prepareImage(image);
         PARAMETERS.setImage(preparedImage);
     }
+
+    public int getEntityCount() {
+        return PARAMETERS.relevantPixelCount;
+    }
 }

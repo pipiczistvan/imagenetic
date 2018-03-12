@@ -16,6 +16,7 @@ import imagenetic.gui.common.api.settings.MutationRateChangedListener;
 import imagenetic.gui.common.api.settings.PopulationCountChangedListener;
 import imagenetic.gui.common.api.settings.SelectionOperatorChangedListener;
 import imagenetic.gui.common.api.settings.ShowAllChangedListener;
+import imagenetic.gui.common.api.settings.ShowBestChangedListener;
 import puppeteer.annotation.premade.Component;
 import puppeteer.annotation.premade.Wire;
 
@@ -41,6 +42,7 @@ public class ListenerContainer {
     public final List<SelectionOperatorChangedListener> selectionOperatorChangedListeners;
     public final List<CrossoverOperatorChangedListener> crossoverOperatorChangedListeners;
     public final List<MutationOperatorChangedListener> mutationOperatorChangedListeners;
+    public final List<ShowBestChangedListener> showBestChangedListeners;
 
     @Wire
     public ListenerContainer(final List<ImageSelectionListener> imageSelectionListeners, final List<PlayPressedListener> playPressedListeners,
@@ -51,7 +53,7 @@ public class ListenerContainer {
                              final List<MutationRateChangedListener> mutationRateChangedListeners, final List<ElitismRateChangedListener> elitismRateChangedListeners,
                              final List<CriteriaRateChangedListener> criteriaRateChangedListeners, final List<PopulationCountChangedListener> populationCountChangedListeners,
                              final List<SelectionOperatorChangedListener> selectionOperatorChangedListeners, final List<CrossoverOperatorChangedListener> crossoverOperatorChangedListeners,
-                             final List<MutationOperatorChangedListener> mutationOperatorChangedListeners) {
+                             final List<MutationOperatorChangedListener> mutationOperatorChangedListeners, final List<ShowBestChangedListener> showBestChangedListeners) {
         this.imageSelectionListeners = imageSelectionListeners;
         this.playPressedListeners = playPressedListeners;
         this.syncPressedListeners = syncPressedListeners;
@@ -69,5 +71,6 @@ public class ListenerContainer {
         this.selectionOperatorChangedListeners = selectionOperatorChangedListeners;
         this.crossoverOperatorChangedListeners = crossoverOperatorChangedListeners;
         this.mutationOperatorChangedListeners = mutationOperatorChangedListeners;
+        this.showBestChangedListeners = showBestChangedListeners;
     }
 }

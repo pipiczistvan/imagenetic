@@ -31,6 +31,7 @@ public class Config {
     public static final int DEF_SPEED = 6;
 
     public static final boolean DEF_SHOW_ALL = false;
+    public static final boolean DEF_SHOW_BEST = false;
 
     // Scene
     public static final float MIN_SCALE = 0.1f;

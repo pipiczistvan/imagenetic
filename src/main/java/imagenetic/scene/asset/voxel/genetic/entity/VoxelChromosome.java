@@ -7,10 +7,6 @@ public class VoxelChromosome implements Comparable<VoxelChromosome> {
     public float fitness = 0;
     public final Vector3i position;
 
-    public VoxelChromosome() {
-        this(new Vector3i());
-    }
-
     public VoxelChromosome(final Vector3i position) {
         this.position = position;
     }

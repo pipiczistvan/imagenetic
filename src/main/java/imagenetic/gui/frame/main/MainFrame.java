@@ -55,8 +55,8 @@ public class MainFrame extends JFrame implements FrameSide {
     }
 
     @Override
-    public void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec) {
-        panelLabel.updateLabels(numberOfGenerations, averageFitness, bestFitness, generationsPerSec);
+    public void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec, final int entityCount) {
+        panelLabel.updateLabels(numberOfGenerations, averageFitness, bestFitness, generationsPerSec, entityCount);
     }
 
     @Override

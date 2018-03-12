@@ -8,6 +8,7 @@ import imagenetic.gui.common.api.buttons.PlayPressedListener;
 import imagenetic.gui.common.api.buttons.ResetPressedListener;
 import imagenetic.gui.common.api.buttons.SlowerPressedListener;
 import imagenetic.gui.common.api.settings.ShowAllChangedListener;
+import imagenetic.gui.common.api.settings.ShowBestChangedListener;
 import imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.core.input.manager.InputManager;
@@ -23,7 +24,7 @@ import static imagenetic.common.Config.MIN_SCALE;
 import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMETERS;
 
 @Component
-public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPressedListener, ResetPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener, ShowAllChangedListener {
+public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPressedListener, ResetPressedListener, FasterPressedListener, SlowerPressedListener, ViewChangedListener, ShowAllChangedListener, ShowBestChangedListener {
 
     private static final float TARGET_ZOOM = 1;
     private static final float ANIMATION_SPEED = 8;
@@ -115,6 +116,12 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
     }
 
     @Override
+    public void onShowBestChanged(boolean checked) {
+        lineModelManager.setShowBest(checked);
+        visualChanged = true;
+    }
+
+    @Override
     public void viewChanged(final VIEW_TYPE view, final boolean zoomReset) {
         if (zoomReset && !animating) {
             animating = true;
@@ -166,6 +173,6 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
     }
 
     private void updateLabels() {
-        Bridge.frameSide.updateLabels(geneticAlgorithm.getNumberOfGenerations(), geneticAlgorithm.getAverageFitness(), geneticAlgorithm.getBestFitness(), speed);
+        Bridge.frameSide.updateLabels(geneticAlgorithm.getNumberOfGenerations(), geneticAlgorithm.getAverageFitness(), geneticAlgorithm.getBestFitness(), speed, geneticAlgorithm.getEntityCount());
     }
 }

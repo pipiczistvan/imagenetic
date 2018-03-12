@@ -24,6 +24,7 @@ public abstract class Synchronizer {
 
     private float viewScale = Config.DEF_SCALE;
     private boolean showAll = Config.DEF_SHOW_ALL;
+    private boolean showBest = Config.DEF_SHOW_BEST;
 
     public Synchronizer(final int modelPopulationCount, final int modelPopulationSize, final List[] cubeModels) {
         this.modelPopulationCount = modelPopulationCount;
@@ -55,6 +56,10 @@ public abstract class Synchronizer {
         this.showAll = showAll;
     }
 
+    public void setShowBest(final boolean showBest) {
+        this.showBest = showBest;
+    }
+
     protected abstract Generation<LayerChromosome> calculateCurrentGeneration(final float delta);
 
     private void syncModelsWithChromosomes() {
@@ -71,16 +76,15 @@ public abstract class Synchronizer {
                     if (j < layerChromosome.voxelChromosomes.size()) {
                         VoxelChromosome chromosome = layerChromosome.voxelChromosomes.get(j);
 
-                        //todo: This should be dynamic
                         lineModel.setPosition(new Vector3f(chromosome.position.x, chromosome.position.y, chromosome.position.z).mul(viewScale * VOXEL_VISUAL_SCALE));
                         lineModel.setScale(viewScale * VOXEL_VISUAL_SCALE);
 
                         if (i == 0) {
                             lineModel.color.set(ColorUtils.BLACK);
-                            lineModel.visible = true;
+                            lineModel.visible = !showBest || chromosome.fitness >= 1f;
                         } else {
                             lineModel.color.set(0.3f, 0.3f, 0.3f);
-                            lineModel.visible = showAll;
+                            lineModel.visible = showBest ? chromosome.fitness >= 1f && showAll : showAll;
                         }
                     } else {
                         lineModel.visible = false;

@@ -34,14 +34,14 @@ public class PanelLabel extends JPanel {
         this.lblEntityCount = new JLabel("");
         this.add(lblEntityCount);
 
-        updateLabels(0, 0, 0, Config.DEF_SPEED);
+        updateLabels(0, 0, 0, Config.DEF_SPEED, 0);
     }
 
-    public void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec) {
+    public void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec, final int entityCount) {
         lblGenerationCount.setText(String.format("Generációk száma: %s", numberOfGenerations));
         lblAverageFitness.setText(String.format("Átlagos fitness: %1.3f", averageFitness));
         lblBestFitness.setText(String.format("Legjobb fitness: %1.3f", bestFitness));
         lblSpeed.setText(String.format("Sebesség: %s generáció/mp", generationsPerSec));
-        lblEntityCount.setText(String.format("Egyedek száma: "));
+        lblEntityCount.setText(String.format("Egyedek száma: %s", entityCount));
     }
 }
