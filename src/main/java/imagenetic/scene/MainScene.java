@@ -5,6 +5,7 @@ import imagenetic.scene.asset.voxel.VoxelAsset;
 import imagenetic.scene.asset.voxel.VoxelAssetArgument;
 import org.joml.Vector2i;
 import piengine.core.architecture.scene.domain.Scene;
+import piengine.core.base.type.color.Color;
 import piengine.core.input.manager.InputManager;
 import piengine.core.utils.ColorUtils;
 import piengine.object.asset.manager.AssetManager;
@@ -42,6 +43,9 @@ import static piengine.visual.postprocessing.domain.EffectType.RADIAL_GRADIENT_E
 
 public class MainScene extends Scene {
 
+    public static final Color COLOR_WHITE = ColorUtils.createNormalizedColor(255, 255, 255);
+    public static final Color COLOR_GOLD = ColorUtils.createNormalizedColor(250,250,210);
+    public static final Color BACKGROUND_COLOR = new Color(COLOR_WHITE);
     private static final Vector2i VIEWPORT = new Vector2i();
 
     private final InputManager inputManager;
@@ -140,7 +144,7 @@ public class MainScene extends Scene {
     private RenderPlan renderToBackground() {
         return GuiRenderPlanBuilder
                 .createPlan(backgroundFbo.getSize())
-                .clearScreen(ColorUtils.WHITE)
+                .clearScreen(BACKGROUND_COLOR)
                 .render();
     }
 

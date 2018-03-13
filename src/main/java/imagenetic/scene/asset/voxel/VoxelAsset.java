@@ -9,6 +9,7 @@ import imagenetic.gui.common.api.buttons.ResetPressedListener;
 import imagenetic.gui.common.api.buttons.SlowerPressedListener;
 import imagenetic.gui.common.api.settings.ShowAllChangedListener;
 import imagenetic.gui.common.api.settings.ShowBestChangedListener;
+import imagenetic.scene.MainScene;
 import imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm;
 import imagenetic.scene.asset.voxel.manager.LineModelManager;
 import piengine.core.input.manager.InputManager;
@@ -21,6 +22,8 @@ import puppeteer.annotation.premade.Wire;
 
 import static imagenetic.common.Config.MAX_SCALE;
 import static imagenetic.common.Config.MIN_SCALE;
+import static imagenetic.scene.MainScene.COLOR_GOLD;
+import static imagenetic.scene.MainScene.COLOR_WHITE;
 import static imagenetic.scene.asset.voxel.genetic.VoxelGeneticAlgorithm.PARAMETERS;
 
 @Component
@@ -88,17 +91,22 @@ public class VoxelAsset extends WorldAsset<VoxelAssetArgument> implements PlayPr
             lineModelManager.updateView();
         }
 
-        if (!paused && !geneticAlgorithm.isDone()) {
-            float progression = delta * speed;
-            elapsedTime += progression;
+        if (geneticAlgorithm.isDone()) {
+            MainScene.BACKGROUND_COLOR.set(COLOR_GOLD);
+        } else {
+            MainScene.BACKGROUND_COLOR.set(COLOR_WHITE);
+            if (!paused) {
+                float progression = delta * speed;
+                elapsedTime += progression;
 
-            if (elapsedTime >= 1) {
-                elapsedTime = 0;
-                geneticAlgorithm.nextGeneration();
-                updateLabels();
+                if (elapsedTime >= 1) {
+                    elapsedTime = 0;
+                    geneticAlgorithm.nextGeneration();
+                    updateLabels();
+                }
+
+                lineModelManager.synchronize(progression);
             }
-
-            lineModelManager.synchronize(progression);
         }
     }
 
