@@ -37,7 +37,6 @@ public class Config {
     public static final float MIN_SCALE = 0.1f;
     public static final float DEF_SCALE = 1.0f;
     public static final float MAX_SCALE = 3.0f;
-    public static final int INTERPOLATION_THRESHOLD = 10;
 
     public static final int SCENE_RESOLUTION = 600;
     public static final int VOXEL_RESOLUTION = 100;

@@ -63,10 +63,17 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, M
     }
 
     private float fitnessOfStick(int[][] pixelValues1, int[][] pixelValues2, VoxelChromosome element) {
-        float fitness1 = calculate(pixelValues1, element.position.x, element.position.y);
-        float fitness2 = multiCheck ? calculate(pixelValues2, element.position.z, element.position.y) : fitness1;
-
-        element.fitness = overall(fitness1, fitness2) * ratio(fitness1, fitness2);
+        if (multiCheck) {
+            float frontFitness = calculate(pixelValues1, element.position.x, element.position.y);
+            float sideFitness = calculate(pixelValues2, element.position.z, element.position.y);
+            element.fitness = overall(frontFitness, sideFitness) * ratio(frontFitness, sideFitness);
+        } else {
+            if (element.position.z != 0) {
+                element.fitness = 0;
+            } else {
+                element.fitness = calculate(pixelValues1, element.position.x, element.position.y);
+            }
+        }
         return element.fitness;
     }
 

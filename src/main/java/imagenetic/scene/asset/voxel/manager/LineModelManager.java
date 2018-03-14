@@ -96,8 +96,5 @@ public class LineModelManager implements SyncPressedListener {
     @Override
     public void onSyncPressed(final boolean interpolated) {
         this.interpolated = interpolated;
-        if (interpolated) {
-            continuousSynchronizer.setupGenerations();
-        }
     }
 }

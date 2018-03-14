@@ -14,9 +14,7 @@ public class LayerChromosomeCopier implements ChromosomeCopier<LayerChromosome> 
     public LayerChromosome copy(final LayerChromosome genotype) {
         List<VoxelChromosome> voxelChromosomes = genotype.voxelChromosomes
                 .stream()
-                .map(c -> new VoxelChromosome(
-                        new Vector3i(c.position))
-                )
+                .map(c -> new VoxelChromosome(new Vector3i(c.position)))
                 .collect(Collectors.toList());
 
         return new LayerChromosome(voxelChromosomes);

@@ -17,7 +17,7 @@ public class VoxelChromosome implements Comparable<VoxelChromosome> {
     }
 
     public VoxelChromosome(final VoxelChromosome voxelChromosome) {
-        this(voxelChromosome.position, voxelChromosome.fitness);
+        this(new Vector3i(voxelChromosome.position), voxelChromosome.fitness);
     }
 
     @Override

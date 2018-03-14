@@ -1,6 +1,5 @@
 package imagenetic.scene.asset.voxel.manager.sync;
 
-import imagenetic.common.Config;
 import imagenetic.common.algorithm.genetic.Generation;
 import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.common.util.Vector3iUtil;
@@ -13,13 +12,14 @@ import java.util.List;
 
 public class ContinuousSynchronizer extends Synchronizer {
 
+    private static final float INTERPOLATION_SPEED = 0.1f;
+
     private final Vector2i referencePosition = new Vector2i();
     private final Vector2i chosenPosition = new Vector2i();
 
     private Generation<LayerChromosome> srcGeneration;
     private Generation<LayerChromosome> destGeneration;
 
-    private int lastGenerationSize = -1;
     private float progression = 0.0f;
 
     public ContinuousSynchronizer(final int modelPopulationCount, final int modelPopulationSize, final List[] lineModels) {
@@ -28,20 +28,14 @@ public class ContinuousSynchronizer extends Synchronizer {
 
     @Override
     protected Generation<LayerChromosome> calculateCurrentGeneration(final float delta) {
-        if (generations.size() != lastGenerationSize && generations.size() % Config.INTERPOLATION_THRESHOLD == 0) {
-            lastGenerationSize = generations.size();
-            progression = 0.0f;
+        progression += delta * INTERPOLATION_SPEED;
 
+        if (progression >= 1) {
             sortGenerations(currentGeneration, generations.get(generations.size() - 1));
+            progression = 0.0f;
         }
 
-        progression += delta;
-        float interpolationProgression = progression / Config.INTERPOLATION_THRESHOLD;
-        if (interpolationProgression > 1) {
-            interpolationProgression = 1;
-        }
-
-        return createInterpolatedGeneration(srcGeneration, destGeneration, interpolationProgression);
+        return createInterpolatedGeneration(srcGeneration, destGeneration, progression);
     }
 
     @Override
@@ -49,11 +43,10 @@ public class ContinuousSynchronizer extends Synchronizer {
         super.setGenerations(generations);
 
         setupGenerations();
-        this.lastGenerationSize = -1;
         this.progression = 0.0f;
     }
 
-    public void setupGenerations() {
+    private void setupGenerations() {
         int srcIndex = generations.size() - 2;
         if (srcIndex < 0) {
             srcIndex = 0;
@@ -72,10 +65,10 @@ public class ContinuousSynchronizer extends Synchronizer {
 
             List<VoxelChromosome> newSrcChromosomes = new ArrayList<>();
             List<VoxelChromosome> newDestChromosomes = new ArrayList<>();
-            List<VoxelChromosome> choosableChromosomes = new ArrayList<>(destLayer.getGenoType().voxelChromosomes);
+            List<VoxelChromosome> choosableChromosomes = new ArrayList<>(srcLayer.getGenoType().voxelChromosomes);
             for (int j = 0; j < srcLayer.getGenoType().voxelChromosomes.size(); j++) {
-                VoxelChromosome srcVoxelChromosome = srcLayer.getGenoType().voxelChromosomes.get(j);
-                VoxelChromosome destVoxelChromosome = pickClosest(choosableChromosomes, srcVoxelChromosome);
+                VoxelChromosome destVoxelChromosome = destLayer.getGenoType().voxelChromosomes.get(j);
+                VoxelChromosome srcVoxelChromosome = pickClosest(choosableChromosomes, destVoxelChromosome);
 
                 newSrcChromosomes.add(new VoxelChromosome(srcVoxelChromosome));
                 newDestChromosomes.add(new VoxelChromosome(destVoxelChromosome));
