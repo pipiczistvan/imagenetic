@@ -13,7 +13,7 @@ public class ComboBoxCrossoverOperator extends JComboBox<CrossoverOperatorType> 
     public ComboBoxCrossoverOperator() {
         super(CrossoverOperatorType.values());
         this.addActionListener(this::onChange);
-        this.setSelectedItem(CrossoverOperatorType.CONSISTENT);
+        this.setSelectedItem(CrossoverOperatorType.UNIFORM);
     }
 
     private void onChange(final ActionEvent e) {

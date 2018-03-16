@@ -1,6 +1,5 @@
 package imagenetic.scene.asset.voxel.genetic.function.mutation;
 
-import imagenetic.gui.common.api.settings.MultiCheckChangedListener;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
 import puppeteer.annotation.premade.Component;
@@ -11,12 +10,11 @@ import static imagenetic.common.Config.VOXEL_RESOLUTION;
 import static imagenetic.scene.asset.voxel.genetic.function.mutation.MutationOperatorType.RANDOM;
 
 @Component
-public class RandomMode implements LayerMutationOperatorMode, MultiCheckChangedListener {
+public class RandomMode implements LayerMutationOperatorMode {
 
     private int maxSize;
     private int halfMaxSize;
     private final Random random = new Random();
-    private boolean multiCheck = false;
 
     @Override
     public void initialize() {
@@ -31,15 +29,10 @@ public class RandomMode implements LayerMutationOperatorMode, MultiCheckChangedL
                 voxelChromosome.position.set(
                         (int) (random.nextFloat() * maxSize - halfMaxSize),
                         (int) (random.nextFloat() * maxSize - halfMaxSize),
-                        multiCheck ? (int) (random.nextFloat() * maxSize - halfMaxSize) : 0
+                        (int) (random.nextFloat() * maxSize - halfMaxSize)
                 );
             }
         }
-    }
-
-    @Override
-    public void onMultiCheckChanged(boolean checked) {
-        multiCheck = checked;
     }
 
     @Override

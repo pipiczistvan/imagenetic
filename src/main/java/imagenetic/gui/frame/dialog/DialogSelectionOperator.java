@@ -37,7 +37,7 @@ public class DialogSelectionOperator extends JDialog {
                     textareaTournament.setEditable(false);
                     textareaTournament.setLineWrap(true);
                     textareaTournament.setWrapStyleWord(true);
-                    textareaTournament.setText("K\u00E9t egyed v\u00E9letlenszer\u0171 kiv\u00E1laszt\u00E1sa ut\u00E1n abb\u00F3l lesz sz\u00FCl\u0151egyed, amelyiknek nagyon a fitnesz \u00E9rt\u00E9ke. A m\u00E1sik sz\u00FCl\u0151 kiv\u00E1laszt\u00E1sa ennek a m\u00F3dszernek a megism\u00E9tl\u00E9s\u00E9vel t\u00F6rt\u00E9nik.");
+                    textareaTournament.setText("Két egyed véletlenszerű kiválasztása után abból lesz szülőegyed, amelyiknek nagyon a fitnesz értéke. A másik szülő kiválasztása ennek a módszernek a megismétlésével történik.");
                     panelTournament.add(textareaTournament, "cell 0 0,grow");
                 }
                 {
@@ -54,7 +54,7 @@ public class DialogSelectionOperator extends JDialog {
                 {
                     JTextArea textAreaAptitude = new JTextArea();
                     textAreaAptitude.setWrapStyleWord(true);
-                    textAreaAptitude.setText("A sz\u00FCl\u0151egyedek a fitnesz\u00E9rt\u00E9k\u00FCk ar\u00E1ny\u00E1ban ker\u00FClnek kiv\u00E1laszt\u00E1sra.");
+                    textAreaAptitude.setText("A szülőegyedek a fitneszértékük arányában kerülnek kiválasztásra.");
                     textAreaAptitude.setLineWrap(true);
                     textAreaAptitude.setFont(new Font("Tahoma", Font.PLAIN, 11));
                     textAreaAptitude.setEditable(false);
@@ -69,7 +69,7 @@ public class DialogSelectionOperator extends JDialog {
             }
             {
                 JPanel panelRanking = new JPanel();
-                tabbedPane.addTab("Rangsor alap\u00FA", null, panelRanking, null);
+                tabbedPane.addTab("Rangsor alapú", null, panelRanking, null);
                 panelRanking.setLayout(new MigLayout("", "[grow]", "[][]"));
                 {
                     JTextArea textareaRank = new JTextArea();
@@ -79,7 +79,7 @@ public class DialogSelectionOperator extends JDialog {
                     textareaRank.setWrapStyleWord(true);
                     textareaRank.setLineWrap(true);
                     textareaRank.setRows(1);
-                    textareaRank.setText("Enn\u00E9l a szelekci\u00F3s m\u00F3dszern\u00E9l az egyedek k\u00F6z\u00F6tt fitneszelt\u00E9r\u00E9s nagys\u00E1ga nem j\u00E1tszik szerepet, hanem a kiv\u00E1laszt\u00E1s a fitnesz alapj\u00E1n bet\u00F6lt\u00F6tt hely szerint t\u00F6rt\u00E9nik. \u00CDgy a nagyobb fitnesz \u00E9rt\u00E9k\u0171 egyed nagyobb es\u00E9llyel versenyez, viszont a kisebbek is kapnak es\u00E9lyt.");
+                    textareaRank.setText("Ennél a szelekciós módszernél az egyedek között fitneszeltérés nagysága nem játszik szerepet, hanem a kiválasztás a fitnesz alapján betöltött hely szerint történik. Úgy a nagyobb fitnesz értékű egyed nagyobb eséllyel versenyez, viszont a kisebbek is kapnak esélyt.");
                     panelRanking.add(textareaRank, "cell 0 0,grow");
                 }
                 {
@@ -91,12 +91,12 @@ public class DialogSelectionOperator extends JDialog {
             }
             {
                 JPanel panelRandom = new JPanel();
-                tabbedPane.addTab("V\u00E9letlenszer\u0171", null, panelRandom, null);
+                tabbedPane.addTab("Véletlenszerű", null, panelRandom, null);
                 panelRandom.setLayout(new MigLayout("", "[grow]", "[grow][]"));
                 {
                     JTextArea textAreaRandom = new JTextArea();
                     textAreaRandom.setWrapStyleWord(true);
-                    textAreaRandom.setText("Az \u00F6sszes egyed azonos es\u00E9llyel ker\u00FCl kiv\u00E1laszt\u00E1sra.");
+                    textAreaRandom.setText("Az összes egyed azonos eséllyel kerül kiválasztásra.");
                     textAreaRandom.setRows(1);
                     textAreaRandom.setLineWrap(true);
                     textAreaRandom.setFont(new Font("Tahoma", Font.PLAIN, 11));

@@ -2,7 +2,9 @@ package imagenetic.scene.asset.voxel.genetic.function.selection;
 
 public enum SelectionOperatorType {
     RANKING("Rangsor"),
-    TOURNAMENT("Versenyeztetés");
+    APTITUDE("Arányos"),
+    TOURNAMENT("Versenyeztetés"),
+    RANDOM("Véletlenszerű");
 
     private final String name;
 

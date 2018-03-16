@@ -36,7 +36,7 @@ public class DialogCrossoverOperator extends JDialog {
                     textareaOnePoint.setEditable(false);
                     textareaOnePoint.setLineWrap(true);
                     textareaOnePoint.setWrapStyleWord(true);
-                    textareaOnePoint.setText("Egy v\u00E9letlenszer\u0171en v\u00E1lasztott pontig az els\u0151 sz\u00FCl\u0151 tulajdons\u00E1gai \u00F6r\u00F6kl\u0151dnek, azt k\u00F6vet\u0151en pedig a m\u00E1sik sz\u00FCl\u0151\u00E9.");
+                    textareaOnePoint.setText("Egy véletlenszerűen választott pontig az első szülő tulajdonságai öröklődnek, azt követően pedig a másik szülőé.");
                     panelOnePoint.add(textareaOnePoint, "cell 0 0,grow");
                 }
                 {
@@ -48,12 +48,12 @@ public class DialogCrossoverOperator extends JDialog {
             }
             {
                 JPanel panelMultiPoint = new JPanel();
-                tabbedPane.addTab("T\u00F6bbpontos", null, panelMultiPoint, null);
+                tabbedPane.addTab("Többpontos", null, panelMultiPoint, null);
                 panelMultiPoint.setLayout(new MigLayout("", "[grow]", "[][][]"));
                 {
                     JTextArea textareaMultiPoint = new JTextArea();
                     textareaMultiPoint.setWrapStyleWord(true);
-                    textareaMultiPoint.setText("A sz\u00FCl\u0171egyedek tulajdons\u00E1gai t\u00F6bb, v\u00E9letlenszer\u0171en v\u00E1lasztott pont ment\u00E9n v\u00E1ltakozva \u00F6r\u00F6kl\u0151dnek.");
+                    textareaMultiPoint.setText("A szülűegyedek tulajdonságai több, véletlenszerűen választott pont mentén váltakozva öröklődnek.");
                     textareaMultiPoint.setLineWrap(true);
                     textareaMultiPoint.setFont(new Font("Tahoma", Font.PLAIN, 11));
                     textareaMultiPoint.setEditable(false);
@@ -78,7 +78,7 @@ public class DialogCrossoverOperator extends JDialog {
                     textareaUniform.setWrapStyleWord(true);
                     textareaUniform.setLineWrap(true);
                     textareaUniform.setRows(1);
-                    textareaUniform.setText("A k\u00E9t sz\u00FCl\u0151egyedt\u0151l a g\u00E9nek egyforma es\u00E9llyel \u00F6r\u00F6kl\u0151dnek.");
+                    textareaUniform.setText("A két szülőegyedtől a gének egyforma eséllyel öröklődnek.");
                     panelUniform.add(textareaUniform, "cell 0 0,grow");
                 }
                 {
@@ -90,12 +90,12 @@ public class DialogCrossoverOperator extends JDialog {
             }
             {
                 JPanel panelAverage = new JPanel();
-                tabbedPane.addTab("\u00C1tlag alap\u00FA", null, panelAverage, null);
+                tabbedPane.addTab("\u00C1tlag alapú", null, panelAverage, null);
                 panelAverage.setLayout(new MigLayout("", "[grow]", "[][][]"));
                 {
                     JTextArea textareaAverage = new JTextArea();
                     textareaAverage.setWrapStyleWord(true);
-                    textareaAverage.setText("A sz\u00FCl\u0151egyedekt\u0151l \u00F6r\u00F6k\u00F6lt g\u00E9nekb\u0151l, a sz\u00FCl\u0151k fitnesz\u00E9rt\u00E9k\u00E9vel s\u00FAlyozott \u00E1tlag\u00E1val \u00FAj g\u00E9nek keletkeznek.");
+                    textareaAverage.setText("A szülőegyedektől örökölt génekből, a szülők fitneszértékével súlyozott átlagával új gének keletkeznek.");
                     textareaAverage.setRows(1);
                     textareaAverage.setLineWrap(true);
                     textareaAverage.setFont(new Font("Tahoma", Font.PLAIN, 11));

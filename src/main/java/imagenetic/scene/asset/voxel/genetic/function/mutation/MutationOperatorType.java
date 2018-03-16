@@ -1,7 +1,10 @@
 package imagenetic.scene.asset.voxel.genetic.function.mutation;
 
 public enum MutationOperatorType {
-    RANDOM("Véletlenszerű");
+    RANDOM("Véletlenszerű"),
+    SWAP("Géncsere"),
+    SCRAMBLE("Összekeverés"),
+    INVERSION("Inverzió");
 
     private final String name;
 

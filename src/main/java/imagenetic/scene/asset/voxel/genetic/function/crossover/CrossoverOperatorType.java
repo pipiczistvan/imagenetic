@@ -1,7 +1,10 @@
 package imagenetic.scene.asset.voxel.genetic.function.crossover;
 
 public enum CrossoverOperatorType {
-    CONSISTENT("Egyenletes");
+    ONE_POINT("Egypontos"),
+    MULTI_POINT("Többpontos"),
+    UNIFORM("Egyenletes"),
+    AVERAGE("Átlag alapú");
 
     private final String name;
 

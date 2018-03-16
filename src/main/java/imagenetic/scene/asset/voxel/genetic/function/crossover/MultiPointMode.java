@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static imagenetic.scene.asset.voxel.genetic.function.crossover.CrossoverOperatorType.CONSISTENT;
+import static imagenetic.scene.asset.voxel.genetic.function.crossover.CrossoverOperatorType.MULTI_POINT;
 
 @Component
-public class ConsistentMode implements LayerCrossoverOperatorMode {
+public class MultiPointMode implements LayerCrossoverOperatorMode {
 
     private final Random random = new Random();
 
@@ -25,8 +25,12 @@ public class ConsistentMode implements LayerCrossoverOperatorMode {
         List<VoxelChromosome> voxelChromosomes = new ArrayList<>();
 
         int pointer = 0;
+        boolean inheritLeft;
+
         while (voxelChromosomes.size() < left.voxelChromosomes.size()) {
-            if (random.nextBoolean()) {
+            inheritLeft = random.nextInt(left.voxelChromosomes.size()) < pointer;
+
+            if (inheritLeft) {
                 voxelChromosomes.add(new VoxelChromosome(left.voxelChromosomes.get(pointer)));
             } else {
                 voxelChromosomes.add(new VoxelChromosome(right.voxelChromosomes.get(pointer)));
@@ -39,6 +43,6 @@ public class ConsistentMode implements LayerCrossoverOperatorMode {
 
     @Override
     public CrossoverOperatorType getType() {
-        return CONSISTENT;
+        return MULTI_POINT;
     }
 }

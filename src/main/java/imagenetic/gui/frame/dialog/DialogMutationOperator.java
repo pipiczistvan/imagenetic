@@ -27,7 +27,7 @@ public class DialogMutationOperator extends JDialog {
             getContentPane().add(tabbedPane, BorderLayout.CENTER);
             {
                 JPanel panelRandom = new JPanel();
-                tabbedPane.addTab("V\u00E9letlenszer\u0171", null, panelRandom, null);
+                tabbedPane.addTab("Véletlenszerű", null, panelRandom, null);
                 panelRandom.setLayout(new MigLayout("", "[grow]", "[][][]"));
                 {
                     JTextArea textareaRandom = new JTextArea();
@@ -36,7 +36,7 @@ public class DialogMutationOperator extends JDialog {
                     textareaRandom.setEditable(false);
                     textareaRandom.setLineWrap(true);
                     textareaRandom.setWrapStyleWord(true);
-                    textareaRandom.setText("Az egyed g\u00E9njei v\u00E9letlenszer\u0171en megv\u00E1ltoznak.");
+                    textareaRandom.setText("Az egyed génjei véletlenszerűen megváltoznak.");
                     panelRandom.add(textareaRandom, "cell 0 0,grow");
                 }
                 {
@@ -48,12 +48,12 @@ public class DialogMutationOperator extends JDialog {
             }
             {
                 JPanel panelSwap = new JPanel();
-                tabbedPane.addTab("G\u00E9ncsere", null, panelSwap, null);
+                tabbedPane.addTab("Géncsere", null, panelSwap, null);
                 panelSwap.setLayout(new MigLayout("", "[grow]", "[][][]"));
                 {
                     JTextArea textareaSwap = new JTextArea();
                     textareaSwap.setWrapStyleWord(true);
-                    textareaSwap.setText("K\u00E9t v\u00E9letlenszer\u0171en kiv\u00E1lasztott g\u00E9n helyet cser\u00E9l egym\u00E1ssal.");
+                    textareaSwap.setText("Két véletlenszerűen kiválasztott gén helyet cserél egymással.");
                     textareaSwap.setLineWrap(true);
                     textareaSwap.setFont(new Font("Tahoma", Font.PLAIN, 11));
                     textareaSwap.setEditable(false);
@@ -68,7 +68,7 @@ public class DialogMutationOperator extends JDialog {
             }
             {
                 JPanel panelScramble = new JPanel();
-                tabbedPane.addTab("\u00D6sszekever\u00E9s", null, panelScramble, null);
+                tabbedPane.addTab("Összekeverés", null, panelScramble, null);
                 panelScramble.setLayout(new MigLayout("", "[grow]", "[][][]"));
                 {
                     JTextArea textareaScramble = new JTextArea();
@@ -78,7 +78,7 @@ public class DialogMutationOperator extends JDialog {
                     textareaScramble.setWrapStyleWord(true);
                     textareaScramble.setLineWrap(true);
                     textareaScramble.setRows(1);
-                    textareaScramble.setText("A g\u00E9nek sorrendje v\u00E9letlenszer\u0171en megv\u00E1ltozik.");
+                    textareaScramble.setText("A gének sorrendje véletlenszerűen megváltozik.");
                     panelScramble.add(textareaScramble, "cell 0 0,grow");
                 }
                 {
@@ -90,12 +90,12 @@ public class DialogMutationOperator extends JDialog {
             }
             {
                 JPanel panelInversion = new JPanel();
-                tabbedPane.addTab("Inverzi\u00F3", null, panelInversion, null);
+                tabbedPane.addTab("Inverzió", null, panelInversion, null);
                 panelInversion.setLayout(new MigLayout("", "[grow]", "[][][]"));
                 {
                     JTextArea textareaInversion = new JTextArea();
                     textareaInversion.setWrapStyleWord(true);
-                    textareaInversion.setText("A g\u00E9nek az inverz \u00E9rt\u00E9k\u00FCket veszik fel.");
+                    textareaInversion.setText("A gének az inverz értéküket veszik fel.");
                     textareaInversion.setRows(1);
                     textareaInversion.setLineWrap(true);
                     textareaInversion.setFont(new Font("Tahoma", Font.PLAIN, 11));
