@@ -4,6 +4,7 @@ import imagenetic.common.algorithm.genetic.entity.Entity;
 import imagenetic.scene.asset.voxel.genetic.entity.LayerChromosome;
 import imagenetic.scene.asset.voxel.genetic.entity.VoxelChromosome;
 import javafx.util.Pair;
+import org.joml.Vector3i;
 import puppeteer.annotation.premade.Component;
 
 import java.util.ArrayList;
@@ -26,11 +27,15 @@ public class UniformMode implements LayerCrossoverOperatorMode {
 
         int pointer = 0;
         while (voxelChromosomes.size() < left.voxelChromosomes.size()) {
-            if (random.nextBoolean()) {
-                voxelChromosomes.add(new VoxelChromosome(left.voxelChromosomes.get(pointer)));
-            } else {
-                voxelChromosomes.add(new VoxelChromosome(right.voxelChromosomes.get(pointer)));
-            }
+            Vector3i leftPosition = left.voxelChromosomes.get(pointer).position;
+            Vector3i rightPosition = right.voxelChromosomes.get(pointer).position;
+
+            int x = random.nextBoolean() ? leftPosition.x : rightPosition.x;
+            int y = random.nextBoolean() ? leftPosition.y : rightPosition.y;
+            int z = random.nextBoolean() ? leftPosition.z : rightPosition.z;
+
+            voxelChromosomes.add(new VoxelChromosome(new Vector3i(x, y, z)));
+
             pointer++;
         }
 

@@ -18,7 +18,11 @@ public class RandomMode implements LayerSelectionOperatorMode {
     @Override
     public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(List<Entity<LayerChromosome>> orderedPopulation) {
         int leftIndex = random.nextInt(orderedPopulation.size());
-        int rightIndex = random.nextInt(orderedPopulation.size());
+        int rightIndex;
+
+        do {
+            rightIndex = random.nextInt(orderedPopulation.size());
+        } while (rightIndex == leftIndex);
 
         Entity<LayerChromosome> parent1 = orderedPopulation.get(leftIndex);
         Entity<LayerChromosome> parent2 = orderedPopulation.get(rightIndex);

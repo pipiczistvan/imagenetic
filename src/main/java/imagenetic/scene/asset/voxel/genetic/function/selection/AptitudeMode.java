@@ -18,7 +18,11 @@ public class AptitudeMode implements LayerSelectionOperatorMode {
     @Override
     public Pair<Entity<LayerChromosome>, Entity<LayerChromosome>> select(List<Entity<LayerChromosome>> orderedPopulation) {
         int leftIndex = createIndex(orderedPopulation);
-        int rightIndex = createIndex(orderedPopulation);
+        int rightIndex;
+
+        do {
+            rightIndex = createIndex(orderedPopulation);
+        } while (rightIndex == leftIndex);
 
         Entity<LayerChromosome> parent1 = orderedPopulation.get(leftIndex);
         Entity<LayerChromosome> parent2 = orderedPopulation.get(rightIndex);

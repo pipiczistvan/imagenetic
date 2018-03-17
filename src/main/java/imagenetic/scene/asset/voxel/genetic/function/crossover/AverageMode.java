@@ -42,7 +42,7 @@ public class AverageMode implements LayerCrossoverOperatorMode {
                 leftScaled = nullSafeDivide(leftChromosome.fitness, rightChromosome.fitness);
             }
 
-            float progression = 0.5f + (rightScaled - leftScaled) / 2;
+            float progression = 0.5f + (rightScaled - leftScaled) / 2f;
 
             voxelChromosomes.add(new VoxelChromosome(Vector3iUtil.interpolatePosition(
                     leftChromosome.position, rightChromosome.position, progression

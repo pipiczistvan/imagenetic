@@ -139,6 +139,6 @@ public class LayerFitnessFunction implements FitnessFunction<LayerChromosome>, M
         int g = (p >> 8) & 0xff;
         int b = p & 0xff;
 
-        return a < 255 ? 0 : (r + g + b) / 3;
+        return a > 0 ? (r + g + b) / 3 : 0;
     }
 }
