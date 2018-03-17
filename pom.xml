@@ -10,8 +10,10 @@
     <packaging>jar</packaging>
 
     <properties>
-        <piengine.version>0.0.8</piengine.version>
+        <piengine.version>0.0.9</piengine.version>
         <miglayout.version>3.7.4</miglayout.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <repositories>
@@ -23,16 +25,16 @@
 
     <dependencies>
         <!-- PI ENGINE -->
-        <!--<dependency>-->
-            <!--<groupId>com.github.pipiczistvan</groupId>-->
-            <!--<artifactId>pi-engine</artifactId>-->
-            <!--<version>${piengine.version}</version>-->
-        <!--</dependency>-->
         <dependency>
-            <groupId>istvan.pipicz.opengl</groupId>
-            <artifactId>pi-engine-frame</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.github.pipiczistvan</groupId>
+            <artifactId>pi-engine</artifactId>
+            <version>${piengine.version}</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>istvan.pipicz.opengl</groupId>-->
+            <!--<artifactId>pi-engine-frame</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
         <!-- MIG LAYOUT -->
         <dependency>
             <groupId>com.miglayout</groupId>
@@ -99,6 +101,9 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
                 <executions>
                     <execution>
                         <id>copy-resources</id>

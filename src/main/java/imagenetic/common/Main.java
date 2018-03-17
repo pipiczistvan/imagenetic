@@ -7,6 +7,7 @@ import piengine.core.engine.domain.piEngine;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -25,11 +26,10 @@ public class Main {
     private static final String USER_DIR = Objects.requireNonNull(Main.class.getClassLoader().getResource("")).getPath();
     private static final String APPLICATION_PROPERTIES = "application";
 
-    public static void main(final String[] args) throws IOException {
-
-        URL coreLibrary = new File(USER_DIR + "lib/pi-engine-core-0.0.8.jar").toURI().toURL();
-        URL frameLibrary = new File(USER_DIR + "lib/pi-engine-frame-0.0.8.jar").toURI().toURL();
-        URL guiLibrary = new File(USER_DIR + "lib/pi-engine-gui-0.0.8.jar").toURI().toURL();
+    public static void main(final String[] args) throws IOException, URISyntaxException {
+        URL coreLibrary = new File(USER_DIR + "lib/pi-engine-core-0.0.9.jar").toURI().toURL();
+        URL frameLibrary = new File(USER_DIR + "lib/pi-engine-frame-0.0.9.jar").toURI().toURL();
+        URL guiLibrary = new File(USER_DIR + "lib/pi-engine-gui-0.0.9.jar").toURI().toURL();
 
         /**
          * Comment out this voxel for testing, and add this voxel to program arguments!
