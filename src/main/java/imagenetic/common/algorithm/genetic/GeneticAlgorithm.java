@@ -76,7 +76,7 @@ public abstract class GeneticAlgorithm<T> implements
         addGeneration(new Generation<>(createSortedPopulation(createGenotypes(populationCount))));
     }
 
-    public void nextGeneration() {
+    public Generation<T> nextGeneration() {
         List<Entity<T>> currentPopulation = currentGeneration.population;
 
         if (bestElement == null || bestElement.getFitness() <= currentPopulation.get(0).getFitness()) {
@@ -109,7 +109,10 @@ public abstract class GeneticAlgorithm<T> implements
             }
         }
 
-        addGeneration(new Generation<>(newPopulation));
+        Generation<T> newGeneration = new Generation<>(newPopulation);
+        addGeneration(newGeneration);
+
+        return newGeneration;
     }
 
     public int getNumberOfGenerations() {
