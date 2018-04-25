@@ -39,8 +39,8 @@ public class PanelLabel extends JPanel {
 
     public void updateLabels(final int numberOfGenerations, final float averageFitness, final float bestFitness, final int generationsPerSec, final int entityCount) {
         lblGenerationCount.setText(String.format("Generációk száma: %s", numberOfGenerations));
-        lblAverageFitness.setText(String.format("Átlagos fitness: %1.3f", averageFitness));
-        lblBestFitness.setText(String.format("Legjobb fitness: %1.3f", bestFitness));
+        lblAverageFitness.setText(String.format("Átlagos fitnesz: %1.3f", averageFitness));
+        lblBestFitness.setText(String.format("Legjobb fitnesz: %1.3f", bestFitness));
         lblSpeed.setText(String.format("Sebesség: %s generáció/mp", generationsPerSec));
         lblEntityCount.setText(String.format("Egyedek száma: %s", entityCount));
     }

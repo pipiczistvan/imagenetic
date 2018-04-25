@@ -17,7 +17,7 @@ public class ButtonReset extends JButton implements PlayPressedListener {
     private final ImageIcon stopButtonIcon = new ImageIcon(IMAGE_LOADER.getUrl("stop-button"));
 
     public ButtonReset() {
-        this.setToolTipText("Legállítás");
+        this.setToolTipText("Leállítás");
         this.setFocusPainted(false);
         this.setMaximumSize(new Dimension(40, 40));
         this.setIcon(stopButtonIcon);
