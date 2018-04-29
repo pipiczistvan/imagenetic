@@ -1,6 +1,8 @@
 package imagenetic.common.algorithm.genetic;
 
+import imagenetic.common.Properties;
 import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.common.algorithm.genetic.entity.EntityCreationTask;
 import imagenetic.common.algorithm.genetic.function.ChromosomeCopier;
 import imagenetic.common.algorithm.genetic.function.ChromosomeCreator;
 import imagenetic.common.algorithm.genetic.function.CriterionFunction;
@@ -15,19 +17,32 @@ import imagenetic.gui.common.api.settings.PopulationCountChangedListener;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static imagenetic.common.Config.DEF_CRITERIA_RATE;
 import static imagenetic.common.Config.DEF_ELITISM_RATE;
 import static imagenetic.common.Config.DEF_MUTATION_RATE;
 import static imagenetic.common.Config.DEF_POPULATION_COUNT;
+import static piengine.core.base.type.property.ApplicationProperties.get;
 
 public abstract class GeneticAlgorithm<T> implements
         MutationRateChangedListener, ElitismRateChangedListener,
         CriteriaRateChangedListener, PopulationCountChangedListener {
+
+    private static int THREAD_COUNT;
+
+    static {
+        try {
+            THREAD_COUNT = get(Properties.THREAD_COUNT);
+        } catch (Exception e) {
+            THREAD_COUNT = 1;
+        }
+    }
 
     protected final FitnessFunction<T> fitnessFunction;
     private final CriterionFunction<T> criterionFunction;
@@ -51,6 +66,8 @@ public abstract class GeneticAlgorithm<T> implements
     private double elitismRate = DEF_ELITISM_RATE;
     private double criteriaRate = DEF_CRITERIA_RATE;
     private int populationCount = DEF_POPULATION_COUNT;
+
+    private final ExecutorService entityCreationExecutor = Executors.newFixedThreadPool(THREAD_COUNT);
 
     public GeneticAlgorithm(final FitnessFunction<T> fitnessFunction, final CriterionFunction<T> criterionFunction,
                             final SelectionOperator<T> selectionOperator, final CrossoverOperator<T> crossoverOperator,
@@ -156,11 +173,22 @@ public abstract class GeneticAlgorithm<T> implements
         return done;
     }
 
-    private List<Entity<T>> createSortedPopulation(final Collection<T> genoTypes) {
-        List<Entity<T>> sortedPopulation = genoTypes.stream()
-                .map(g -> new Entity<>(g, fitnessFunction))
-                .sorted()
-                .collect(Collectors.toList());
+    private List<Entity<T>> createSortedPopulation(final List<T> genoTypes) {
+        List<Entity<T>> newPopulation = Collections.synchronizedList(new ArrayList<>());
+
+        // create tasks
+        List<EntityCreationTask<T>> tasks = new ArrayList<>();
+        for (T genoType : genoTypes) {
+            tasks.add(new EntityCreationTask<>(fitnessFunction, newPopulation, genoType));
+        }
+        try {
+            entityCreationExecutor.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // sort population
+        List<Entity<T>> sortedPopulation = newPopulation.stream().sorted().collect(Collectors.toList());
 
         bestFitness = sortedPopulation.get(0).getFitness();
         averageFitness = (float) sortedPopulation.stream().mapToDouble(Entity::getFitness).average().getAsDouble();

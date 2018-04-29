@@ -20,6 +20,7 @@ public class Main {
     static {
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            Properties.preload();
         } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -29,9 +30,9 @@ public class Main {
     private static final String APPLICATION_PROPERTIES = "application";
 
     public static void main(final String[] args) throws IOException, URISyntaxException {
-        URL coreLibrary = new File(USER_DIR + "lib/pi-engine-core-0.0.9.jar").toURI().toURL();
-        URL frameLibrary = new File(USER_DIR + "lib/pi-engine-frame-0.0.9.jar").toURI().toURL();
-        URL guiLibrary = new File(USER_DIR + "lib/pi-engine-gui-0.0.9.jar").toURI().toURL();
+        URL coreLibrary = new File(USER_DIR + "lib/pi-engine-core-0.0.11.jar").toURI().toURL();
+        URL frameLibrary = new File(USER_DIR + "lib/pi-engine-frame-0.0.11.jar").toURI().toURL();
+        URL guiLibrary = new File(USER_DIR + "lib/pi-engine-gui-0.0.11.jar").toURI().toURL();
 
         FileSystems.newFileSystem(Main.class.getResource("/imagenetic/common/Main.class").toURI(), Collections.emptyMap());
 
