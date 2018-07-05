@@ -5,5 +5,5 @@ import imagenetic.common.algorithm.genetic.entity.Entity;
 import java.util.List;
 
 public interface CriterionFunction<T> {
-    boolean matches(List<Entity<T>> orderedPopulation);
+    float value(List<Entity<T>> orderedPopulation);
 }

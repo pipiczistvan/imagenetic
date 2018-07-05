@@ -1,25 +1,27 @@
 package imagenetic.algorithm;
 
+import imagenetic.common.algorithm.genetic.Generation;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class GeneticAlgorithmTest {
 
     @Test
-    public void test() throws Exception {
-        List<Integer[]> initialPopulation = Arrays.asList(
-                new Integer[]{5, 2, 3, 4},
-                new Integer[]{2, 4, 4, 5},
-                new Integer[]{3, 4, 3, 2},
-                new Integer[]{5, 3, 2, 3}
-        );
-
+    public void test() {
         NumberGeneticAlgorithm geneticAlgorithm = new NumberGeneticAlgorithm();
-        List<Integer[]> newPopulation = geneticAlgorithm.execute(0.01f, 0.8f);
+        geneticAlgorithm.initialize();
+        geneticAlgorithm.criteriaRateChanged(1);
+        geneticAlgorithm.elitismRateChanged(1);
+        geneticAlgorithm.mutationRateChanged(0.1);
+        geneticAlgorithm.populationCountChanged(10);
 
-        System.out.println(Arrays.toString(newPopulation.get(0)));
-        System.out.println(geneticAlgorithm.getNumberOfGenerations());
+        while (!geneticAlgorithm.isDone()) {
+            Generation<Integer[]> lastGeneration = geneticAlgorithm.nextGeneration();
+            System.out.printf("Current generation's best is: %s\n", Arrays.toString(lastGeneration.population.get(0).getGenoType()));
+        }
+
+        System.out.println("Done!");
+        System.out.printf("Number of generations: %d", geneticAlgorithm.getNumberOfGenerations());
     }
 }

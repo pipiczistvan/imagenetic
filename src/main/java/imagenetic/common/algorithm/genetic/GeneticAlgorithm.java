@@ -1,6 +1,8 @@
 package imagenetic.common.algorithm.genetic;
 
+import imagenetic.common.Properties;
 import imagenetic.common.algorithm.genetic.entity.Entity;
+import imagenetic.common.algorithm.genetic.entity.EntityCreationTask;
 import imagenetic.common.algorithm.genetic.function.ChromosomeCopier;
 import imagenetic.common.algorithm.genetic.function.ChromosomeCreator;
 import imagenetic.common.algorithm.genetic.function.CriterionFunction;
@@ -8,15 +10,39 @@ import imagenetic.common.algorithm.genetic.function.CrossoverOperator;
 import imagenetic.common.algorithm.genetic.function.FitnessFunction;
 import imagenetic.common.algorithm.genetic.function.MutationOperator;
 import imagenetic.common.algorithm.genetic.function.SelectionOperator;
+import imagenetic.gui.common.api.settings.CriteriaRateChangedListener;
+import imagenetic.gui.common.api.settings.ElitismRateChangedListener;
+import imagenetic.gui.common.api.settings.MutationRateChangedListener;
+import imagenetic.gui.common.api.settings.PopulationCountChangedListener;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-public abstract class GeneticAlgorithm<T> {
+import static imagenetic.common.Config.DEF_CRITERIA_RATE;
+import static imagenetic.common.Config.DEF_ELITISM_RATE;
+import static imagenetic.common.Config.DEF_MUTATION_RATE;
+import static imagenetic.common.Config.DEF_POPULATION_COUNT;
+import static piengine.core.base.type.property.ApplicationProperties.get;
+
+public abstract class GeneticAlgorithm<T> implements
+        MutationRateChangedListener, ElitismRateChangedListener,
+        CriteriaRateChangedListener, PopulationCountChangedListener {
+
+    private static int THREAD_COUNT;
+
+    static {
+        try {
+            THREAD_COUNT = get(Properties.THREAD_COUNT);
+        } catch (Exception e) {
+            THREAD_COUNT = 1;
+        }
+    }
 
     protected final FitnessFunction<T> fitnessFunction;
     private final CriterionFunction<T> criterionFunction;
@@ -34,6 +60,14 @@ public abstract class GeneticAlgorithm<T> {
 
     private float averageFitness = 0;
     private float bestFitness = 0;
+    private boolean done = false;
+
+    private double mutationRate = DEF_MUTATION_RATE;
+    private double elitismRate = DEF_ELITISM_RATE;
+    private double criteriaRate = DEF_CRITERIA_RATE;
+    private int populationCount = DEF_POPULATION_COUNT;
+
+    private final ExecutorService entityCreationExecutor = Executors.newFixedThreadPool(THREAD_COUNT);
 
     public GeneticAlgorithm(final FitnessFunction<T> fitnessFunction, final CriterionFunction<T> criterionFunction,
                             final SelectionOperator<T> selectionOperator, final CrossoverOperator<T> crossoverOperator,
@@ -49,26 +83,17 @@ public abstract class GeneticAlgorithm<T> {
         this.chromosomeCreator = chromosomeCreator;
     }
 
-    public void initialize(final int populationCount) {
+    public void initialize() {
         bestElement = null;
         averageFitness = 0;
         bestFitness = 0;
+        done = false;
 
         generations.clear();
         addGeneration(new Generation<>(createSortedPopulation(createGenotypes(populationCount))));
     }
 
-    public List<T> execute(final float mutationRate, final float elitismRate) {
-        Generation<T> lastGeneration = generations.get(generations.size() - 1);
-
-        while (!criterionFunction.matches(lastGeneration.population)) {
-            nextGeneration(mutationRate, elitismRate);
-        }
-
-        return lastGeneration.population.stream().map(Entity::getGenoType).collect(Collectors.toList());
-    }
-
-    public void nextGeneration(final float mutationRate, final float elitismRate) {
+    public Generation<T> nextGeneration() {
         List<Entity<T>> currentPopulation = currentGeneration.population;
 
         if (bestElement == null || bestElement.getFitness() <= currentPopulation.get(0).getFitness()) {
@@ -101,7 +126,10 @@ public abstract class GeneticAlgorithm<T> {
             }
         }
 
-        addGeneration(new Generation<>(newPopulation));
+        Generation<T> newGeneration = new Generation<>(newPopulation);
+        addGeneration(newGeneration);
+
+        return newGeneration;
     }
 
     public int getNumberOfGenerations() {
@@ -120,18 +148,54 @@ public abstract class GeneticAlgorithm<T> {
         return generations;
     }
 
-    public Generation<T> getCurrentGeneration() {
-        return currentGeneration;
+    @Override
+    public void elitismRateChanged(final double rate) {
+        elitismRate = rate;
     }
 
-    private List<Entity<T>> createSortedPopulation(final Collection<T> genoTypes) {
-        List<Entity<T>> sortedPopulation = genoTypes.stream()
-                .map(g -> new Entity<>(g, fitnessFunction))
-                .sorted()
-                .collect(Collectors.toList());
+    @Override
+    public void mutationRateChanged(final double rate) {
+        mutationRate = rate;
+    }
+
+    @Override
+    public void criteriaRateChanged(final double rate) {
+        criteriaRate = rate;
+        done = false;
+    }
+
+    @Override
+    public void populationCountChanged(final int count) {
+        populationCount = count;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    private List<Entity<T>> createSortedPopulation(final List<T> genoTypes) {
+        List<Entity<T>> newPopulation = Collections.synchronizedList(new ArrayList<>());
+
+        // create tasks
+        List<EntityCreationTask<T>> tasks = new ArrayList<>();
+        for (T genoType : genoTypes) {
+            tasks.add(new EntityCreationTask<>(fitnessFunction, newPopulation, genoType));
+        }
+        try {
+            entityCreationExecutor.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // sort population
+        List<Entity<T>> sortedPopulation = newPopulation.stream().sorted().collect(Collectors.toList());
 
         bestFitness = sortedPopulation.get(0).getFitness();
         averageFitness = (float) sortedPopulation.stream().mapToDouble(Entity::getFitness).average().getAsDouble();
+
+        if (criterionFunction.value(sortedPopulation) >= criteriaRate) {
+            done = true;
+        }
 
         return sortedPopulation;
     }

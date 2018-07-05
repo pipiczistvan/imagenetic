@@ -8,7 +8,7 @@ import java.util.List;
 public class NumberCriterionFunction implements CriterionFunction<Integer[]> {
 
     @Override
-    public boolean matches(List<Entity<Integer[]>> orderedPopulation) {
-        return orderedPopulation.stream().anyMatch(e -> e.getFitness().equals(1f));
+    public float value(List<Entity<Integer[]>> orderedPopulation) {
+        return orderedPopulation.get(0).getFitness();
     }
 }
